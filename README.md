@@ -1,0 +1,2 @@
+# CIAMORE
+Ciamore-theme
