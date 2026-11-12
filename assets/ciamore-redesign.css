@@ -1695,10 +1695,10 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
   border: none !important;
   box-shadow: none !important;
 }
-/* Set-Produkte: option-title unchecked = 400, checked = 600 (wie Einzelprodukte) */
+/* Set-Produkte: option-title unchecked = 600, checked = 700 (1:1 wie Einzelprodukte) */
 .cm-multi-pdp .product__selectors .radio__button .option-title {
-  font-weight: 400 !important;
+  font-weight: 600 !important;
 }
 .cm-multi-pdp .product__selectors .radio__button input:checked + label .option-title {
-  font-weight: 600 !important;
+  font-weight: 700 !important;
 }
