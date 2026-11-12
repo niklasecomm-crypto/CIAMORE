@@ -331,7 +331,13 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('change', function (e) { var b = e.target.closest && e.target.closest('.cm-multi-pdp .product__selectors .radio__buttons'); if (b) upd(b, true); });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { all(false); }); else all(false);
   window.addEventListener('pageshow', function () { all(false); });
-  new MutationObserver(function () { all(false); }).observe(document.documentElement, { childList: true, subtree: true });
+  /* Einmalig warten bis die Set-Container im DOM sind, dann initialisieren und Observer stoppen */
+  if (!document.querySelectorAll('.cm-multi-pdp .product__selectors .radio__buttons').length) {
+    var mo = new MutationObserver(function () {
+      if (document.querySelectorAll('.cm-multi-pdp .product__selectors .radio__buttons').length) { mo.disconnect(); all(false); }
+    });
+    mo.observe(document.documentElement, { childList: true, subtree: true });
+  }
 })();
 </script>
 <script>
