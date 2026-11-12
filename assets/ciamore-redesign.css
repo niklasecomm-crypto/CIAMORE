@@ -992,7 +992,7 @@ html body.template-product .radio__fieldset--swatches .radio__buttons::after {
   width: 100% !important; height: 44px !important; padding: 0 12px !important;
   border: none !important; border-radius: 8px !important; background: transparent !important; box-shadow: none !important;
   font-family: var(--cm-body) !important; font-size: 14px !important; font-weight: 600 !important;
-  color: #6b6b6b !important; cursor: pointer; transition: background .15s ease, box-shadow .15s ease;
+  color: #000 !important; cursor: pointer; transition: background .15s ease, box-shadow .15s ease;
   white-space: nowrap;
 }
 .cm-multi-pdp .product__selectors .radio__button input:checked + label {
@@ -1680,7 +1680,7 @@ html body.cm-multi-pdp .product__selectors .radio__button input:checked + label 
 /* Bundle-Veredelung: unchecked label = transparent, gleiche Schrift wie Einzelprodukte */
 html body.cm-multi-pdp .product__selectors .radio__button label {
   font-weight: 600 !important;
-  color: #6b6b6b !important;
+  color: #000 !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
