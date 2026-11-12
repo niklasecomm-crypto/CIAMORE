@@ -1,0 +1,93 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "section-404",
+      "disabled": true,
+      "settings": {
+        "color_scheme": ""
+      }
+    },
+    "section_custom_code_4xPKNa": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<style>\n  .contact-full-width-wrapper {\n    background-color: #f8f6f3;\n    width: 100vw;\n    position: relative;\n    left: 50%;\n    right: 50%;\n    margin-left: -50vw;\n    margin-right: -50vw;\n    box-sizing: border-box;\n    padding: 25px 10px;\n    text-align: center;\n  }\n\n  .contact-text-top {\n    font-size: 20px;\n    font-weight: bold;\n    color: #000;\n    margin: 0;\n    padding-top: 8px;\n  }\n\n  .contact-text-main {\n    font-size: 12px;\n    color: #000;\n    margin: 0;\n  }\n</style>\n\n<div class=\"contact-full-width-wrapper\">\n  <p class=\"contact-text-main\">\n    Kontaktiere uns bei Fragen bezüglich deiner Bestellung, unserer Qualität, dem Versand und anderen Anliegen.\n  </p>\n  <h2 class=\"contact-text-top\">Kontakt</h2>\n</div>",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "contact_form_YRbhHf": {
+      "type": "contact-form",
+      "blocks": {
+        "text_4PdU6p": {
+          "type": "text",
+          "settings": {
+            "title": "Vollständiger Name",
+            "required": true
+          }
+        },
+        "email_RAifek": {
+          "type": "email",
+          "settings": {
+            "title": "Deine Email",
+            "required": true
+          }
+        },
+        "text_b8nkeD": {
+          "type": "text",
+          "settings": {
+            "title": "Bestellnummer (optional)",
+            "required": false
+          }
+        },
+        "body_dXH9Th": {
+          "type": "body",
+          "settings": {
+            "title": "Deine Nachricht",
+            "required": false
+          }
+        },
+        "form_heading_6tMyiP": {
+          "type": "formHeading",
+          "settings": {
+            "title": "Optional"
+          }
+        }
+      },
+      "block_order": [
+        "text_4PdU6p",
+        "email_RAifek",
+        "text_b8nkeD",
+        "body_dXH9Th",
+        "form_heading_6tMyiP"
+      ],
+      "name": "Contact form",
+      "settings": {
+        "title": "Kontaktformular",
+        "heading_font_size": "heading-large",
+        "terms": false,
+        "width": "wrapper--narrow",
+        "color_scheme": "",
+        "padding_top": 60,
+        "padding_bottom": 100,
+        "heading_tag": "automatic"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "section_custom_code_4xPKNa",
+    "contact_form_YRbhHf"
+  ]
+}

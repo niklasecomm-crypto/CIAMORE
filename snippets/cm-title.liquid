@@ -1,0 +1,24 @@
+{%- comment -%}
+  Gibt einen Produkttitel aus. Titel, die komplett in Großbuchstaben gepflegt sind
+  (z. B. "GLOSSY PINK CLOVER SET"), werden als "Glossy Pink Clover Set" angezeigt.
+  Aufruf: {% render 'cm-title', title: product.title %}
+{%- endcomment -%}
+{%- liquid
+  assign cm_raw = title | strip_html
+  assign cm_up = cm_raw | upcase
+  if cm_raw == cm_up
+    assign cm_words = cm_raw | downcase | split: ' '
+    assign cm_out = ''
+    for w in cm_words
+      assign cm_w = w | capitalize
+      if forloop.first
+        assign cm_out = cm_w
+      else
+        assign cm_out = cm_out | append: ' ' | append: cm_w
+      endif
+    endfor
+  else
+    assign cm_out = cm_raw
+  endif
+-%}
+{{- cm_out | escape -}}

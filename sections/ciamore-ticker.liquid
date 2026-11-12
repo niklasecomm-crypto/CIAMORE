@@ -1,0 +1,49 @@
+{%- comment -%}
+  CIAMORE | Laufband mit Markenversprechen (langsam, ruhig)
+{%- endcomment -%}
+{%- capture cm_items -%}
+  {%- for block in section.blocks -%}
+    <span class="cm-tick__item" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+    <svg class="cm-tick__heart" aria-hidden="true" focusable="false" width="16" height="14" viewBox="0 0 16 14"><path d="M8 13C2 8.5 1 5 2.5 2.8 3.6 1.2 6 1.2 8 3.4 10 1.2 12.4 1.2 13.5 2.8 15 5 14 8.5 8 13Z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+  {%- endfor -%}
+{%- endcapture -%}
+<div class="cm-tick cm-tick--{{ section.id }}" role="marquee" aria-label="{{ section.blocks | map: 'settings' | map: 'text' | join: ', ' | escape }}">
+  <div class="cm-tick__track" aria-hidden="true">
+    <div class="cm-tick__group">{{ cm_items }}</div>
+    <div class="cm-tick__group">{{ cm_items }}</div>
+  </div>
+</div>
+<style>
+  .cm-tick--{{ section.id }} {
+    margin-top: {{ section.settings.mt_mobile }}px; background: {{ section.settings.bg }}; color: {{ section.settings.fg }};
+    overflow: hidden; padding: 14px 0;
+  }
+  .cm-tick--{{ section.id }} .cm-tick__track { display: flex; width: max-content; animation: cmTick-{{ section.id }} {{ section.settings.speed }}s linear infinite; }
+  .cm-tick--{{ section.id }} .cm-tick__group { display: flex; align-items: center; flex-shrink: 0; }
+  .cm-tick--{{ section.id }} .cm-tick__item {
+    font-family: var(--cm-display); font-style: italic; font-size: 24px; line-height: 1.1; white-space: nowrap; padding: 0 22px;
+  }
+  .cm-tick--{{ section.id }} .cm-tick__heart { flex-shrink: 0; opacity: .7; }
+  @keyframes cmTick-{{ section.id }} { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (min-width: 750px) {
+    .cm-tick--{{ section.id }} { margin-top: {{ section.settings.mt }}px; padding: 20px 0; }
+    .cm-tick--{{ section.id }} .cm-tick__item { font-size: 34px; padding: 0 32px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cm-tick--{{ section.id }} .cm-tick__track { animation: none; } }
+</style>
+{% schema %}
+{
+  "name": "Ciamore Laufband",
+  "settings": [
+    { "type": "color", "id": "bg", "label": "Hintergrund", "default": "#212121" },
+    { "type": "color", "id": "fg", "label": "Text", "default": "#ffffff" },
+    { "type": "range", "id": "speed", "label": "Dauer pro Durchlauf", "min": 20, "max": 120, "step": 5, "unit": "s", "default": 45 },
+    { "type": "range", "id": "mt", "label": "Abstand oben (Desktop)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "mt_mobile", "label": "Abstand oben (Handy)", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 32 }
+  ],
+  "blocks": [
+    { "type": "item", "name": "Text", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "Wasserfest" } ] }
+  ],
+  "presets": [{ "name": "Ciamore Laufband", "blocks": [{ "type": "item" }, { "type": "item" }, { "type": "item" }] }]
+}
+{% endschema %}

@@ -1,0 +1,80 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "section_custom_code_HnWRL6": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<style>\n  .faq-full-width-wrapper {\n    background-color: #f8f6f3;\n    width: 100vw;\n    position: relative;\n    left: 50%;\n    right: 50%;\n    margin-left: -50vw;\n    margin-right: -50vw;\n    box-sizing: border-box;\n    padding: 25px 10px;\n    text-align: center;\n    display: none; /* Standard: ausblenden */\n  }\n\n  .faq-text-top {\n    font-size: 12px;\n    padding-bottom: 12px;\n    color: #000;\n    margin: 0;\n  }\n\n  .faq-text-main {\n    font-size: 16px;\n    font-weight: bold;\n    color: #000;\n    margin: 0;\n  }\n</style>\n\n<div class=\"faq-full-width-wrapper\" id=\"faq-box\">\n  <p class=\"faq-text-top\">Hier findest du unser FAQ</p>\n  <h2 class=\"faq-text-main\">Häufig gestellte Fragen</h2>\n</div>\n\n<script>\n  // Nur anzeigen, wenn die URL /pages/faq enthält\n  if (window.location.pathname.includes(\"/pages/faq\")) {\n    document.getElementById(\"faq-box\").style.display = \"block\";\n  }\n</script>",
+        "width": "wrapper--full",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "section_custom_code_aNT3KW": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<style>\n  .section-header-wrapper {\n    background-color: #f8f6f3;\n    width: 100vw;\n    position: relative;\n    left: 50%;\n    right: 50%;\n    margin-left: -50vw;\n    margin-right: -50vw;\n    box-sizing: border-box;\n    padding: 25px 10px;\n    text-align: center;\n    display: none; /* initial versteckt */\n  }\n\n  .section-header-top {\n    font-size: 12px;\n    padding-bottom: 10px;\n    color: #000;\n    margin: 0;\n  }\n\n  .section-header-main {\n    font-size: 20px;\n    font-weight: bold;\n    color: #000;\n    margin: 0;\n  }\n</style>\n\n<div class=\"section-header-wrapper\" id=\"materials-box\">\n  <p class=\"section-header-top\">Hier findest du alle Infos zu unseren Materialien</p>\n  <h2 class=\"section-header-main\">Materialien</h2>\n</div>\n\n<script>\n  // Nur anzeigen, wenn die URL \"/pages/materialien\" enthält\n  if (window.location.pathname.includes(\"/pages/materialien\")) {\n    document.getElementById(\"materials-box\").style.display = \"block\";\n  }\n</script>",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "section_custom_code_cHKQaQ": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<style>\n  .section-header-wrapper {\n    background-color: #f8f6f3;\n    width: 100vw;\n    position: relative;\n    left: 50%;\n    right: 50%;\n    margin-left: -50vw;\n    margin-right: -50vw;\n    box-sizing: border-box;\n    padding: 25px 10px;\n    text-align: center;\n    display: none; /* initial versteckt */\n  }\n\n  .section-header-top {\n    font-size: 12px;\n    padding-bottom: 10px;\n    color: #000;\n    margin: 0;\n  }\n\n  .section-header-main {\n    font-size: 20px;\n    font-weight: bold;\n    color: #000;\n    margin: 0;\n  }\n</style>\n\n<div class=\"section-header-wrapper\" id=\"returns-box\">\n  <p class=\"section-header-top\">Hier findest du alle Infos zu deiner Rücksendung</p>\n  <h2 class=\"section-header-main\">Rücksendung</h2>\n</div>\n\n<script>\n  // Nur anzeigen, wenn die URL \"/pages/rucksendung\" enthält\n  if (window.location.pathname.includes(\"/pages/rucksendung\")) {\n    document.getElementById(\"returns-box\").style.display = \"block\";\n  }\n</script>",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "section_custom_code_7Pe83D": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<style>\n  .section-header-wrapper {\n    background-color: #f8f6f3;\n    width: 100vw;\n    position: relative;\n    left: 50%;\n    right: 50%;\n    margin-left: -50vw;\n    margin-right: -50vw;\n    box-sizing: border-box;\n    padding: 25px 10px;\n    text-align: center;\n    display: none; /* initial versteckt */\n  }\n\n  .section-header-top {\n    font-size: 12px;\n    padding-bottom: 10px;\n    color: #000;\n    margin: 0;\n  }\n\n  .section-header-main {\n    font-size: 20px;\n    font-weight: bold;\n    color: #000;\n    margin: 0;\n  }\n</style>\n\n<div class=\"section-header-wrapper\" id=\"shipping-box\">\n  <p class=\"section-header-top\">Hier findest du alle Infos rund um deinen Versand</p>\n  <h2 class=\"section-header-main\">Versand</h2>\n</div>\n\n<script>\n  // Nur anzeigen, wenn die URL \"/pages/versand\" enthält\n  if (window.location.pathname.includes(\"/pages/versand\")) {\n    document.getElementById(\"shipping-box\").style.display = \"block\";\n  }\n</script>",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "subheading": "",
+        "show_title": true,
+        "heading_font_size": "heading-large",
+        "show_content": true,
+        "text_font_size": "body-medium",
+        "align_text": "text-center",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 50,
+        "padding_bottom": 10,
+        "heading_tag": "automatic"
+      }
+    }
+  },
+  "order": [
+    "section_custom_code_HnWRL6",
+    "section_custom_code_aNT3KW",
+    "section_custom_code_cHKQaQ",
+    "section_custom_code_7Pe83D",
+    "main"
+  ]
+}

@@ -1,0 +1,23 @@
+/* Desktop-Version */
+.radio__button label {
+    font-size: 15px !important;  /* Schriftgröße wie im Referenz-Shop */
+    padding: 10px 15px !important;  /* Innenabstand */
+    min-width: 110px !important;  /* Breite */
+    height: 42px !important;  /* Höhe */
+    border-radius: 0px !important; /* Abgerundete Ecken */
+    text-align: center !important; 
+}
+
+/* Mobile-Version */
+@media only screen and (max-width: 767px) {
+    .radio__button label {
+        font-size: 14px !important; /* Etwas kleinere Schrift auf Mobil */
+        padding: 8px 12px !important; /* Innenabstand reduziert */
+        min-width: 90px !important; /* Kleinere Box */
+        height: 36px !important; /* Leicht geringere Höhe */
+        border-radius: 0px !important; /* Abgerundete Ecken bleiben */
+        text-align: center !important;
+    }
+}
+
+

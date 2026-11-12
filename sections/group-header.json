@@ -1,0 +1,168 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "announcement": {
+      "type": "announcement",
+      "blocks": {
+        "text_CLy9jh": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<p>★★★★★ (4,8) von 3.000+ Kunden</p>",
+            "target_url_enabled": false,
+            "target_url": "",
+            "target_referrer_enabled": false,
+            "target_referrer": "",
+            "target_device_enabled": false,
+            "target_device": "mobile"
+          }
+        },
+        "text_DcKjhq": {
+          "type": "text",
+          "settings": {
+            "text": "<p>VERSAND IN 1-3 WERKTAGEN</p>",
+            "target_url_enabled": false,
+            "target_url": "",
+            "target_referrer_enabled": false,
+            "target_referrer": "",
+            "target_device_enabled": false,
+            "target_device": "mobile"
+          }
+        },
+        "text_9fTznk": {
+          "type": "text",
+          "settings": {
+            "text": "<p>KOSTENLOSER VERSAND IN 🇩🇪 AB 39€</p>",
+            "target_url_enabled": false,
+            "target_url": "",
+            "target_referrer_enabled": false,
+            "target_referrer": "",
+            "target_device_enabled": false,
+            "target_device": "mobile"
+          }
+        }
+      },
+      "block_order": [
+        "text_CLy9jh",
+        "text_DcKjhq",
+        "text_9fTznk"
+      ],
+      "settings": {
+        "show_border": false,
+        "layout": "slider",
+        "slider_speed": 5,
+        "text_alignment": "center",
+        "show_arrows": true,
+        "marquee_speed": 100,
+        "message_spacing": 10,
+        "text_font_size": "body-small",
+        "color_scheme": "scheme-1",
+        "border_color": "",
+        "padding_top": 7,
+        "padding_bottom": 7
+      }
+    },
+    "section_custom_code_mpdU4N": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<!-- 100% Wasserfest – Lebenslange Garantie -->\n<style>\n.announcement-bar-custom-full {\n  width: 100%;\n  background-color: #212121;\n  color: #fff;\n  font-family: 'DM Sans', sans-serif;\n  text-align: center;\n  padding: 9px 15px;\n  font-size: 15px;\n  font-weight: 800;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 10px;\n  flex-wrap: wrap;\n  z-index: 100;\n}\n\n@media screen and (max-width: 767px) {\n  .announcement-bar-custom-full {\n    font-size: 12.5px;\n    padding: 11px 10px;\n  }\n}\n</style>\n\n<!-- DM Sans laden (falls nicht global) -->\n<link href=\"https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap\" rel=\"stylesheet\">\n\n<div class=\"announcement-bar-custom-full\">\n  <span>💧 100% Wasserfest – MADE TO MAKE YOU GLOW ✨</span> \n</div>",
+        "width": "wrapper--full",
+        "color_scheme": "scheme-1",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "header_sticky": true,
+        "header_style": "logo_beside",
+        "show_separator_line": false,
+        "header_border_color": "",
+        "separator_opacity": 35,
+        "show_icons": true,
+        "icon_as_circle": false,
+        "cart_icon_family": "bag",
+        "logo": "shopify://shop_images/Ciamore-Logo.png",
+        "logo_max_limit": 210,
+        "logo_max_limit_mobile": 155,
+        "main_menu_linklist": "",
+        "mobile_menu_linklist": "",
+        "enable_search": true,
+        "show_social_icons": false,
+        "button_text": "",
+        "button_link": "",
+        "button_type": "btn--black",
+        "show_locale_selector": false,
+        "show_globe_icon": true,
+        "show_country_selector": false,
+        "show_country_name": false,
+        "show_country_flag": false,
+        "highlight_item": "NEW IN",
+        "highlight_item_color": "#d82323",
+        "transparent_home": false,
+        "transparent_collection": false,
+        "transparent_article": false,
+        "transparent_page": false,
+        "transparent_product_page": false,
+        "secondary_menu_linklist": "",
+        "tertiary_menu_linklist": "",
+        "padding_top": 25,
+        "padding_bottom": 25
+      }
+    },
+    "mobile-menu": {
+      "type": "mobile-menu",
+      "blocks": {
+        "menu": {
+          "type": "menu",
+          "settings": {
+            "mobile_menu_linklist": "",
+            "text_font_size": "body-large",
+            "highlight_item": "",
+            "highlight_item_color": "#000000",
+            "padding": true,
+            "padding_bottom": 14
+          }
+        }
+      },
+      "block_order": [
+        "menu"
+      ],
+      "custom_css": [
+        ".sliderow__title,.sliderow__title span {font-weight: 500 !important; /* 500 entspricht \"bold\" */}"
+      ],
+      "settings": {
+        "logo": "shopify://shop_images/Ciamore-Logo.png",
+        "logo_max_limit": 155,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "cm_strip": {
+      "type": "ciamore-strip",
+      "settings": {
+        "text_1": "100% Wasserfest",
+        "text_2": "Made to make you glow"
+      },
+      "disabled": true
+    }
+  },
+  "order": [
+    "announcement",
+    "section_custom_code_mpdU4N",
+    "header",
+    "cm_strip",
+    "mobile-menu"
+  ]
+}

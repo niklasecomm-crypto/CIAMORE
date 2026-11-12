@@ -1,0 +1,56 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "aside",
+  "name": "Overlay",
+  "sections": {
+    "cart-drawer": {
+      "type": "cart-drawer",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "title": "Warenkorb"
+          }
+        },
+        "products": {
+          "type": "products",
+          "settings": {
+            "pin_to_bottom": false
+          }
+        },
+        "checkout-buttons": {
+          "type": "checkout-buttons",
+          "settings": {
+            "enable_additional_buttons": false,
+            "show_view_cart_button": false,
+            "pin_to_bottom": true
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "products",
+        "checkout-buttons"
+      ],
+      "custom_css": [
+        "/* Entfernt das Schloss-Icon vor dem \"Zur Kasse\"-Button */button[disabled]::before,.checkout-button::before,button.checkout::before,button[aria-disabled=\"true\"]::before {display: none !important;}",
+        " /* Falls das Symbol eine eigene Klasse hat (z. B. \"icon-lock\") */.icon-lock {display: none !important;}",
+        "cart-count.cart__items-count {display: none;}"
+      ],
+      "settings": {
+        "color_scheme": ""
+      }
+    }
+  },
+  "order": [
+    "cart-drawer"
+  ]
+}

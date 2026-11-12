@@ -1,0 +1,326 @@
+{%- comment -%}
+  Express Bearbeitung Toggle für den Cart Drawer (Broadcast Theme)
+  Einbinden im Cart Drawer direkt ÜBER dem cart__price__holder mit:
+  {% render 'express-toggle' %}
+  Der Zustand (an/aus, sichtbar/unsichtbar) wird per JavaScript aus /cart.js synchronisiert,
+  damit er auch nach Theme- oder App-Aktualisierungen stimmt.
+{%- endcomment -%}
+
+{%- assign express_handle = 'express-bearbeitung' -%}
+{%- assign express_title = 'Express Bearbeitung' -%}
+{%- assign express_text = 'Deine Bestellung wird vor allen anderen gepackt und versandt' -%}
+
+{%- assign express_product = all_products[express_handle] -%}
+
+{%- if express_product != blank -%}
+  {%- assign express_variant = express_product.selected_or_first_available_variant -%}
+  {%- assign express_in_cart = false -%}
+  {%- assign other_items = 0 -%}
+
+  {%- for item in cart.items -%}
+    {%- if item.variant_id == express_variant.id -%}
+      {%- assign express_in_cart = true -%}
+    {%- else -%}
+      {%- assign other_items = other_items | plus: item.quantity -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  <div class="express-toggle"
+       data-express-toggle
+       data-variant-id="{{ express_variant.id }}"
+       data-line-key=""
+       {% if other_items == 0 %}hidden{% endif %}>
+    <label class="express-toggle__inner">
+      <span class="express-toggle__head">
+        <span class="express-toggle__title">
+          <svg class="express-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M3 5h11v9h1.5V8h3.3L22 11.6V16h-1.6a2.5 2.5 0 0 1-4.8 0H9.4a2.5 2.5 0 0 1-4.8 0H3V5Zm15.5 5H17v3h3.4l-1.9-3ZM7 17.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm11 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+          </svg>
+          {{ express_title }}
+        </span>
+        <span class="express-toggle__right">
+          <span class="express-toggle__price">+{{ express_variant.price | money }}</span>
+          <input type="checkbox"
+                 role="switch"
+                 class="express-toggle__input"
+                 aria-label="{{ express_title }} für {{ express_variant.price | money }} hinzufügen"
+                 {% if express_in_cart %}checked{% endif %}>
+          <span class="express-toggle__switch" aria-hidden="true"></span>
+        </span>
+      </span>
+      <span class="express-toggle__text">{{ express_text }}</span>
+    </label>
+  </div>
+{%- endif -%}
+
+<style>
+  /* Express Zeile in der Artikelliste ausblenden */
+  .cart__item[data-express-line] { display: none !important; }
+
+  .express-toggle {
+    background: #f3f3f5;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    transition: opacity .2s;
+  }
+  .express-toggle[hidden] { display: none !important; }
+  .express-toggle.is-loading { opacity: .5; pointer-events: none; }
+  .express-toggle__inner { display: block; cursor: pointer; }
+  .express-toggle__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .express-toggle__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .express-toggle__icon { width: 20px; height: 20px; color: #c62828; flex-shrink: 0; }
+  .express-toggle__right { display: flex; align-items: center; gap: 10px; }
+  .express-toggle__price { font-weight: 700; font-size: 14px; white-space: nowrap; }
+
+
+
+
+  .express-toggle .express-toggle__input {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    pointer-events: none !important;
+  }
+
+
+
+
+  .express-toggle__switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    background: #d6d6d9;
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+  .express-toggle__switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    transition: transform .2s;
+  }
+  .express-toggle__input:checked + .express-toggle__switch { background: #111; }
+  .express-toggle__input:checked + .express-toggle__switch::after { transform: translateX(18px); }
+  .express-toggle__input:focus-visible + .express-toggle__switch { outline: 2px solid #111; outline-offset: 2px; }
+  .express-toggle__text {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #666;
+  }
+
+
+  /* Lade-Platzhalter des Themes im Express-Kasten unterdrücken */
+  .express-toggle .express-toggle__title,
+  .express-toggle .express-toggle__right,
+  .express-toggle .express-toggle__price,
+  .express-toggle .express-toggle__text {
+    background: none !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    outline: 0 !important;
+    animation: none !important;
+  }
+  .express-toggle .express-toggle__title::before,
+  .express-toggle .express-toggle__title::after,
+  .express-toggle .express-toggle__right::before,
+  .express-toggle .express-toggle__right::after,
+  .express-toggle .express-toggle__price::before,
+  .express-toggle .express-toggle__price::after,
+  .express-toggle .express-toggle__text::before,
+  .express-toggle .express-toggle__text::after {
+    content: none !important;
+    display: none !important;
+  }
+
+
+</style>
+
+<script>
+  (function () {
+    if (window.__expressToggleInit) return;
+    window.__expressToggleInit = true;
+
+    var originalFetch = window.fetch.bind(window);
+    var CART_CHANGE = /\/cart\/(add|change|update|clear)/;
+    var busy = false;
+    var removingOrphan = false;
+    var syncTimer = null;
+
+    function variantId() {
+      var box = document.querySelector('[data-express-toggle]');
+      return box ? Number(box.dataset.variantId) : null;
+    }
+
+    // Toggle-Zustand an den echten Warenkorb anpassen
+    function render(cart) {
+      var vid = variantId();
+      if (!vid) return;
+
+      var expressLine = null;
+      var others = 0;
+      cart.items.forEach(function (item) {
+        if (item.variant_id === vid) expressLine = item;
+        else others += item.quantity;
+      });
+
+      document.querySelectorAll('[data-express-toggle]').forEach(function (box) {
+        box.hidden = others === 0;
+        box.dataset.lineKey = expressLine ? expressLine.key : '';
+        box.classList.remove('is-loading');
+        var input = box.querySelector('.express-toggle__input');
+        if (input) input.checked = !!expressLine;
+      });
+
+      // Express-Zeile in der Artikelliste markieren (wird per CSS ausgeblendet)
+      if (expressLine) {
+        document.querySelectorAll('.cart__item[data-item="' + expressLine.key + '"]').forEach(function (el) {
+          el.setAttribute('data-express-line', '');
+        });
+      }
+
+      // Nur noch Express im Warenkorb: automatisch entfernen
+      if (expressLine && others === 0 && !removingOrphan) {
+        removingOrphan = true;
+        changeLine(expressLine.key, 0).then(afterChange).finally(function () {
+          removingOrphan = false;
+        });
+      }
+    }
+
+    function sync() {
+      return originalFetch('/cart.js', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(render)
+        .catch(function () {});
+    }
+
+    function scheduleSync() {
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(sync, 250);
+    }
+
+    function addExpress(vid) {
+      return originalFetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ items: [{ id: vid, quantity: 1 }] })
+      });
+    }
+
+    function changeLine(key, qty) {
+      return originalFetch('/cart/change.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: key, quantity: qty })
+      });
+    }
+
+    // Nach eigener Änderung: Theme den Warenkorb neu aufbauen lassen, dann Toggle synchronisieren
+    function afterChange() {
+      document.dispatchEvent(new CustomEvent('theme:cart:refresh', { bubbles: true }));
+
+      return originalFetch(window.location.href, { credentials: 'same-origin' })
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+
+          var livePrice = document.querySelector('[data-cart-price-holder]');
+          var freshPrice = doc.querySelector('[data-cart-price-holder]');
+          if (livePrice && freshPrice) livePrice.innerHTML = freshPrice.innerHTML;
+
+          var liveCounts = document.querySelectorAll('cart-count[data-cart-count]');
+          var freshCounts = doc.querySelectorAll('cart-count[data-cart-count]');
+          liveCounts.forEach(function (el, i) {
+            if (!freshCounts[i]) return;
+            el.setAttribute('data-cart-count', freshCounts[i].getAttribute('data-cart-count'));
+            el.textContent = freshCounts[i].textContent;
+          });
+        })
+        .then(function () { setTimeout(sync, 400); });
+    }
+
+    // Klick auf den Schalter
+    document.addEventListener('change', function (e) {
+      if (!e.target.matches('.express-toggle__input')) return;
+      if (busy) return;
+      busy = true;
+
+      var box = e.target.closest('[data-express-toggle]');
+      box.classList.add('is-loading');
+
+      var request = e.target.checked
+        ? addExpress(Number(box.dataset.variantId))
+        : changeLine(box.dataset.lineKey, 0);
+
+      request
+        .then(afterChange)
+        .catch(function () { sync(); })
+        .finally(function () { busy = false; });
+    });
+
+    // Änderungen durch Theme oder Apps (fetch) mitbekommen
+    window.fetch = function (input, init) {
+      var url = typeof input === 'string' ? input : (input && input.url) || '';
+      var p = originalFetch(input, init);
+      if (CART_CHANGE.test(url)) p.then(scheduleSync, scheduleSync);
+      return p;
+    };
+
+    // Änderungen durch Theme oder Apps (XHR) mitbekommen
+    var origOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function (method, url) {
+      if (CART_CHANGE.test(String(url))) {
+        this.addEventListener('loadend', scheduleSync);
+      }
+      return origOpen.apply(this, arguments);
+    };
+
+    // Wenn das Theme den Drawer neu zeichnet: erneut synchronisieren
+    // (Countdown und alles außerhalb des Drawers wird ignoriert, sonst würde es jede Sekunde feuern)
+    new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        var m = mutations[i];
+        if (!m.addedNodes.length) continue;
+        var t = m.target.nodeType === 1 ? m.target : m.target.parentElement;
+        if (!t || !t.closest('cart-drawer')) continue;
+        if (t.closest('.cartCountdownWrapper')) continue;
+        scheduleSync();
+        return;
+      }
+    }).observe(document.body, { childList: true, subtree: true });
+
+    sync();
+  })();
+</script>

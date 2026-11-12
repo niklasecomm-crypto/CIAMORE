@@ -1,0 +1,26 @@
+<main-search>
+  <div class="search-outer">
+    <form action="{{ routes.search_url }}" method="get" class="search-bar-custom" role="search">
+  <input name="options[prefix]" type="hidden" value="last">
+  <div class="search-bar__inner">
+    <input
+      type="search"
+      name="q"
+      class="search-bar__input"
+      aria-label="{{ 'general.search.placeholder' | t }}"
+      placeholder="{{ 'general.search.title' | t }}"
+      value="{{ search.terms }}">
+      
+    {% if search.terms != blank %}
+      <button type="reset" class="search-bar__clear" aria-label="{{ 'general.search.reset' | t }}">
+        {{ 'general.search.clear' | t }}
+      </button>
+    {% endif %}
+
+    <button type="submit" class="search-bar__submit" aria-label="{{ 'general.search.search' | t }}">
+      {% render 'icon-search' %}
+    </button>
+  </div>
+</form>
+  </div>
+</main-search>

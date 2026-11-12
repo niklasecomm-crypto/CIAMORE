@@ -1,0 +1,567 @@
+<!doctype html>
+<html class="no-js no-touch supports-no-cookies" lang="{{ request.locale.iso_code }}">
+  
+  <head>
+    {%- render 'head' -%}
+
+    {{ content_for_header }}
+
+    <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
+    <link rel="preload" href="{{ 'cm-bricolage.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ 'cm-figtree-400.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ 'ciamore-redesign.css' | asset_url }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Neue+Haas+Unica:wght@400;500;700&display=swap">
+
+
+  </head>
+
+
+
+  <body
+    id="{{ page_title | handle }}"
+    class="{% if request.path contains '/bundle/28201' %}cm-vip {% endif %}{% if template.name == 'product' %}{% assign cm_pt = product.title | downcase %}{% if cm_pt contains 'set' %}cm-multi-pdp {% endif %}{% endif %}template-{{ template.name | handle }} grid-{{ settings.grid_style }}{% if customer %} customer-logged-in{% endif %}{% if settings.animations_enable %} aos-initialized{% endif %}{% if settings.product_grid_outline %} has-line-design{% endif %}"
+    data-animations="{{ settings.animations_enable }}"
+  >
+    {%- render 'loading' -%}
+
+    <a class="in-page-link visually-hidden skip-link" data-skip-content href="#MainContent">
+      {{- 'general.accessibility.skip_to_content' | t -}}
+    </a>
+
+    <div class="container" data-site-container>
+      <div class="header-sections">
+        {% sections 'group-header' %}
+      </div>
+
+      {% sections 'group-overlay' %}
+
+      <!-- CONTENT -->
+      <main role="main" id="MainContent" class="main-content">
+        {{ content_for_layout }}
+      </main>
+    </div>
+
+    {% sections 'group-pre-footer' %}
+
+    <footer class="footer-sections">
+      {% sections 'group-footer' %}
+    </footer>
+
+    {%- if settings.swatches_type != 'disabled' -%}
+      {% render 'template-swatch' %}
+    {%- endif -%}
+
+    {% render 'zoom-pswp' %}
+
+    {%- if template.name != 'product' and settings.show_scroll_top_button -%}
+      <button
+        type="button"
+        class="btn btn--scroll-top btn--black btn--solid"
+        aria-label="{{ 'general.accessibility.scroll_to_top' | t }}"
+        data-scroll-top-button
+      >
+        {%- render 'icon-arrow-up' -%}
+      </button>
+    {%- endif -%}
+
+    {%- comment -%}
+      In order to use your custom javascript file at assets/custom.js
+      just cut this next line and paste it outside this comment:
+      <script src="{{ 'custom.js' | asset_url }}" defer="defer"></script>
+    {%- endcomment -%}
+    <!-- Paste marketing code or third party scripts below this comment line ============== -->
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const STORAGE_KEY = "ciamore_tragebilder_on";
+  const toggle = document.getElementById("toggle-tragebilder");
+  if (!toggle) return;
+
+  // ✅ WICHTIG: Toggle-Logik NUR auf Collection-/Search-Seiten ausführen
+  const allowedTemplates =
+    document.body.classList.contains("template-collection") ||
+    document.body.classList.contains("template-search") ||
+    document.body.classList.contains("template-list-collections");
+
+  if (!allowedTemplates) return;
+
+  function applyToggleState(isActive, root = document) {
+    const containers = root.querySelectorAll(".product-hover-wrapper, .image-wrapper");
+    containers.forEach(container => {
+      const defaultImg = container.querySelector(".product-image-default");
+      const trageImg  = container.querySelector(".product-image-tragebild");
+      if (!defaultImg) return;
+
+      if (isActive && trageImg) {
+        defaultImg.style.display = "none";
+        trageImg.style.display = "block";
+      } else {
+        defaultImg.style.display = "block";
+        if (trageImg) trageImg.style.display = "none";
+      }
+    });
+
+    // optionaler CSS-Hook
+    document.documentElement.toggleAttribute("data-tragebilder-on", !!isActive);
+  }
+
+  function saveState(on) {
+    try { localStorage.setItem(STORAGE_KEY, on ? "1" : "0"); } catch(e) {}
+  }
+  function loadState() {
+    try { return localStorage.getItem(STORAGE_KEY) === "1"; } catch(e) { return false; }
+  }
+
+  // 1) Zustand wiederherstellen
+  const persisted = loadState();
+  if (persisted !== toggle.checked) toggle.checked = persisted;
+
+  // 2) anwenden
+  applyToggleState(toggle.checked);
+
+  // 3) Änderungen speichern + anwenden
+  toggle.addEventListener("change", () => {
+    saveState(toggle.checked);
+    applyToggleState(toggle.checked);
+  });
+
+  // 4) Neu eingefügte Produktkarten berücksichtigen
+  const grid = document.querySelector(".collection, .product-grid, .featured-collection, body");
+  if (grid) {
+    const mo = new MutationObserver(muts => {
+      for (const m of muts) {
+        m.addedNodes && m.addedNodes.forEach(node => {
+          if (node.nodeType === 1) applyToggleState(toggle.checked, node);
+        });
+      }
+    });
+    mo.observe(grid, { childList: true, subtree: true });
+  }
+
+  document.addEventListener("shopify:section:load", () => applyToggleState(toggle.checked));
+  document.addEventListener("shopify:section:reorder", () => applyToggleState(toggle.checked));
+
+  // 5) Zurück/Vorwärts-Navigation (bfcache)
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted) {
+      const on = loadState();
+      if (on !== toggle.checked) toggle.checked = on;
+      applyToggleState(on);
+    }
+  });
+
+  // 6) Tab-Sync
+  window.addEventListener("storage", (e) => {
+    if (e.key === STORAGE_KEY) {
+      const on = e.newValue === "1";
+      if (on !== toggle.checked) toggle.checked = on;
+      applyToggleState(on);
+    }
+  });
+});
+</script>
+
+
+
+
+
+
+<script>
+(function () {
+  if (!('visualViewport' in window)) return;
+
+  function setInsets() {
+    // Wie viel „Platz“ klaut die iOS-Toolbar unten aktuell?
+    // = Layout-Viewport minus (sichtbare Höhe + Versatz der sichtbaren Fläche)
+    var vv = window.visualViewport;
+    var delta = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+    // in CSS verfügbar machen
+    document.documentElement.style.setProperty('--ios-bottom-ui', delta + 'px');
+    // optional: echte sichtbare Höhe als Variable, falls du 100vh ersetzen willst
+    document.documentElement.style.setProperty('--vvh', vv.height + 'px');
+  }
+
+  setInsets();
+  visualViewport.addEventListener('resize', setInsets);
+  visualViewport.addEventListener('scroll', setInsets);
+  window.addEventListener('orientationchange', setInsets);
+})();
+</script>
+
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.body.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-popup-open]');
+    if (!btn) return;
+    
+    setTimeout(function() {
+      var modal = document.querySelector('.product-modal[open]');
+      if (!modal) return;
+      
+      var scrollEl = modal.querySelector('.size-chart-scroll');
+      if (!scrollEl) return;
+      
+      // Scroll lock komplett entfernen für dieses Element
+      scrollEl.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+      }, { passive: true, capture: true });
+      
+      scrollEl.addEventListener('touchmove', function(e) {
+        e.stopPropagation();
+      }, { passive: true, capture: true });
+    }, 400);
+  });
+});
+</script>
+
+
+
+
+
+
+    <!-- And above this comment line ================================================== -->
+  
+<script>
+/* Quick-Add: kurzer Puls am gewählten Kreis und weicher Wechsel des Namens neben "Veredelung" */
+document.addEventListener('change', function (e) {
+  var t = e.target.closest && e.target.closest('.product-quick-add__form__inner .radio__fieldset--swatches tooltip-component'); if (!t) return;
+  t.classList.remove('cm-pulse'); void t.offsetWidth; t.classList.add('cm-pulse'); setTimeout(function () { t.classList.remove('cm-pulse'); }, 500);
+  var v = t.closest('.radio__fieldset') && t.closest('.radio__fieldset').querySelector('.radio__legend__value');
+  if (v) { v.classList.add('cm-fade'); setTimeout(function () { v.classList.remove('cm-fade'); }, 180); }
+});
+/* Leerer Warenkorb: Bestseller per Plus direkt hinzufügen */
+/* Wischen im leeren Warenkorb nicht an die Drawer-Gesten (Schließen per Wischen) weitergeben */
+['touchstart','touchmove','touchend','pointerdown','pointermove'].forEach(function (ev) {
+  document.addEventListener(ev, function (e) { if (e.target.closest && e.target.closest('[data-cm-swipe]')) e.stopPropagation(); }, { capture: true, passive: true });
+});
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('[data-cm-add]'); if (!b) return;
+  e.preventDefault(); b.classList.add('is-loading');
+  fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ items: [{ id: +b.getAttribute('data-cm-add'), quantity: 1 }] }) })
+    .then(function (r) { return r.json(); })
+    .then(function () { b.classList.remove('is-loading'); document.dispatchEvent(new CustomEvent('theme:cart:refresh', { bubbles: true })); })
+    .catch(function () { b.classList.remove('is-loading'); });
+});
+</script>
+<script>
+/* Veredelung: die ganze Fläche (Kreis + Text) ist antippbar, auch bei ausverkauften Varianten */
+document.addEventListener('click', function (e) {
+  var t = e.target.closest && e.target.closest('.template-product .radio__fieldset--swatches tooltip-component');
+  if (!t || e.target.closest('label, input')) return;
+  var inp = t.querySelector('input[type="radio"]');
+  if (inp && !inp.checked) { inp.checked = true; inp.dispatchEvent(new Event('change', { bubbles: true })); inp.dispatchEvent(new Event('input', { bubbles: true })); }
+});
+</script>
+<script>
+/* Akkordeons (Produktseite Versand/Rücksendung + Startseiten-FAQ): Höhen-Animation, immer nur eins offen */
+document.addEventListener('DOMContentLoaded', function () {
+  var SEL = '.template-product details.shipping-accordion, .template-product details.return-accordion, details.cm-faq__item';
+  function groupOf(d) { var g = d.closest('[data-cm-acc-group]'); return g ? g.querySelectorAll('details.cm-faq__item') : document.querySelectorAll('.template-product details.shipping-accordion, .template-product details.return-accordion'); }
+  function closeAcc(d) {
+    var body = d.querySelector(':scope > .cm-acc-body'); if (!body || !d.classList.contains('cm-acc-open')) return;
+    body.style.height = body.scrollHeight + 'px'; body.offsetHeight;
+    d.classList.remove('cm-acc-open'); body.style.height = '0px';
+  }
+  function openAcc(d) {
+    var body = d.querySelector(':scope > .cm-acc-body'), inner = body.firstChild;
+    d.classList.add('cm-acc-open'); body.style.height = inner.scrollHeight + 'px';
+    setTimeout(function () { if (d.classList.contains('cm-acc-open')) body.style.height = 'auto'; }, 320);
+  }
+  document.querySelectorAll(SEL).forEach(function (d) {
+    var sum = d.querySelector('summary'); if (!sum || d.__cmAcc) return; d.__cmAcc = true;
+    var body = document.createElement('div'); body.className = 'cm-acc-body';
+    var inner = document.createElement('div'); inner.className = 'cm-acc-inner'; body.appendChild(inner);
+    while (sum.nextSibling) inner.appendChild(sum.nextSibling);
+    d.appendChild(body);
+    var open = d.hasAttribute('open'); body.style.height = open ? 'auto' : '0px'; d.classList.toggle('cm-acc-open', open); d.setAttribute('open', '');
+    sum.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (d.classList.contains('cm-acc-open')) { closeAcc(d); return; }
+      groupOf(d).forEach(function (o) { if (o !== d) closeAcc(o); });
+      openAcc(d);
+    });
+  });
+});
+</script>
+<script>
+/* Leerer Warenkorb: Standard = mix (Karten kompakt wie 5, Kategorien als Liste wie 4). Testvarianten ?ecart=1..7 */
+(function(){ try { sessionStorage.removeItem('cmEcart'); var v = new URLSearchParams(location.search).get('ecart'); if (v) sessionStorage.setItem('cmEcart2', v); v = v || sessionStorage.getItem('cmEcart2') || 'mix'; if (v && v !== 'off') document.documentElement.setAttribute('data-ecart', v); } catch(e){} })();
+</script>
+<script>
+/* "Was unsere Kunden lieben": Standard = dark (Schwarz-Glanz). Alternative silver liegt bereit. Zum Testen ?fbt=warm|silver|dark|split|off */
+(function(){ try { var v = new URLSearchParams(location.search).get('fbt'); if (v) sessionStorage.setItem('cmFbt', v); v = v || sessionStorage.getItem('cmFbt') || 'dark'; if (v && v !== 'off') document.documentElement.setAttribute('data-fbt', v); } catch(e){} })();
+</script>
+<script>
+/* Veredelung: Position der gleitenden weißen Fläche setzen */
+(function () {
+  function upd(box, anim) {
+    var items = [].slice.call(box.querySelectorAll('tooltip-component'));
+    if (!items.length) return;
+    var i = items.findIndex(function (t) { var x = t.querySelector('input'); return x && x.checked; });
+    if (!anim) box.classList.add('no-anim');
+    box.style.setProperty('--n', items.length); box.style.setProperty('--i', Math.max(0, i));
+    if (!anim) setTimeout(function () { box.classList.remove('no-anim'); }, 60);
+  }
+  function all(anim) { document.querySelectorAll('.template-product .radio__fieldset--swatches .radio__buttons').forEach(function (b) { upd(b, anim); }); }
+  document.addEventListener('change', function (e) { var b = e.target.closest && e.target.closest('.radio__fieldset--swatches .radio__buttons'); if (b) upd(b, true); });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { all(false); }); else all(false);
+  window.addEventListener('pageshow', function () { all(false); });
+})();
+</script>
+<script>
+/* BOGOS: fest eingebaute englische Texte auf Deutsch */
+(function(){
+  var R=[
+    [/^This item:?$/,'Dieser Artikel'],
+    [/\((\d+\s?%)\s*OFF\)/g,'($1 Rabatt)'],
+    [/\((\d+)\s*products?\)/g,'($1 Produkte)'],
+    [/\bitem\(s\)/g,'Artikel'],
+    [/^\(s\)$/,''],[/^OFF$/,'Rabatt'],[/^(\d+\s?%)\s*OFF$/i,'$1 Rabatt'],
+    [/^(\d+\s+)?items?$/,function(m,a){return (a||'')+'Artikel';}],
+    [/^See more/,'Mehr anzeigen'],[/^See product.?s details$/i,'Produktdetails ansehen'],[/^See less$/,'Weniger anzeigen'],
+    [/^Get our special offers$/,'Unsere Angebote'],
+    [/^Not reached yet$/,'Noch nicht erreicht'],
+    [/^Free Shipping$/,'Gratis Versand'],[/^Free Gift$/,'Gratis Geschenk'],[/^VIP Gift$/,'VIP Geschenk'],
+    [/^Buy (.+)$/,'Ab $1']
+  ];
+  function fix(root){
+    var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),n,t,o;
+    while(n=w.nextNode()){
+      if(!n.parentElement||/SCRIPT|STYLE/.test(n.parentElement.tagName))continue;
+      o=n.nodeValue;t=o.trim();if(!t||!/[A-Za-z]/.test(t))continue;
+      var r=t;for(var i=0;i<R.length;i++)r=r.replace(R[i][0],R[i][1]);
+      if(r!==t)n.nodeValue=o.replace(t,r);
+    }
+  }
+  function deal(){
+    document.querySelectorAll('.bogos-step-item-discount-price,.bogos-bp-total-discount-price').forEach(function(d){
+      var o=d.nextElementSibling;if(!o||!/original-price/.test(o.className))return;
+      var on=o.style.display!=='none'&&o.textContent.trim()!==''&&o.textContent.trim()!==d.textContent.trim();
+      if(d.classList.contains('cm-deal')!==on)d.classList.toggle('cm-deal',on);
+      var same=o.textContent.trim()===d.textContent.trim();
+      if(o.classList.contains('cm-same')!==same)o.classList.toggle('cm-same',same);
+    });
+  }
+  function run(){document.querySelectorAll('[class*="bogos"]').forEach(function(el){if(!el.parentElement.closest('[class*="bogos"]'))fix(el);});deal();}
+  var q=0;new MutationObserver(function(ms){if(q)return;if(ms.every(function(m){return m.type==='attributes'&&!(m.target.closest&&m.target.closest('[class*="bogos"]'));}))return;q=1;setTimeout(function(){q=0;run();},30);}).observe(document.documentElement,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["style"]});
+  document.addEventListener('DOMContentLoaded',run);setTimeout(run,1500);
+})();
+</script>
+<script>
+  window.__cmSwatchList = {{ settings.swatch_color_list | json }};
+  window.__cmFilesBase = '{{ 'x.png' | file_url | split: 'x.png' | first }}';
+  window.__cmSwatchNames = {{ 'general.swatches.color' | t | json }};
+</script>
+<script>
+/* Bundle-Seiten (BOGOS): Produkt-Fenster beim Antippen wie die Produktseite (Material, Swatches, Größen + Größentabelle, Produktinfo-Tabelle) */
+(function () {
+  var SW_RAW = window.__cmSwatchList || '';
+  var FILES = window.__cmFilesBase || '/cdn/shop/files/';
+  var SWNAMES = (window.__cmSwatchNames || 'Farbe, Veredelung').split(',').map(function (s) { return s.trim().toLowerCase(); });
+  var map = {};
+  SW_RAW.split(/\n/).forEach(function (l) { var i = l.indexOf(':'); if (i < 1) return; var k = l.slice(0, i).trim().toLowerCase(), v = l.slice(i + 1).trim(); if (k && v) map[k] = v; });
+  function swStyle(val) {
+    var v = map[String(val).toLowerCase()]; if (!v) return '';
+    if (/^#|^rgb/i.test(v)) return 'background:' + v;
+    return 'background-image:url(' + FILES + v.replace(/\.(png|jpe?g|webp)$/i, function (m) { return '_small' + m; }) + ')';
+  }
+  function isSize(name) { return /gr(ö|oe)(ß|ss)e|size/i.test(name); }
+  var pc = {}, mc = {};
+  function getProduct(h) { if (!pc[h]) pc[h] = fetch('/products/' + h + '.js').then(function (r) { return r.json(); }); return pc[h]; }
+  function getMeta(h) { if (!mc[h]) mc[h] = fetch('/products/' + h + '?view=cm-meta').then(function (r) { return r.json(); }).catch(function () { return {}; }); return mc[h]; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function handleOf(modal) { var l = modal.querySelector('.bogos-product-page-link'); var m = l && (l.getAttribute('href') || '').match(/\/products\/([^/?#]+)/); return m && m[1]; }
+
+  function openChart(modal, html) {
+    var o = document.createElement('div'); o.className = 'cm-bvo-chart';
+    o.innerHTML = '<div class="cm-bvo-chart__box" role="dialog" aria-label="Größentabelle"><button type="button" class="cm-bvo-chart__x" aria-label="Schließen">&times;</button><div class="cm-bvo-chart__rte">' + html + '</div></div>';
+    o.addEventListener('click', function (e) { if (e.target === o || e.target.closest('.cm-bvo-chart__x')) { e.preventDefault(); e.stopPropagation(); o.remove(); } });
+    modal.appendChild(o);
+  }
+
+  function extras(modal, h) {
+    if (modal.__cmXh === h) return; modal.__cmXh = h;
+    modal.querySelectorAll('.cm-bm-mat, .cm-bm-specs').forEach(function (e) { e.remove(); });
+    var desc = modal.querySelector('.bogos-product-description'); if (desc) desc.classList.remove('cm-bm-hide');
+    getMeta(h).then(function (d) {
+      if (handleOf(modal) !== h) return;
+      var title = modal.querySelector('.bogos-product-title');
+      if (d.material && title && !modal.querySelector('.cm-bm-mat')) { var s = document.createElement('div'); s.className = 'cm-bm-mat'; s.textContent = d.material; title.insertAdjacentElement('beforebegin', s); }
+      if (d.specs && d.specs.indexOf('cm-specs__row') > -1 && !modal.querySelector('.cm-bm-specs')) {
+        var w = document.createElement('div'); w.className = 'cm-bm-specs'; w.innerHTML = d.specs;
+        var anchor = desc || modal.querySelector('.bogos-product-page-link');
+        if (anchor) { anchor.insertAdjacentElement('afterend', w); if (desc) desc.classList.add('cm-bm-hide'); }
+      }
+      modal.__cmChart = d.sizechart || '';
+    });
+  }
+
+  function build(vc) {
+    var modal = vc.closest('.bogos-product-detail-modal'); if (!modal) return;
+    var h = handleOf(modal);
+    var items = {}, n = 0; vc.querySelectorAll('[data-variant-id]').forEach(function (it) { items[it.getAttribute('data-variant-id')] = it; n++; });
+    if (!h) return;
+    extras(modal, h);
+    if (!n) return;
+    var key = h + ':' + Object.keys(items).join(',');
+    if (vc.__cmVoKey === key) return; vc.__cmVoKey = key;
+    var old = vc.parentNode.querySelector(':scope > .cm-bvo'); if (old) old.remove();
+    getProduct(h).then(function (p) {
+      if (vc.__cmVoKey !== key || !p || !p.variants || p.variants.length < 2) { vc.classList.remove('cm-bvo-host'); return; }
+      var avail = {}; Object.keys(items).forEach(function (id) { avail[id] = items[id].getAttribute('data-check-variant-available') !== '0'; });
+      var curEl = vc.querySelector('.active[data-variant-id]') || vc.querySelector('[data-variant-id]');
+      var cur = p.variants.find(function (v) { return curEl && String(v.id) === curEl.getAttribute('data-variant-id'); }) || p.variants[0];
+      if (!avail[cur.id]) { var fa = p.variants.find(function (v) { return avail[v.id]; }); if (fa) { cur = fa; if (items[fa.id]) setTimeout(function () { items[fa.id].click(); }, 0); } }
+      var sel = cur.options.slice();
+      var box = document.createElement('div'); box.className = 'cm-bvo';
+      p.options.forEach(function (o, oi) {
+        var isSw = SWNAMES.indexOf(o.name.toLowerCase()) > -1 && o.values.some(function (v) { return swStyle(v); });
+        var g = document.createElement('div'); g.className = 'cm-bvo__group' + (isSw ? ' cm-bvo__group--sw' : ' cm-bvo__group--pill');
+        var q = (!isSw && isSize(o.name)) ? ' <button type="button" class="cm-bvo__q" aria-label="Größentabelle">?</button>' : '';
+        g.innerHTML = '<div class="cm-bvo__legend"><span class="cm-bvo__name">' + esc(o.name) + ':' + q + '</span> <span class="cm-bvo__val"></span></div><div class="cm-bvo__vals"></div>';
+        var vals = g.querySelector('.cm-bvo__vals');
+        if (isSw) vals.style.setProperty('--n', o.values.length);
+        o.values.forEach(function (val) {
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'cm-bvo__btn'; b.setAttribute('data-oi', oi); b.setAttribute('data-val', val);
+          if (isSw) b.innerHTML = '<span class="cm-bvo__dot" style="' + swStyle(val) + '"></span><span>' + esc(val) + '</span>';
+          else b.textContent = val;
+          vals.appendChild(b);
+        });
+        box.appendChild(g);
+      });
+      function variantFor(opts) { return p.variants.find(function (v) { return v.options.every(function (x, i) { return x === opts[i]; }); }); }
+      function refresh() {
+        box.querySelectorAll('.cm-bvo__group').forEach(function (g, gi) {
+          var oi = gi, vals = g.querySelector('.cm-bvo__vals'), idx = 0;
+          g.querySelectorAll('.cm-bvo__btn').forEach(function (b, bi) {
+            var val = b.getAttribute('data-val'); var test = sel.slice(); test[oi] = val; var v = variantFor(test);
+            var on = sel[oi] === val; if (on) idx = bi;
+            b.classList.toggle('is-active', on); b.classList.toggle('is-soldout', !v || !avail[v.id]);
+          });
+          vals.style.setProperty('--i', idx);
+          g.querySelector('.cm-bvo__val').textContent = sel[oi];
+        });
+      }
+      box.addEventListener('click', function (e) {
+        var q = e.target.closest('.cm-bvo__q'); if (q) { e.preventDefault(); e.stopPropagation(); if (modal.__cmChart) openChart(modal, modal.__cmChart); return; }
+        var b = e.target.closest('.cm-bvo__btn'); if (!b) return; e.preventDefault(); e.stopPropagation();
+        var oi = +b.getAttribute('data-oi'); sel[oi] = b.getAttribute('data-val');
+        var v = variantFor(sel);
+        if (!v || !avail[v.id]) { var alt = p.variants.find(function (x) { return x.options[oi] === sel[oi] && avail[x.id]; }); if (alt) v = alt; }
+        if (v) sel = v.options.slice();
+        refresh();
+        if (v && items[v.id]) items[v.id].click();
+      });
+      refresh();
+      vc.classList.add('cm-bvo-host'); vc.parentNode.insertBefore(box, vc);
+    }).catch(function () { vc.__cmVoKey = ''; });
+  }
+  function scan() { document.querySelectorAll('.bogos-product-detail-modal .bogos-variants-choose-container').forEach(build); }
+  var t = 0; new MutationObserver(function () { clearTimeout(t); t = setTimeout(scan, 60); }).observe(document.documentElement, { childList: true, subtree: true });
+  if (document.readyState !== 'loading') scan(); else document.addEventListener('DOMContentLoaded', scan);
+})();
+</script>
+<script>
+/* Bundle-Leiste: Hinweis, wie viele Produkte noch fehlen ("Noch 1 Produkt wählen") */
+(function () {
+  var MIN = { '28202': 4, '28201': 5, '28353': 3 };
+  function need() {
+    var m = location.pathname.match(/bundle\/(\d+)/); if (m && MIN[m[1]]) return MIN[m[1]];
+    var r = document.querySelector('.bogos-step-items-product-require-title'); var x = r && r.textContent.match(/\d+/); return x ? +x[0] : 0;
+  }
+  function count() {
+    var n = 0; document.querySelectorAll('.bogos-bp-widget .bogos-step-item').forEach(function (it) { var q = it.querySelector('.bogos-bp-quantity-input'); n += q ? (parseInt(q.value, 10) || 1) : 1; }); return n;
+  }
+  function upd() {
+    var head = document.querySelector('.bogos-bp-widget .bogos-bp-widget-header'); if (!head) return;
+    var req = need(); if (!req) return;
+    var el = head.parentNode.querySelector(':scope > .cm-bp-left');
+    if (!el) { el = document.createElement('div'); el.className = 'cm-bp-left'; el.setAttribute('aria-live', 'polite'); head.insertAdjacentElement('afterend', el); }
+    var left = req - count();
+    var txt = left > 0 ? 'Noch ' + left + (left === 1 ? ' Produkt' : ' Produkte') + ' wählen' : '';
+    if (el.textContent !== txt) el.textContent = txt;
+    el.hidden = !txt;
+  }
+  var t = 0; new MutationObserver(function (ms) { if (ms.every(function (m) { return m.target.closest && m.target.closest('.cm-bp-left'); })) return; clearTimeout(t); t = setTimeout(upd, 60); }).observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['value'] });
+  document.addEventListener('input', function (e) { if (e.target.closest && e.target.closest('.bogos-bp-widget')) setTimeout(upd, 30); });
+  document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.bogos-bp-widget, .bogos-bp-btn-add-product, .bogos-product-add-btn')) setTimeout(upd, 400); });
+})();
+</script>
+<script>
+/* Bundle-Fenster: Zurück-Wischen/Zurück-Taste schließt nur das Produkt-Fenster statt das Bundle zu verlassen.
+   Außerdem Button-Text wie auf der Produktseite ("In den Warenkorb"). */
+(function () {
+  var pushed = false;
+  function wrapEl() { var m = document.querySelector('.bogos-product-detail-modal'); return m && m.parentElement; }
+  function isOpen() { var w = wrapEl(); return !!(w && w.classList.contains('sca-is-visible-fg')); }
+  function closeModal() { var b = document.querySelector('.bogos-product-detail-modal .bogos-product-modal-close-btn'); if (b) b.click(); }
+  function sync() {
+    var open = isOpen();
+    if (open && !pushed) { try { history.pushState({ cmBogosModal: 1 }, ''); pushed = true; } catch (e) {} }
+    if (!open && pushed) { pushed = false; if (history.state && history.state.cmBogosModal) { try { history.back(); } catch (e) {} } }
+    var add = document.querySelector('.bogos-product-detail-modal .bogos-product-add-btn');
+    if (add) { var t = add.textContent.trim(); var n = /^in den warenkorb$/i.test(t) ? 'In den Warenkorb' : (/^ausverkauft$/i.test(t) ? 'Ausverkauft' : t); if (n !== t) add.textContent = n; }
+  }
+  window.addEventListener('popstate', function () { if (pushed && isOpen()) { pushed = false; closeModal(); } });
+  var t = 0; new MutationObserver(function () { clearTimeout(t); t = setTimeout(sync, 30); }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+<script>
+/* Cookie-Banner kompakt (Shopify-Banner): kurzer Text, "Okay" zuerst, "Einstellungen" als Link in der Textzeile. */
+(function () {
+  function fix() {
+    var d = document.querySelector('.shopify-pc__banner__dialog'); if (!d) return;
+    var p = d.querySelector('.shopify-pc__banner__body p'); var a = p && p.querySelector('a');
+    if (p && a && !p.dataset.cm) { p.dataset.cm = 1; a.textContent = 'Datenschutz'; p.textContent = 'Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. '; p.appendChild(a); }
+    var m = d.querySelector('.shopify-pc__banner__btn-manage-prefs');
+    if (p && m && !p.contains(m)) { var dot = document.createElement('span'); dot.className = 'cm-ck-dot'; dot.textContent = '·'; p.appendChild(dot); p.appendChild(m); var sp = m.querySelector('span'); (sp || m).textContent = 'Einstellungen'; }
+    var ok = d.querySelector('.shopify-pc__banner__btn-accept'); if (ok && ok.textContent.trim() !== 'Okay') ok.textContent = 'Okay';
+  }
+  fix(); new MutationObserver(fix).observe(document.body || document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+<script>
+/* Quick-Add: Specs-Tabelle (wie Produktseite) statt Fließtext "Material: … | Veredelung: …" */
+(function () {
+  var cache = {};
+  function run() {
+    document.querySelectorAll('.product-quick-add__description:not([data-cm-specs])').forEach(function (d) {
+      var form = d.closest('.product-quick-add__form'); var a = form && form.querySelector('a[href*="/products/"]'); if (!a) return;
+      var h = a.getAttribute('href').split('/products/')[1].split(/[?#]/)[0]; d.setAttribute('data-cm-specs', '1');
+      if (!cache[h]) cache[h] = fetch('/products/' + h + '?view=cm-meta').then(function (r) { return r.json(); }).catch(function () { return {}; });
+      cache[h].then(function (j) { if (j.specs && j.specs.indexOf('cm-specs__row') > -1) d.innerHTML = '<div class="cm-bm-specs">' + j.specs + '</div>'; });
+    });
+  }
+  run(); new MutationObserver(run).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+<script>
+/* Bundle-Fenster: Versand/Klarna-Badges unter dem Warenkorb-Button (wie Produktseite) */
+(function () {
+  var T = '<div class="cm-pdp-tiles cm-pdp-tiles--bm">'
+    + '<div class="cm-pdp-tile cm-pdp-tile--icon"><img class="cm-pdp-tile__icon cm-pdp-tile__icon--flag" src="https://cdn.shopify.com/s/files/1/0877/8157/2952/files/Flag_of_germany_800_480_1_800x800.png?v=1777579334&width=60" alt="" width="20" height="13" loading="lazy"><div><b>In 1-3 Tagen bei dir</b><span>Versand aus DE</span></div></div>'
+    + '<div class="cm-pdp-tile cm-pdp-tile--icon"><img class="cm-pdp-tile__icon" src="https://cdn.shopify.com/s/files/1/0877/8157/2952/files/klarna-icon_800x800.png?v=1777579020&width=60" alt="" width="18" height="18" loading="lazy"><div><b>Später bezahlen</b><span>Mit Klarna</span></div></div>'
+    + '</div>';
+  function run() {
+    var m = document.querySelector('.bogos-product-detail-modal'); if (!m) return;
+    var ac = m.querySelector('.bogos-product-action-add-container'); if (!ac) return;
+    var n = ac.nextElementSibling; if (n && n.classList.contains('cm-pdp-tiles')) return;
+    m.querySelectorAll('.cm-pdp-tiles--bm').forEach(function (e) { e.remove(); });
+    ac.insertAdjacentHTML('afterend', T);
+  }
+  var t = 0; new MutationObserver(function () { clearTimeout(t); t = setTimeout(run, 30); }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+</body>
+  {%- render 'freegifts-snippet' -%}
+  {%- render 'cm-bundle-preselect' -%}
+
+</html>

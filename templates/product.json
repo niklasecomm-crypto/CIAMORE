@@ -1,0 +1,361 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "section_custom_code_VBATNp": {
+      "type": "section-custom-code",
+      "name": "Wasserfest - Kein Abfärben!",
+      "settings": {
+        "code": "<!DOCTYPE html>\n<html lang=\"de\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Wasserfest Banner – Mobile & Desktop</title>\n  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n  <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap\" rel=\"stylesheet\">\n  <style>\n    body {\n      font-family: 'Inter', sans-serif;\n      color: #333;\n    }\n    .mobile-banner-wrapper {\n      display: block;\n    }\n    @media screen and (min-width: 768px) {\n      .mobile-banner-wrapper {\n        display: none;\n      }\n    }\n    .waterproof-banner {\n      background-color: #F0EAE0;\n      color: #333 !important;\n      padding: 5px 25px 5px 15px;\n      border-radius: 0 15px 15px 0;\n      display: inline-flex;\n      align-items: center;\n      font-size: 12px;\n      margin-left: -16px;\n      font-family: 'Inter', sans-serif;\n      font-weight: 500;\n    }\n    .waterproof-banner .text-container {\n      position: relative;\n      top: 2px;\n    }\n    .waterproof-banner .text-wasserfest {\n      font-weight: 700;\n      font-size: 14px;\n      color: #333 !important;\n    }\n    .waterproof-banner .text-keinabfaerben {\n      font-weight: 500;\n      color: #333 !important;\n    }\n    .desktop-waterproof-banner-wrapper {\n      display: none;\n    }\n    @media screen and (min-width: 768px) {\n      .desktop-waterproof-banner-wrapper {\n        display: block;\n        width: 100vw;\n        position: relative;\n        left: 50%;\n        transform: translateX(-50%);\n        margin: 0;\n        padding: 0;\n      }\n      .desktop-waterproof-banner {\n        background-color: #F0EAE0;\n        color: #333;\n        padding: 7px 24px 7px 16px;\n        border-radius: 0 18px 18px 0;\n        display: inline-flex;\n        align-items: center;\n        font-family: 'Inter', sans-serif;\n        font-size: 14px;\n        font-weight: 500;\n      }\n      .desktop-text-wasserfest {\n        font-weight: 700;\n        font-size: 15px;\n        letter-spacing: -0.02em;\n        margin-right: 3px;\n      }\n      .desktop-text-keinabfaerben {\n        font-weight: 500;\n        font-size: 14px;\n      }\n    }\n  </style>\n</head>\n<body>\n  <!-- MOBIL-BANNER -->\n  <div class=\"mobile-banner-wrapper\">\n    <div class=\"waterproof-banner\">\n      <img src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/1_9d6a6793-a493-4884-81d7-007925406b1f_800x800.png?v=1777708321\" alt=\"Symbol\" style=\"height: 18.5px; width: auto; margin-right: 6px; position: relative; top: 1px;\">\n      <span class=\"text-container\">\n        <span class=\"text-wasserfest\">Wasserfest</span> –\n        <span class=\"text-keinabfaerben\">Kein Abfärben!</span>\n      </span>\n    </div>\n  </div>\n  <!-- DESKTOP-BANNER -->\n  <div class=\"desktop-waterproof-banner-wrapper\">\n    <div class=\"desktop-waterproof-banner\">\n      <img src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/1_9d6a6793-a493-4884-81d7-007925406b1f_800x800.png?v=1777708321\" alt=\"Symbol\" style=\"height: 18px; width: auto; margin-right: 6px; flex-shrink: 0; position: relative; top: 1px;\">\n      <span class=\"desktop-text-wasserfest\">Wasserfest</span>\n      <span style=\"margin: 0 4px;\">–</span>\n      <span class=\"desktop-text-keinabfaerben\">Kein Abfärben!</span>\n    </div>\n  </div>\n</body>\n</html>",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      },
+      "disabled": true
+    },
+    "1742308227fe794051": {
+      "type": "apps",
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "main": {
+      "type": "product",
+      "blocks": {
+        "code_phgEgp": {
+          "type": "code",
+          "disabled": true,
+          "settings": {
+            "code": "<div class=\"kunden-box\">\n  <p class=\"kunden-text\">\n    <img src=\"{{ 'Design_ohne_Titel_2.svg' | file_url }}\" alt=\"Icon\" class=\"verified-badge-icon-left\">\n    Über <span class=\"light-text\"> <strong class=\"highlighted-number\">100.000</strong> glückliche Kunden!</span>\n    <img src=\"{{ 'Design_ohne_Titel_1.svg' | file_url }}\" alt=\"Verifiziert\" class=\"verified-badge-icon-right\">\n  </p>\n</div>\n\n<style>\n.kunden-box {\n  font-family: Dm Sans, sans-serif;\n  font-size: 12px;\n  color: #333;\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  margin-bottom: -10px;\n  margin-top: 20px;\n}\n\n.kunden-text {\n  margin: 0;\n}\n\n.light-text {\n  font-weight: 200;\n}\n\n.highlighted-number {\n  font-weight: 800;\n  font-size: 13px; /* 1px größer als Grundschrift (12px) */\n  line-height: 1;\n}\n\n/* Icon VOR dem Text */\n.verified-badge-icon-left {\n  width: 53px;\n  height: 53px;\n  margin-right: 2px;\n  vertical-align: middle;\n  position: relative;\n  top: -1px;\n}\n\n/* Icon NACH dem Text */\n.verified-badge-icon-right {\n  width: 14px;\n  height: 14px;\n  margin-left: -2px;\n  vertical-align: middle;\n  position: relative;\n  top: -2px;\n}\n</style>",
+            "padding_bottom": 16
+          }
+        },
+        "divider_f3xVhx": {
+          "type": "divider",
+          "settings": {
+            "show_line": true,
+            "padding_bottom": 0
+          },
+          "disabled": true
+        },
+        "code_zak3MY": {
+          "type": "code",
+          "settings": {
+            "code": "{%- comment -%} Bewertungszeile: Gesamtzahl aller Shop-Bewertungen live aus Loox (shop.metafields.loox.global_stats = \"Schnitt,Anzahl\"), Fallback Produktwerte {%- endcomment -%}\n{%- liquid\n  assign cm_stats = shop.metafields.loox.global_stats | split: ','\n  assign cm_rating = cm_stats.first | default: product.metafields.loox.avg_rating\n  assign cm_count = cm_stats.last | plus: 0\n  if cm_count == 0\n    assign cm_count = product.metafields.loox.num_reviews | plus: 0\n  endif\n  assign cm_material = product.metafields.custom.material\n-%}\n<div class=\"cm-pdp-meta\">\n  <span class=\"cm-pdp-meta__material\">{{ cm_material }}</span>\n  {%- if cm_count > 0 -%}\n    <a class=\"cm-pdp-meta__rating\" href=\"#looxReviews\">\n      <span class=\"cm-pdp-meta__stars\" aria-hidden=\"true\">★★★★★</span>\n      {% assign cm_r = cm_rating | plus: 0 | round: 1 | append: '' -%}{%- unless cm_r contains '.' -%}{%- assign cm_r = cm_r | append: '.0' -%}{%- endunless -%}{{ cm_r | replace: '.', ',' }} · <u>{{ cm_count }} Bewertungen</u>\n    </a>\n  {%- endif -%}\n</div>",
+            "padding_bottom": 0
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "subheading_option": "breadcrumb",
+            "heading_font_size": "heading-x-small",
+            "padding_bottom": 0
+          }
+        },
+        "code_KicJVp": {
+          "type": "code",
+          "settings": {
+            "code": "{% assign material_text = product.metafields.custom.material %}\n\n{% if material_text != blank %}\n  <p class=\"custom-text\">{{ material_text }}</p>\n{% endif %}\n\n<style>\n  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');\n\n  /* Desktop-Styles (Standard ab 768px) */\n  .custom-text {\n    padding-top: 0px;       /* Abstand oben (Desktop) */\n    padding-bottom: 5px;    /* Abstand unten (Desktop) */\n    margin-top: 5px;\n    margin-bottom: -14px;\n    font-size: 11px;        /* Schriftgröße (Desktop) */\n    color: #9d9d9d;\n    font-family: 'Inter', sans-serif;\n    font-weight: 500;\n  }\n\n  /* Mobile-Styles (bis 767px) */\n  @media screen and (max-width: 767px) {\n    .custom-text {\n      padding-top: 0px;       /* Abstand oben (Mobile) */\n      padding-bottom: 2px;    /* Abstand unten (Mobile) */\n      font-size: 10px;        /* Schriftgröße (Mobile) */\n    }\n  }\n</style>",
+            "padding_bottom": 16
+          },
+          "disabled": true
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "text_font_size": "body-medium",
+            "padding_bottom": 16
+          }
+        },
+        "code_UrMXFJ": {
+          "type": "code",
+          "name": "gutscheincode",
+          "settings": {
+            "code": "<div class=\"gg-rabatt-wrapper\">\n  <div class=\"gg-gutscheincode-wrapper\" id=\"gg-box\">\n    \n    <div class=\"gg-gutscheincode-text\" id=\"gg-original-content\">\n      <span class=\"gg-code-text\">\n        oder nur <b id=\"discounted-price\">--,-- €</b> mit dem Code \n        <b class=\"gg-code\" id=\"copy-code-button\">\n          \"FALL20\"\n          <svg viewBox=\"0 0 24 24\" width=\"13\" height=\"13\">\n            <path d=\"M16 1H6a2 2 0 0 0-2 2v10h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z\"/>\n          </svg>\n        </b>\n      </span>\n    </div>\n\n    <div id=\"gg-success-message\">\n      Gutscheincode kopiert\n    </div>\n\n    <span class=\"gg-subtext\" id=\"gg-subtext\">\n      Ab einem Bestellwert von 69€\n    </span>\n\n  </div>\n</div>\n\n<style>\n.gg-rabatt-wrapper { margin: 15px 0; }\n\n.gg-gutscheincode-wrapper {\n  background: #FBF7F0;\n  border-radius: 12px;\n  padding: 12px 16px;\n  text-align: center;\n  position: relative; /* wichtig */\n}\n\n.gg-gutscheincode-text {\n  font-size: 13px;\n  line-height: 1.4;\n}\n\n.gg-gutscheincode-text b { font-weight: 700; }\n\n.gg-code { cursor: pointer; }\n\n.gg-code svg {\n  margin-left: 2px;\n  vertical-align: middle;\n  fill: #000;\n  opacity: 0.85;\n  transform: translateY(-1px);\n}\n\n.gg-subtext {\n  display: block;\n  margin-top: 6px;\n  font-size: 12px;\n  opacity: 0.8;\n}\n\n/* SUCCESS TEXT (zentriert über Box) */\n#gg-success-message {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  font-size: 14px;\n  font-weight: 600;\n  opacity: 0;\n  pointer-events: none;\n  transition: opacity 0.2s ease;\n}\n\n</style>\n\n<script>\n// ===== COPY BUTTON =====\ndocument.getElementById('copy-code-button').addEventListener('click', function() {\n  const couponCode = 'FALL20';\n\n  navigator.clipboard.writeText(couponCode).then(function() {\n\n    const original = document.getElementById('gg-original-content');\n    const subtext = document.getElementById('gg-subtext');\n    const success = document.getElementById('gg-success-message');\n\n    // Inhalt nur unsichtbar machen (Platz bleibt erhalten)\n    original.style.visibility = 'hidden';\n    subtext.style.visibility = 'hidden';\n\n    // Success anzeigen\n    success.style.opacity = '1';\n\n    // Nach 1.5s zurück\n    setTimeout(() => {\n      original.style.visibility = 'visible';\n      subtext.style.visibility = 'visible';\n      success.style.opacity = '0';\n    }, 1500);\n\n    // Toast\n\n    \n  });\n});\n\n\n// ===== 20% BERECHNUNG =====\nfunction getCurrentProductPrice() {\n  let salePrice = document.querySelector('.product__price--sale');\n  if (salePrice) return extractNumber(salePrice.innerText);\n\n  let normalPrice = document.querySelector('.product__price');\n  if (normalPrice) return extractNumber(normalPrice.innerText);\n\n  return null;\n}\n\nfunction extractNumber(text) {\n  let match = text.replace(/\\s/g, '').match(/(\\d+[.,]\\d{2})/);\n  if (!match) return null;\n  return parseFloat(match[1].replace(',', '.'));\n}\n\nfunction formatGermanPrice(number) {\n  return number.toLocaleString('de-DE', {\n    style: 'currency',\n    currency: 'EUR'\n  });\n}\n\nfunction updateDiscountPrice() {\n  let price = getCurrentProductPrice();\n  if (!price) return;\n\n  let discounted = price * 0.80;\n  let formatted = formatGermanPrice(discounted);\n\n  document.getElementById('discounted-price').innerText = formatted;\n}\n\ndocument.addEventListener('DOMContentLoaded', function() {\n  updateDiscountPrice();\n});\n</script>",
+            "padding_bottom": 16
+          }
+        },
+        "variants": {
+          "type": "variants",
+          "settings": {
+            "info_page": "groessentabelle-ringe",
+            "size_chart_style": "question",
+            "subscriptions_enable_selectors": true,
+            "padding_bottom": 16
+          }
+        },
+        "code_XryM3i": {
+          "type": "code",
+          "name": "1-3 Tage / Klarna Custom Code",
+          "settings": {
+            "code": "<div class=\"cm-pdp-tiles\">\n  <div class=\"cm-pdp-tile cm-pdp-tile--icon\"><img class=\"cm-pdp-tile__icon cm-pdp-tile__icon--flag\" src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/Flag_of_germany_800_480_1_800x800.png?v=1777579334&width=60\" alt=\"\" width=\"20\" height=\"13\" loading=\"lazy\"><div><b>In 1-3 Tagen bei dir</b><span>Versand aus DE</span></div></div>\n  <div class=\"cm-pdp-tile cm-pdp-tile--icon\"><img class=\"cm-pdp-tile__icon\" src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/klarna-icon_800x800.png?v=1777579020&width=60\" alt=\"\" width=\"18\" height=\"18\" loading=\"lazy\"><div><b>Später bezahlen</b><span>Mit Klarna</span></div></div>\n</div>",
+            "padding_bottom": 16
+          }
+        },
+        "buttons": {
+          "type": "buttons",
+          "settings": {
+            "show_quantity": false,
+            "button_type": "btn--primary",
+            "button_style": "btn--solid",
+            "show_payment_button": false,
+            "button_type_dynamic": "btn--secondary",
+            "button_style_dynamic": "btn--solid",
+            "show_gift_card_recipient": false,
+            "padding_bottom": 32
+          }
+        },
+        "code_t7wixh": {
+          "type": "code",
+          "name": "Benefit Box",
+          "settings": {
+            "code": "<ul class=\"cm-usp\" data-v=\"marquee\" role=\"list\">\n  <li class=\"cm-usp__item cm-usp__item--wide\"><img class=\"cm-usp__icon\" src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/1_9d6a6793-a493-4884-81d7-007925406b1f_800x800.png?v=1777708321&width=64\" alt=\"\" width=\"20\" height=\"20\" loading=\"lazy\"><span class=\"cm-usp__text\"><b>Wasserfest</b><small>auch unter der Dusche</small></span></li>\n  <li class=\"cm-usp__item\"><img class=\"cm-usp__icon\" src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/2_61654a14-d98b-44eb-bac7-09cc9d152a3f_800x800.png?v=1777708321&width=64\" alt=\"\" width=\"20\" height=\"20\" loading=\"lazy\"><span class=\"cm-usp__text\"><b>Lifetime Care</b></span></li>\n  <li class=\"cm-usp__item\"><img class=\"cm-usp__icon\" src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/3_5e648fb8-7ee2-4c76-8940-ed6064cee137_800x800.png?v=1777708320&width=64\" alt=\"\" width=\"20\" height=\"20\" loading=\"lazy\"><span class=\"cm-usp__text\"><b>30 Tage Rückgabe</b></span></li>\n  <li class=\"cm-usp__item\"><img class=\"cm-usp__icon\" src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/4_7bcda7eb-ec97-4194-883f-db55b0faee03_800x800.png?v=1777708322&width=64\" alt=\"\" width=\"20\" height=\"20\" loading=\"lazy\"><span class=\"cm-usp__text\"><b>Gratis Versand</b><small>ab 39€</small></span></li>\n  <li class=\"cm-usp__item\"><img class=\"cm-usp__icon\" src=\"https://cdn.shopify.com/s/files/1/0877/8157/2952/files/5_b0e4aa6d-cdc2-49a0-8277-c0205a424e2a_800x800.png?v=1777708321&width=64\" alt=\"\" width=\"20\" height=\"20\" loading=\"lazy\"><span class=\"cm-usp__text\"><b>5A CZ Steine</b></span></li>\n</ul>\n<script>(function(){var u=document.currentScript.previousElementSibling;var v=new URLSearchParams(location.search).get('usp');if(v)u.setAttribute('data-v',v);})();</script>\n<script src=\"{{ 'cm-usp.js' | asset_url }}\" defer></script>",
+            "padding_bottom": 16
+          }
+        },
+        "divider_npRf9m": {
+          "type": "divider",
+          "settings": {
+            "show_line": true,
+            "padding_bottom": 0
+          },
+          "disabled": true
+        },
+        "pickup": {
+          "type": "pickup",
+          "settings": {
+            "padding_bottom": 32
+          }
+        },
+        "bogos_io_free_gift_fbt_upsell_view_MDqEkQ": {
+          "type": "shopify://apps/bogos-io-free-gift/blocks/fbt-upsell-view/0432bba6-720a-4e95-be5a-b868386f7aa6",
+          "settings": {
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "code_phgEgp",
+        "divider_f3xVhx",
+        "code_zak3MY",
+        "title",
+        "code_KicJVp",
+        "price",
+        "code_UrMXFJ",
+        "variants",
+        "code_XryM3i",
+        "buttons",
+        "code_t7wixh",
+        "divider_npRf9m",
+        "pickup",
+        "bogos_io_free_gift_fbt_upsell_view_MDqEkQ"
+      ],
+      "custom_css": [
+        ".select__fieldset,.radio__fieldset {grid-template-columns: 1fr;}",
+        "span.option-title {font-weight: 400;}",
+        ".radio__legend__label {display: inline-block;}",
+        "legend .radio_legend_option-name {font-weight: 700 !important;}",
+        ".swatch__button.sale:before {display: none;}"
+      ],
+      "settings": {
+        "product_sticky_enable": true,
+        "variant_image_scroll": true,
+        "show_cart_bar": true,
+        "enable_zoom": true,
+        "enable_video_looping": false,
+        "image_layout": "thumbnails",
+        "image_size": "normal",
+        "mobile_image_style": "slider",
+        "color_scheme": "",
+        "padding_top": 35,
+        "padding_bottom": 30
+      }
+    },
+    "section_custom_code_Cj7iha": {
+      "type": "section-custom-code",
+      "settings": {
+        "code": "{%- unless product.handle == 'geschenkgutschein-1' -%}\n<div class=\"cm-specs\" data-v=\"lines\">\n  <dl class=\"cm-specs__list\">\n  {% if product.metafields.custom.materialien != blank %}\n  <div class=\"cm-specs__row\"><dt>Material</dt><dd>{{ product.metafields.custom.materialien }}</dd></div>\n  {% endif %}\n  {% if product.metafields.custom.steine != blank %}\n  <div class=\"cm-specs__row\"><dt>Steine</dt><dd>{{ product.metafields.custom.steine }}</dd></div>\n  {% endif %}\n  {% if product.metafields.custom.laenge != blank %}\n  <div class=\"cm-specs__row\"><dt>Länge</dt><dd>{{ product.metafields.custom.laenge }}</dd></div>\n  {% endif %}\n  {% if product.metafields.custom.veredelung != blank %}\n  <div class=\"cm-specs__row\"><dt>Veredelung</dt><dd>{{ product.metafields.custom.veredelung }}</dd></div>\n  {% endif %}\n  {% if product.metafields.custom.kleeblatt != blank %}\n  <div class=\"cm-specs__row\"><dt>Kleeblatt</dt><dd>{{ product.metafields.custom.kleeblatt }}</dd></div>\n  {% endif %}\n  {% if product.metafields.custom.kleeblatt_farben != blank %}\n  <div class=\"cm-specs__row\"><dt>Kleeblatt-Farben</dt><dd>{{ product.metafields.custom.kleeblatt_farben | join: ', ' }}</dd></div>\n  {% endif %}\n  {% if product.metafields.custom.wasserfest != blank %}\n  <div class=\"cm-specs__row\"><dt>Wasserfest</dt><dd><span class=\"cm-specs__yes\">✓</span></dd></div>\n  {% endif %}\n  </dl>\n</div>\n<style>\n  .cm-specs { margin: 8px 0 4px; font-family: var(--cm-body); }\n  .cm-specs__title { margin: 0 0 6px; font-family: var(--cm-display); font-weight: 800; font-size: 22px; letter-spacing: -0.03em; line-height: 1.1; color: #212121; }\n  .cm-specs__list { margin: 0; padding: 0; }\n  .cm-specs dt, .cm-specs dd { margin: 0; }\n  .cm-specs__yes { font-weight: 700; }\n  /* 1 lines: Bezeichnung klein grau in Großbuchstaben, Wert fett, Haarlinien */\n  .cm-specs[data-v=\"lines\"] .cm-specs__row { display: grid; grid-template-columns: 38% 1fr; align-items: baseline; gap: 16px; padding: 13px 0; border-bottom: 1px solid #dcdcdc; }\n  .cm-specs[data-v=\"lines\"] .cm-specs__row:last-child { border-bottom: 0; }\n  .cm-specs[data-v=\"lines\"] dt { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #212121; }\n  .cm-specs[data-v=\"lines\"] dd { font-size: 14.5px; font-weight: 600; line-height: 1.4; color: #212121; }\n  /* 2 leaders: wie eine edle Preisliste, Punktlinie zwischen Bezeichnung und Wert, Wert rechtsbündig */\n  .cm-specs[data-v=\"leaders\"] .cm-specs__row { display: flex; align-items: baseline; gap: 8px; padding: 9px 0; }\n  .cm-specs[data-v=\"leaders\"] dt { flex: 0 0 auto; font-size: 14px; color: #4d4d4d; }\n  .cm-specs[data-v=\"leaders\"] .cm-specs__row::after { content: none; }\n  .cm-specs[data-v=\"leaders\"] dt::after { content: \"\"; display: inline-block; }\n  .cm-specs[data-v=\"leaders\"] .cm-specs__row { position: relative; }\n  .cm-specs[data-v=\"leaders\"] dd { order: 3; flex: 0 1 auto; text-align: right; font-size: 14px; font-weight: 700; color: #212121; max-width: 62%; }\n  .cm-specs[data-v=\"leaders\"] .cm-specs__row > dt + dd { margin-left: auto; }\n  .cm-specs[data-v=\"leaders\"] .cm-specs__row::before { content: \"\"; order: 2; flex: 1 1 auto; min-width: 16px; border-bottom: 1.5px dotted #c9c4bc; transform: translateY(-4px); }\n  /* 3 grid: 2er-Raster, Bezeichnung klein über dem Wert, feine Linien */\n  .cm-specs[data-v=\"grid\"] .cm-specs__list { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #e7e4e0; }\n  .cm-specs[data-v=\"grid\"] .cm-specs__row { padding: 12px 12px 12px 0; border-bottom: 1px solid #e7e4e0; display: flex; flex-direction: column; gap: 3px; position: relative; }\n  .cm-specs[data-v=\"grid\"] .cm-specs__row:nth-child(even) { padding-left: 14px; }\n  .cm-specs[data-v=\"grid\"] .cm-specs__row:nth-child(even)::before { content: \"\"; position: absolute; left: 0; top: 12px; bottom: 12px; width: 1px; background: #e7e4e0; }\n  .cm-specs[data-v=\"grid\"] dt { font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #8a847c; }\n  .cm-specs[data-v=\"grid\"] dd { font-size: 14.5px; font-weight: 700; line-height: 1.35; color: #212121; }\n  /* 4 gold: Bezeichnung klein über dem Wert, links eine feine Goldlinie, luftig */\n  .cm-specs[data-v=\"gold\"] .cm-specs__list { display: flex; flex-direction: column; gap: 14px; padding: 4px 0 4px 16px; border-left: 2px solid transparent; border-image: linear-gradient(180deg, #e6cf93, #a8853f) 1; }\n  .cm-specs[data-v=\"gold\"] .cm-specs__row { display: flex; flex-direction: column; gap: 2px; }\n  .cm-specs[data-v=\"gold\"] dt { font-size: 12px; color: #8a847c; }\n  .cm-specs[data-v=\"gold\"] dd { font-size: 15px; font-weight: 700; color: #212121; line-height: 1.35; }\n  @media (min-width: 750px) { .cm-specs__title { font-size: 24px; } }\n</style>\n<script>(function(){ var v = new URLSearchParams(location.search).get('spec'); if (v) document.querySelectorAll('.cm-specs').forEach(function(n){ n.setAttribute('data-v', v); }); })();</script>\n{%- endunless -%}",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "section_divider_yfCmqK": {
+      "type": "section-divider",
+      "name": "Divider",
+      "settings": {
+        "show_line": false,
+        "width": "wrapper--full-padded",
+        "color_scheme": "",
+        "padding_top": 25,
+        "padding_bottom": 25
+      }
+    },
+    "section_custom_code_tRHxm8": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<!-- Schriftart: Inter 500 (Medium) & 700 (Bold) -->\n<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap\" rel=\"stylesheet\">\n\n<style>\n.shipping-accordion {\n  padding: 24px 0;\n  font-family: 'Inter', sans-serif;\n  font-weight: 500;\n}\n\n.shipping-accordion summary {\n  list-style: none;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  font-weight: 700; /* bold */\n  cursor: pointer;\n  font-size: 14px;\n  margin-bottom: -8px;\n  margin-top: -8px;\n  font-family: 'Inter', sans-serif;\n}\n\n.shipping-accordion summary::-webkit-details-marker {\n  display: none;\n}\n\n.shipping-accordion .icon {\n  font-size: 22px;\n  font-weight: 200;\n  display: inline-block;\n  transition: transform 0.3s ease-in-out;\n  line-height: 1;\n}\n\n.shipping-accordion[open] .icon {\n  transform: rotate(360deg);\n}\n\n.shipping-content {\n  margin-top: 36px;\n  font-family: 'Inter', sans-serif;\n  font-weight: 500;\n}\n\n.shipping-content h2 {\n  font-size: 20px;\n  font-weight: 700; /* bold */\n  margin-bottom: 16px;\n  margin-top: 36px;\n}\n\n.shipping-content .subtitle {\n  font-size: 14px;\n  color: #000;\n  margin-bottom: 34px;\n  margin-top: 12px;\n  font-weight: 500;\n}\n\n.shipping-content .shipping-zone {\n  font-size: 18px;\n  font-weight: 700; /* bold */\n  margin-bottom: 12px;\n}\n\n.shipping-table {\n  width: 100%;\n  margin-bottom: 20px;\n  margin-top: 26px;\n  border-collapse: collapse;\n  font-size: 14px;\n  font-family: 'Inter', sans-serif;\n  font-weight: 500;\n}\n\n.shipping-table td {\n  padding: 6px 0;\n}\n\n.shipping-table tr + tr td {\n  border-top: 1px solid #eee;\n}\n</style>\n\n<details class=\"shipping-accordion\">\n  <summary>\n    Versand\n    <span class=\"icon\">+</span>\n  </summary>\n  <div class=\"shipping-content\">\n    <h2>Versandkosten &amp; Versanddauer</h2>\n    <p class=\"subtitle\">Der Versand erfolgt durch die Deutsche Post bzw. DHL</p>\n\n    <p class=\"shipping-zone\">Innerhalb Deutschland: 1–3 Werktage*</p>\n    <table class=\"shipping-table\">\n      <tr>\n        <td>Bis 39 €</td>\n        <td>3,90 € Versandkosten</td>\n      </tr>\n      <tr>\n        <td>Ab 39 €</td>\n        <td>Kostenlos</td>\n      </tr>\n    </table>\n\n    <p class=\"shipping-zone\">Europäische Union: 3–9 Werktage*</p>\n    <table class=\"shipping-table\">\n      <tr>\n        <td>Bis 79 €</td>\n        <td>6,90 € Versandkosten</td>\n      </tr>\n      <tr>\n        <td>Ab 79 €</td>\n        <td>Kostenlos</td>\n      </tr>\n    </table>\n\n    <p class=\"shipping-zone\">Schweiz &amp; Liechtenstein: 4–10 Werktage*</p>\n    <table class=\"shipping-table\">\n      <tr>\n        <td>Bis 99 €</td>\n        <td>7,90 € Versandkosten</td>\n      </tr>\n      <tr>\n        <td>Ab 99 €</td>\n        <td>Kostenlos</td>\n      </tr>\n    </table>\n  </div>\n</details>\n\n<script>\n  document.querySelectorAll('.shipping-accordion').forEach(el => {\n    const icon = el.querySelector('.icon');\n\n    // Initial: korrektes Symbol setzen\n    icon.textContent = el.open ? '−' : '+';\n\n    el.addEventListener('toggle', () => {\n      icon.textContent = el.open ? '−' : '+';\n    });\n  });\n</script>",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "section_custom_code_YiqUt8": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<!-- Google Font Inter Medium & Bol -->\n<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap\" rel=\"stylesheet\">\n\n<style>\n.return-accordion {\n  padding: 24px 0;\n  font-family: 'Inter', sans-serif;\n  font-weight: 500;\n}\n\n.return-accordion summary {\n  list-style: none;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  font-weight: 700; /* fett */\n  cursor: pointer;\n  font-size: 14px; /* nicht kleiner machen */\n  margin-bottom: -8px;\n  margin-top: -8px;\n  font-family: 'Inter', sans-serif;\n}\n\n.return-accordion summary::-webkit-details-marker {\n  display: none;\n}\n\n.return-accordion .icon {\n  font-size: 22px;\n  font-weight: 200;\n  display: inline-block;\n  transition: transform 0.3s ease;\n}\n\n.return-accordion[open] .icon {\n  transform: rotate(360deg);\n}\n\n.return-content {\n  animation: fadeDown 0.35s ease;\n  font-family: 'Inter', sans-serif;\n  font-weight: 500;\n  font-size: 14px;\n}\n\n.return-content h2 {\n  text-align: center;\n  font-size: 20px; /* reduziert von 24px */\n  font-weight: 700;\n  margin-top: 50px;\n  margin-bottom: 35px;\n}\n\n.return-content p {\n  font-size: 14px; /* reduziert von 15px */\n  margin-bottom: 14px;\n  line-height: 1.6;\n  font-weight: 500;\n}\n\n.return-content strong {\n  font-weight: 700;\n}\n\n.return-content h3 {\n  font-size: 16px;\n  font-weight: 700;\n  margin-top: 26px;\n  margin-bottom: 10px;\n}\n\n@keyframes fadeDown {\n  from {\n    opacity: 0;\n    transform: translateY(-8px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n</style>\n\n<details class=\"return-accordion\">\n  <summary>\n    Rücksendung\n    <span class=\"icon\">+</span>\n  </summary>\n  <div class=\"return-content\">\n    <h2>Rücksendung</h2>\n    <p><strong>Rücksendungen:</strong><br>\n    Du hast das Recht, innerhalb von 30 Tagen nach Erhalt des Pakets die Ware ohne Angabe von Gründen zurückzuschicken. Dies gilt jedoch nicht für Artikel, die ausdrücklich vom Umtausch ausgenommen sind.</p>\n\n    <p>Wir nehmen Rücksendungen nur für neue und ungetragene Ware entgegen. Sollte die Ware bei Eintreffen in unserem Lager beschädigt sein, senden wir sie wieder an dich zurück.</p>\n\n    <h3>Wie schicke ich mein Paket zurück?</h3>\n    <p>Verpacke deine Bestellung sorgfältig in der Originalverpackung und lege einen Zettel bei, auf dem deine Bestellnummer (z. B. #1363) vermerkt ist. Sende dein Paket anschließend an die folgende Adresse:</p>\n\n    <p><strong> Niklas Bronsart von Schellendorff<br> c/o IP-Management #7234 </strong><br>\n    Ludwig-Erhard-Straße 18 <br>\n    \n20459 Hamburg \n</p>\n\n    <p>Bitte beachte, dass die Kosten für den Rückversand von dir als Käufer getragen werden.</p>\n\n    <p>Bei Bestellungen von Produktsets oder Bundles ist eine teilweise Rücksendung der einzelnen Produkte nicht möglich. Im Falle einer Rückgabe muss das gesamte Set oder Bundle zurückgeschickt werden. Der entsprechende Wert des zurückgesendeten Produkts wird dir in Form eines Gutscheins erstattet – basierend auf dem Preis, der für das einzelne Produkt im Set gezahlt wurde.</p>\n\n    <p>Sollte dein Rückgaberecht überschritten und nicht vorher von uns ein verlängertes Rückgaberecht bestätigt worden sein, wird deine Rücksendung automatisch an dich zurückgeschickt.</p>\n  </div>\n</details>\n\n<script>\n  document.querySelectorAll('.shipping-accordion, .return-accordion').forEach(el => {\n    const icon = el.querySelector('.icon');\n    icon.textContent = el.open ? '−' : '+';\n\n    el.addEventListener('toggle', () => {\n      icon.textContent = el.open ? '−' : '+';\n    });\n  });\n</script>",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "section_divider_rxPH8i": {
+      "type": "section-divider",
+      "name": "Divider",
+      "settings": {
+        "show_line": false,
+        "width": "wrapper--full-padded",
+        "color_scheme": "",
+        "padding_top": 50,
+        "padding_bottom": 50
+      }
+    },
+    "17616464917794ca29": {
+      "type": "apps",
+      "blocks": {
+        "loox_reviews_loox_dynamic_section_LQdNwm": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-dynamic-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "reviews_to_display": "",
+            "default_tab": "automatic",
+            "only_photos": false,
+            "aggregated": true,
+            "limit": 15,
+            "hide_thumbnails": false,
+            "maxwidth": 1080,
+            "is_sample": true
+          }
+        }
+      },
+      "block_order": [
+        "loox_reviews_loox_dynamic_section_LQdNwm"
+      ],
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "17616463562bdf7318": {
+      "type": "apps",
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "1761646345631be4a0": {
+      "type": "apps",
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "section_divider_aAKweP": {
+      "type": "section-divider",
+      "name": "Divider",
+      "settings": {
+        "show_line": false,
+        "width": "wrapper--full-padded",
+        "color_scheme": "",
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    "1760188062a3531a0b": {
+      "type": "apps",
+      "blocks": {
+        "loox_reviews_loox_dynamic_section_FTYPWq": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-dynamic-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "disabled": true,
+          "settings": {
+            "reviews_to_display": "",
+            "default_tab": "automatic",
+            "only_photos": false,
+            "aggregated": true,
+            "limit": 20,
+            "hide_thumbnails": false,
+            "maxwidth": 1400,
+            "is_sample": false
+          }
+        }
+      },
+      "block_order": [
+        "loox_reviews_loox_dynamic_section_FTYPWq"
+      ],
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "related": {
+      "type": "related",
+      "blocks": {
+        "related_Lg9k9C": {
+          "type": "related",
+          "settings": {
+            "product_recommendations_heading": "Das könnte dir auch gefallen",
+            "limit": 4
+          }
+        }
+      },
+      "block_order": [
+        "related_Lg9k9C"
+      ],
+      "custom_css": [
+        "@media (max-width: 768px) {.swatch__button {margin-right: 4px !important; margin-left: 5px !important; padding-top: 10px !important; }}",
+        "@media (min-width: 769px) {.swatch__button {margin-right: 10px !important; margin-left: 0px !important; padding-top: 12px !important; }}"
+      ],
+      "settings": {
+        "enable_tabs": false,
+        "heading_alignment": "text-center",
+        "heading_font_size": "heading-small",
+        "layout_mobile": "slider",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 5
+      }
+    },
+    "17601880615bbef61b": {
+      "type": "apps",
+      "settings": {
+        "include_margins": false
+      }
+    }
+  },
+  "order": [
+    "section_custom_code_VBATNp",
+    "1742308227fe794051",
+    "main",
+    "section_custom_code_Cj7iha",
+    "section_divider_yfCmqK",
+    "section_custom_code_tRHxm8",
+    "section_custom_code_YiqUt8",
+    "section_divider_rxPH8i",
+    "17616464917794ca29",
+    "17616463562bdf7318",
+    "1761646345631be4a0",
+    "section_divider_aAKweP",
+    "1760188062a3531a0b",
+    "related",
+    "17601880615bbef61b"
+  ]
+}

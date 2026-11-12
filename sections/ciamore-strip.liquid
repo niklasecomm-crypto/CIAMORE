@@ -1,0 +1,26 @@
+{%- comment -%}
+  CIAMORE | Schmaler Info-Streifen unter dem Header (z. B. "100% Wasserfest")
+{%- endcomment -%}
+<div class="cm-strip cm-strip--{{ section.id }}">
+  <svg aria-hidden="true" focusable="false" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg>
+  <span>{{ section.settings.text_1 }}{% if section.settings.text_2 != blank %} <span class="cm-strip__dot" aria-hidden="true">·</span> {{ section.settings.text_2 }}{% endif %}</span>
+</div>
+<style>
+  .cm-strip--{{ section.id }} {
+    background: var(--cm-sand); color: var(--cm-ink);
+    padding: 9px 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--cm-body); font-size: 12.5px; font-weight: 600; text-align: center;
+  }
+  .cm-strip--{{ section.id }} .cm-strip__dot { color: var(--cm-faint); }
+  @media (min-width: 750px) { .cm-strip--{{ section.id }} { font-size: 13.5px; padding: 10px 24px; } }
+</style>
+{% schema %}
+{
+  "name": "Ciamore Info-Streifen",
+  "settings": [
+    { "type": "text", "id": "text_1", "label": "Text 1", "default": "100% Wasserfest" },
+    { "type": "text", "id": "text_2", "label": "Text 2", "default": "Made to make you glow" }
+  ],
+  "presets": [{ "name": "Ciamore Info-Streifen" }]
+}
+{% endschema %}

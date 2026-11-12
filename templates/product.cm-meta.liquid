@@ -1,0 +1,16 @@
+{%- layout none -%}
+{%- comment -%} CIAMORE: Zusatzinfos für das Bundle-Produktfenster: Material, Produktinfo-Tabelle, Größentabelle (gleiche Daten wie Produktseite) {%- endcomment -%}
+{%- capture cm_specs -%}
+{%- unless product.handle == 'geschenkgutschein-1' -%}
+<div class="cm-specs" data-v="lines"><dl class="cm-specs__list">
+{%- if product.metafields.custom.materialien != blank -%}<div class="cm-specs__row"><dt>Material</dt><dd>{{ product.metafields.custom.materialien }}</dd></div>{%- endif -%}
+{%- if product.metafields.custom.steine != blank -%}<div class="cm-specs__row"><dt>Steine</dt><dd>{{ product.metafields.custom.steine }}</dd></div>{%- endif -%}
+{%- if product.metafields.custom.laenge != blank -%}<div class="cm-specs__row"><dt>Länge</dt><dd>{{ product.metafields.custom.laenge }}</dd></div>{%- endif -%}
+{%- if product.metafields.custom.veredelung != blank -%}<div class="cm-specs__row"><dt>Veredelung</dt><dd>{{ product.metafields.custom.veredelung }}</dd></div>{%- endif -%}
+{%- if product.metafields.custom.kleeblatt != blank -%}<div class="cm-specs__row"><dt>Kleeblatt</dt><dd>{{ product.metafields.custom.kleeblatt }}</dd></div>{%- endif -%}
+{%- if product.metafields.custom.kleeblatt_farben != blank -%}<div class="cm-specs__row"><dt>Kleeblatt-Farben</dt><dd>{{ product.metafields.custom.kleeblatt_farben | join: ', ' }}</dd></div>{%- endif -%}
+{%- if product.metafields.custom.wasserfest != blank -%}<div class="cm-specs__row"><dt>Wasserfest</dt><dd><span class="cm-specs__yes">✓</span></dd></div>{%- endif -%}
+</dl></div>
+{%- endunless -%}
+{%- endcapture -%}
+{"material": {{ product.metafields.custom.material.value | default: '' | json }}, "specs": {{ cm_specs | strip | json }}, "sizechart": {{ pages['groessentabelle-ringe'].content | default: '' | json }}}

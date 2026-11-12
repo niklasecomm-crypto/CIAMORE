@@ -1,0 +1,218 @@
+{%- comment -%}
+  CIAMORE | Kategorie-Pills (horizontal wischbar)
+{%- endcomment -%}
+<div class="cm-chips-home"><nav class="cm-chips cm-chips--{{ section.id }}" data-v="{{ section.settings.variant | default: 'glass' }}" aria-label="{{ section.settings.aria | escape }}">
+  <div class="cm-chips__track">
+    {%- for block in section.blocks -%}
+      {%- assign is_current = false -%}
+      {%- if block.settings.link != blank and request.path == block.settings.link -%}{%- assign is_current = true -%}{%- endif -%}
+      {%- liquid
+        assign cm_img = blank
+        assign cm_mark = ''
+        if block.settings.link contains '/collections/'
+          assign cm_handle = block.settings.link | split: '/collections/' | last | split: '?' | first | split: '/' | first
+          assign cm_col = collections[cm_handle]
+          assign cm_img = cm_col.image | default: cm_col.products.first.featured_image
+        elsif block.settings.link contains '/bundle/28202'
+          assign cm_mark = '−50%'
+        elsif block.settings.link contains '/bundle/28201'
+          assign cm_mark = '5×'
+        elsif block.settings.link contains '/bundle/28353'
+          assign cm_mark = '3×'
+        endif
+      -%}
+      <a class="cm-chip cm-chip--{{ block.settings.style }}{% if is_current %} is-current{% endif %}" href="{{ block.settings.link | default: '#' }}" {% if is_current %}aria-current="page"{% endif %} {{ block.shopify_attributes }}>
+        <span class="cm-chip__media" aria-hidden="true">{%- if cm_img != blank -%}{{ cm_img | image_url: width: 200 | image_tag: loading: 'lazy', alt: '', widths: '100, 200', sizes: '72px' }}{%- elsif cm_mark != '' -%}<span class="cm-chip__mark">{{ cm_mark }}</span>{%- endif -%}</span>
+        <span class="cm-chip__label">{{ block.settings.label }}</span>
+      </a>
+    {%- endfor -%}
+  </div>
+</nav></div>
+
+<style>
+  .cm-chips--{{ section.id }} { padding: {{ section.settings.pt_mobile }}px 0 {{ section.settings.pb_mobile }}px; }
+  .cm-chips--{{ section.id }} .cm-chips__track {
+    display: flex; gap: 8px; overflow-x: auto; padding: 0 16px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .cm-chips--{{ section.id }} .cm-chips__track::-webkit-scrollbar { display: none; }
+  .cm-chips--{{ section.id }} .cm-chip {
+    flex: 0 0 auto; height: 38px; padding: 0 16px; border-radius: 999px;
+    display: inline-flex; align-items: center; white-space: nowrap;
+    font-family: var(--cm-body); font-size: 13px; font-weight: 600; line-height: 1;
+    text-decoration: none; color: var(--cm-ink);
+    background: #f3f1ee; border: 1.5px solid #f3f1ee;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .cm-chips--{{ section.id }} .cm-chip:hover { background: #e8e5e1; border-color: #e8e5e1; }
+  .cm-chips--{{ section.id }} .cm-chip.is-current { background: var(--cm-ink); border-color: var(--cm-ink); color: #fff; }
+  .cm-chips--{{ section.id }} .cm-chip--sale { color: #d82323; }
+  .cm-chips--{{ section.id }} .cm-chip--bundle { background: #f3f1ee; border-color: #d2cec8; }
+  .cm-chips--{{ section.id }} .cm-chip--bundle:hover { background: #ebe8e4; border-color: #bdbdbd; }
+  .cm-chips--{{ section.id }} .cm-chip--vip { background: #161616; border-color: #c9a45c; color: #c9a45c; }
+  .cm-chips--{{ section.id }} .cm-chip--vip:hover { background: #161616; border-color: #c9a45c; color: #e2c47f; }
+  @media (min-width: 750px) {
+    .cm-chips--{{ section.id }} { padding: {{ section.settings.pt }}px 0 {{ section.settings.pb }}px; }
+    .cm-chips--{{ section.id }} .cm-chips__track { padding: 0 var(--outer, 24px); {% if section.settings.center_desktop %}justify-content: safe center;{% endif %} }
+    .cm-chips--{{ section.id }} .cm-chip { height: 42px; padding: 0 18px; font-size: 14px; }
+  }
+
+  /* ===== Varianten (Einstellung "Darstellung" oder zum Testen ?chips=text|tiles|outline|bar|glass) ===== */
+  .cm-chips--{{ section.id }} .cm-chip__media { display: none; }
+  /* A: Nur Text, jeder Punkt mit eigenem Strich in Textlänge */
+  .cm-chips--{{ section.id }}[data-v="text"] .cm-chips__track { gap: 24px; padding-top: 2px; padding-bottom: 2px; overflow-y: hidden !important; overscroll-behavior: contain; touch-action: pan-x; align-items: flex-start; }
+  .cm-chips--{{ section.id }}[data-v="text"] .cm-chip { background: transparent !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 0 9px !important; height: auto !important; font-size: 14px; color: #333 !important; position: relative; }
+  .cm-chips--{{ section.id }}[data-v="text"] .cm-chip::before { display: none !important; }
+  .cm-chips--{{ section.id }}[data-v="text"] .cm-chip::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px; background: var(--cm-ink); border-radius: 0 !important; }
+  .cm-chips--{{ section.id }}[data-v="text"] .cm-chip--vip { color: #a8853f !important; }
+  .cm-chips--{{ section.id }}[data-v="text"] .cm-chip--vip::after { background: #c9a45c; }
+  .cm-chips--{{ section.id }}[data-v="text"] .cm-chip--vip .cm-chip__label::before { content: "★ "; }
+  /* B: Bild-Kacheln */
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chips__track { gap: 10px; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip { flex-direction: column; align-items: center; gap: 7px; height: auto !important; padding: 0 !important; width: 72px; background: transparent !important; border: 0 !important; box-shadow: none !important; white-space: normal; text-align: center; font-size: 12px; line-height: 1.2; color: #333 !important; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip::before { display: none !important; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip__media { display: flex; width: 72px; height: 72px; border-radius: 8px; background: #fff; overflow: hidden; align-items: center; justify-content: center; border: 1.5px solid transparent; box-sizing: border-box; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip__media img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip__mark { font-family: var(--cm-display); font-weight: 700; font-size: 20px; letter-spacing: -0.03em; color: var(--cm-ink); }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip--vip .cm-chip__media { background: #161616; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip--vip .cm-chip__mark { color: #c9a45c; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip--vip { color: #a8853f !important; font-weight: 700; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip--sale { color: #d82323 !important; }
+  .cm-chips--{{ section.id }}[data-v="tiles"] .cm-chip:active .cm-chip__media { border-color: var(--cm-ink); }
+  /* C: Outline */
+  .cm-chips--{{ section.id }}[data-v="outline"] .cm-chip:not(.cm-chip--vip) { background: #fff !important; border: 1px solid #d2cec8 !important; box-shadow: none !important; color: #333 !important; border-radius: 8px !important; }
+  .cm-chips--{{ section.id }}[data-v="outline"] .cm-chip--sale { color: #d82323 !important; }
+  .cm-chips--{{ section.id }}[data-v="outline"] .cm-chip::before { display: none !important; }
+  .cm-chips--{{ section.id }}[data-v="outline"] .cm-chip--vip { border-radius: 8px !important; }
+  /* D: Leiste (ein durchgehender Balken) */
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chips__track { gap: 0; }
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip { background: #f3f1ee !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; height: 44px !important; padding: 0 16px !important; color: #333 !important; position: relative; }
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip::before { display: none !important; }
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip + .cm-chip::after { content: ""; position: absolute; left: 0; top: 13px; bottom: 13px; width: 1px; background: #d2cec8; }
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip:first-child { border-radius: 10px 0 0 10px !important; }
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip:last-child { border-radius: 0 10px 10px 0 !important; }
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip--vip { background: #161616 !important; color: #c9a45c !important; }
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip--vip::after, .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip--vip + .cm-chip::after { display: none; }
+  .cm-chips--{{ section.id }}[data-v="bar"] .cm-chip--sale { color: #d82323 !important; }
+</style>
+<style>
+  /* Desktop: Leiste wandert in den Header und ersetzt dort das alte Menü */
+  .header__desktop__bar__c:has(.cm-chips--inhead) .header__menu { display: none !important; }
+  /* Strich-Animation: dezente Grundlinie, beim Drüberfahren / Antippen läuft der dunkle Strich von links rein */
+  .cm-chips[data-v="text"] .cm-chip::after {
+    height: 1.5px !important;
+    background: linear-gradient(var(--cm-ink), var(--cm-ink)) no-repeat left center / 0% 100%, rgba(33,33,33,.28) !important;
+    transition: background-size .38s cubic-bezier(.65,0,.25,1), height .2s ease, transform .2s ease;
+  }
+  .cm-chips[data-v="text"] .cm-chip { transition: color .2s ease, transform .2s ease; }
+  .cm-chips[data-v="text"] .cm-chip--vip::after {
+    background: linear-gradient(90deg, #a8853f, #e6cf93, #a8853f) no-repeat left center / 0% 100%, rgba(201,164,92,.45) !important;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .cm-chips[data-v="text"] .cm-chip:hover { color: var(--cm-ink) !important; }
+    .cm-chips[data-v="text"] .cm-chip:hover::after { background-size: 100% 100%, auto !important; height: 2px !important; }
+  }
+  .cm-chips[data-v="text"] .cm-chip:active::after,
+  .cm-chips[data-v="text"] .cm-chip.is-tapped::after { background-size: 100% 100%, auto !important; height: 2px !important; transition-duration: .22s; }
+  .cm-chips[data-v="text"] .cm-chip.is-current { color: var(--cm-ink) !important; }
+  .cm-chips[data-v="text"] .cm-chip.is-current::after { height: 2px !important; background-size: 100% 100%, auto !important; animation: cmChipIn .6s cubic-bezier(.65,0,.25,1) .15s both; }
+  @keyframes cmChipIn { from { background-size: 0% 100%, auto; } to { background-size: 100% 100%, auto; } }
+  @media (prefers-reduced-motion: reduce) { .cm-chips[data-v="text"] .cm-chip::after { transition: none; animation: none !important; } }
+  /* Breitenmessung des Themes (Klon) soll wie mit dem alten Menü rechnen, damit der Umbruch-Punkt gleich bleibt */
+  .js__header__clone .cm-chips--inhead { display: none !important; }
+  .js__header__clone .header__desktop__bar__c .header__menu { display: flex !important; }
+  .cm-chips--inhead { padding: 0 !important; min-width: 0; max-width: 100%; display: flex; align-items: center; align-self: stretch; }
+  .cm-chips--inhead .cm-chips__track { padding-top: 9px !important; }
+  .cm-chips--inhead .cm-chips__track { padding: 2px 0 !important; justify-content: safe center; flex-wrap: nowrap !important; gap: 22px !important; overflow-x: auto; }
+  .cm-chips--inhead[data-v="text"] .cm-chip { font-size: 14px !important; padding-bottom: 7px !important; }
+  .shopify-section:has(> .cm-chips-home:empty) { display: none !important; }
+  .cm-chips--inhead.is-overflow .cm-chips__track { justify-content: flex-start; mask-image: linear-gradient(90deg, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, #000 90%, transparent); }
+  @media (max-width: 1299px) { .cm-chips--inhead .cm-chips__track { gap: 16px !important; } .cm-chips--inhead[data-v="text"] .cm-chip { font-size: 13px !important; } }
+</style>
+<script>
+  (function () {
+    var t = document.querySelector('.cm-chips--{{ section.id }} .cm-chips__track');
+    if (!t) return;
+    var K = 'cmChipsX', saved = null;
+    try { saved = sessionStorage.getItem(K); } catch (e) {}
+    if (saved !== null) t.scrollLeft = +saved;
+    var cur = t.querySelector('.cm-chip.is-current');
+    if (cur && t.scrollWidth > t.clientWidth) {
+      var tl = t.getBoundingClientRect(), cl = cur.getBoundingClientRect();
+      if (cl.left < tl.left + 12 || cl.right > tl.right - 12) {
+        var target = t.scrollLeft + (cl.left - tl.left) - (t.clientWidth - cl.width) / 2;
+        if (saved === null) t.scrollLeft = target;
+        else setTimeout(function () { t.scrollTo({ left: target, behavior: 'smooth' }); }, 60);
+      }
+    }
+    var save = function () { try { sessionStorage.setItem(K, Math.round(t.scrollLeft)); } catch (e) {} };
+    t.addEventListener('scroll', save, { passive: true });
+    t.addEventListener('click', save);
+  })();
+</script>
+<script>
+  (function () {
+    var mq = window.matchMedia('(min-width: 990px)');
+    function run() {
+      var chips = document.querySelector('.cm-chips--{{ section.id }}');
+      var slot = document.querySelector('.theme__header .header__desktop__bar__c');
+      if (!chips || !slot) return;
+      if (!chips.__home) {
+        chips.__home = chips.parentNode.classList.contains('cm-chips-home') ? chips.parentNode : (function () { var h = document.createElement('div'); h.className = 'cm-chips-home'; chips.parentNode.insertBefore(h, chips); h.appendChild(chips); return h; })();
+      }
+      var wrap = slot.closest('.header__wrapper');
+      if (wrap && !wrap.__cmObs) { wrap.__cmObs = true; new MutationObserver(function () { setTimeout(run, 0); }).observe(wrap, { attributes: true, attributeFilter: ['class'] }); }
+      if (mq.matches && !(wrap && wrap.classList.contains('js__show__mobile'))) {
+        if (chips.parentNode !== slot) { slot.appendChild(chips); chips.classList.add('cm-chips--inhead'); }
+        var tr = chips.querySelector('.cm-chips__track'); chips.classList.toggle('is-overflow', tr && tr.scrollWidth > tr.clientWidth + 2);
+      } else if (chips.parentNode === slot) {
+        chips.__home.appendChild(chips); chips.classList.remove('cm-chips--inhead');
+      }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+    document.addEventListener('click', function (e) {
+      var c = e.target.closest && e.target.closest('.cm-chips[data-v="text"] .cm-chip');
+      if (c) c.classList.add('is-tapped');
+    }, { passive: true });
+    window.addEventListener('pageshow', function () { document.querySelectorAll('.cm-chip.is-tapped').forEach(function (c) { c.classList.remove('is-tapped'); }); });
+    if (mq.addEventListener) mq.addEventListener('change', run); else mq.addListener(run);
+    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(run, 120); });
+  })();
+</script>
+<script>
+  (function(){ try { var v = new URLSearchParams(location.search).get('chips'); if (v) { document.querySelectorAll('.cm-chips').forEach(function(n){ n.dataset.v = v; }); } } catch(e){} })();
+</script>
+
+{% schema %}
+{
+  "name": "Ciamore Pills",
+  "settings": [
+    { "type": "text", "id": "aria", "label": "Name für Screenreader", "default": "Kategorien" },
+    { "type": "select", "id": "variant", "label": "Darstellung", "options": [{ "value": "glass", "label": "Silber-Pills" }, { "value": "text", "label": "Nur Text" }, { "value": "tiles", "label": "Bild-Kacheln" }, { "value": "outline", "label": "Outline" }, { "value": "bar", "label": "Leiste" }], "default": "glass" },
+    { "type": "checkbox", "id": "center_desktop", "label": "Am Desktop zentrieren", "default": true },
+    { "type": "range", "id": "pt", "label": "Abstand oben (Desktop)", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 20 },
+    { "type": "range", "id": "pb", "label": "Abstand unten (Desktop)", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range", "id": "pt_mobile", "label": "Abstand oben (Handy)", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "pb_mobile", "label": "Abstand unten (Handy)", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 4 }
+  ],
+  "blocks": [
+    {
+      "type": "chip",
+      "name": "Pill",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Text", "default": "Kategorie" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "select", "id": "style", "label": "Stil", "default": "outline", "options": [
+          { "value": "outline", "label": "Weiß mit Rand" },
+          { "value": "soft", "label": "Beige" },
+          { "value": "dark", "label": "Schwarz" },
+          { "value": "sale", "label": "Sale (roter Text)" },
+          { "value": "bundle", "label": "Bundle (Grau mit Rahmen)" },
+          { "value": "vip", "label": "Top-Deal (Schwarz/Gold)" }
+        ] }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Ciamore Pills" }]
+}
+{% endschema %}

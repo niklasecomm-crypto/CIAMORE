@@ -1,0 +1,205 @@
+{%- comment -%}
+  CIAMORE | Kopf der Kollektionsseite (Brotkrumen, Titel, Anzahl)
+{%- endcomment -%}
+<div class="cm-colhead cm-colhead--{{ section.id }}" data-wear="{{ section.settings.wear_style | default: 'switch' }}">
+  {%- if section.settings.show_breadcrumb -%}
+    <nav class="cm-colhead__crumbs" aria-label="Brotkrumen"><a href="{{ routes.root_url }}">Startseite</a> / <span aria-current="page">{{ collection.title | default: page_title }}</span></nav>
+  {%- endif -%}
+  <div class="cm-colhead__row">
+    <h1 class="cm-colhead__title">{{ collection.title | default: page_title }}</h1>
+    {%- if section.settings.show_toggle -%}
+      {%- liquid
+        assign cm_p = collection.products.first
+        for cp in collection.products limit: 16
+          assign cm_src = cp.images[1].src | downcase
+          if cm_src contains '.jp'
+            assign cm_p = cp
+            break
+          endif
+        endfor
+        assign cm_img0 = cm_p.images[0]
+        assign cm_img1 = cm_p.images[1] | default: cm_p.images[0]
+      -%}
+      <div class="cm-wear-ui">
+        <input type="checkbox" id="toggle-tragebilder" class="cm-wear__input" aria-label="Tragebilder zeigen">
+        <label class="cm-wear cm-ui--switch" for="toggle-tragebilder">
+          <span class="cm-wear__label">Tragebilder</span>
+          <span class="cm-wear__track" aria-hidden="true"><span class="cm-wear__knob"></span></span>
+        </label>
+        <div class="cm-seg cm-ui--seg" role="group" aria-label="Ansicht">
+          <span class="cm-seg__pill" aria-hidden="true"></span>
+          <button type="button" class="cm-seg__btn" data-on="0">Produkt</button>
+          <button type="button" class="cm-seg__btn" data-on="1">Getragen</button>
+        </div>
+        <div class="cm-thumbs cm-ui--thumbs" role="group" aria-label="Ansicht">
+          <button type="button" class="cm-thumbs__btn" data-on="0" aria-label="Produktfotos">{%- if cm_img0 -%}<img src="{{ cm_img0 | image_url: width: 120 }}" alt="" width="40" height="40" loading="lazy">{%- endif -%}</button>
+          <button type="button" class="cm-thumbs__btn" data-on="1" aria-label="Tragebilder">{%- if cm_img1 -%}<img src="{{ cm_img1 | image_url: width: 120 }}" alt="" width="40" height="40" loading="lazy">{%- endif -%}</button>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+  {%- if section.settings.show_count and collection.products_count -%}
+    <p class="cm-colhead__count">{{ collection.products_count }} {% if collection.products_count == 1 %}Produkt{% else %}Produkte{% endif %}</p>
+  {%- endif -%}
+  {%- if section.settings.show_description and collection.description != blank -%}
+    <div class="cm-colhead__desc">{{ collection.description }}</div>
+  {%- endif -%}
+</div>
+<style>
+  .cm-colhead--{{ section.id }} { padding: 22px 16px 0; color: var(--cm-ink); }
+  .cm-colhead--{{ section.id }} .cm-colhead__crumbs { font-size: 12.5px; color: var(--cm-muted); }
+  .cm-colhead--{{ section.id }} .cm-colhead__crumbs a { color: inherit; text-decoration: none; }
+  .cm-colhead--{{ section.id }} .cm-colhead__title {
+    margin: 6px 0 0; font-family: var(--cm-display); font-weight: 800; font-size: 40px; line-height: 1; letter-spacing: -0.04em; color: inherit;
+  }
+  .cm-colhead--{{ section.id }} .cm-colhead__row {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+    padding-bottom: 16px; border-bottom: 1px solid #e7e4e0;
+  }
+  .cm-colhead--{{ section.id }} .cm-colhead__row .cm-colhead__title { margin: 0; }
+  .cm-wear-ui { flex: 0 0 auto; display: flex; align-items: center; margin-bottom: 2px; }
+  .cm-wear-ui > [class*="cm-ui--"] { display: none; }
+  .cm-colhead[data-wear="switch"] .cm-ui--switch { display: inline-flex; }
+  .cm-colhead[data-wear="seg"] .cm-ui--seg, .cm-colhead[data-wear="start"] .cm-ui--seg { display: inline-flex; }
+  .cm-colhead[data-wear="thumbs"] .cm-ui--thumbs { display: inline-flex; }
+  .cm-colhead[data-wear="swipe"] .cm-wear-ui { display: none; }
+  .cm-wear__input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+
+  /* 0: Schalter (Standard-Farben wie früher) */
+  .cm-wear { align-items: center; gap: 10px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .cm-wear__label { font-family: var(--cm-body); font-size: 14px; font-weight: 600; color: var(--cm-ink); letter-spacing: 0; text-transform: none; }
+  .cm-wear__track { position: relative; width: 44px; height: 26px; border-radius: 999px; background: #d9d4d4; }
+  .cm-wear__knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.18); transition: transform .25s cubic-bezier(.3,.7,.4,1), background .25s; }
+  .cm-colhead.is-on .cm-wear__knob { transform: translateX(18px); background: #000; }
+  .cm-wear__input:focus-visible ~ .cm-wear .cm-wear__track { outline: 2px solid var(--cm-ink); outline-offset: 2px; }
+
+  /* 1+3: Segment Produkt | Getragen, weiße Fläche gleitet */
+  .cm-colhead[data-wear="seg"] .cm-ui--seg, .cm-colhead[data-wear="start"] .cm-ui--seg { display: inline-grid; }
+  .cm-seg { position: relative; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 9px; isolation: isolate; overflow: hidden;
+    background: linear-gradient(135deg, #ecebe8 0%, #d9d7d3 52%, #cbc9c4 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.7), inset 0 -1px 0 rgba(0,0,0,.05), 0 1px 2px rgba(20,20,20,.06);
+  }
+  .cm-seg::after {
+    content: ""; position: absolute; z-index: -1; top: -60%; left: 8%; width: 30%; height: 220%; pointer-events: none;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.5), rgba(255,255,255,0)); transform: rotate(20deg);
+  }
+  .cm-seg__pill {
+    position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 7px;
+    background: #fff; box-shadow: 0 2px 5px rgba(20,20,20,.16), 0 1px 1px rgba(20,20,20,.06);
+    transition: transform .38s cubic-bezier(.65,0,.25,1);
+  }
+  .cm-colhead.is-on .cm-seg__pill { transform: translateX(100%); }
+  .cm-seg__btn {
+    position: relative; z-index: 1; appearance: none; border: 0; margin: 0; cursor: pointer; padding: 6px 10px; border-radius: 7px; background: transparent;
+    font-family: var(--cm-body); font-size: 12px; font-weight: 600; line-height: 1.2; color: #66625c; letter-spacing: 0; text-transform: none; text-align: center;
+    transition: color .3s ease; -webkit-tap-highlight-color: transparent;
+  }
+  .cm-colhead:not(.is-on) .cm-seg__btn[data-on="0"], .cm-colhead.is-on .cm-seg__btn[data-on="1"] { color: var(--cm-ink); }
+  .cm-seg.no-anim .cm-seg__pill { transition: none; }
+
+  /* 2: Mini-Vorschau */
+  .cm-thumbs { gap: 6px; }
+  .cm-thumbs__btn {
+    appearance: none; margin: 0; padding: 0; cursor: pointer; width: 42px; height: 42px; border-radius: 8px; overflow: hidden;
+    border: 2px solid transparent; background: #f3f1ee; opacity: .55; transition: opacity .2s, border-color .2s; -webkit-tap-highlight-color: transparent;
+  }
+  .cm-thumbs__btn img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+  .cm-colhead:not(.is-on) .cm-thumbs__btn[data-on="0"], .cm-colhead.is-on .cm-thumbs__btn[data-on="1"] { opacity: 1; border-color: var(--cm-ink); }
+
+  .cm-colhead--{{ section.id }} .cm-colhead__count { margin: 8px 0 0; font-size: 14px; color: var(--cm-muted); }
+  .cm-colhead--{{ section.id }} .cm-colhead__desc { margin-top: 10px; font-size: 14.5px; line-height: 1.5; color: var(--cm-muted); max-width: 640px; }
+  @media (min-width: 750px) {
+    .cm-colhead--{{ section.id }} { padding: 40px var(--outer, 24px) 0; }
+    .cm-colhead--{{ section.id }} .cm-colhead__title { font-size: 64px; }
+    .cm-colhead--{{ section.id }} .cm-colhead__count { font-size: 15px; }
+  }
+</style>
+<style>
+  /* 4: Wischen pro Karte */
+  html[data-wear="swipe"] #CollectionLoop .trage-hover.cm-swipe {
+    display: flex !important; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+  }
+  html[data-wear="swipe"] #CollectionLoop .trage-hover.cm-swipe::-webkit-scrollbar { display: none; }
+  html[data-wear="swipe"] #CollectionLoop .trage-hover.cm-swipe img {
+    display: block !important; position: relative !important; inset: auto !important; flex: 0 0 100%; width: 100% !important; height: 100% !important; object-fit: cover; scroll-snap-align: start;
+  }
+  .cm-dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 5px; z-index: 3; pointer-events: none; }
+  .cm-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(33,33,33,.25); transition: background .2s, width .2s; }
+  .cm-dots i.is-active { background: #212121; width: 14px; border-radius: 3px; }
+</style>
+<script>
+(function () {
+  var K = 'ciamore_tragebilder_on';
+  var root = document.querySelector('.cm-colhead--{{ section.id }}');
+  if (!root) return;
+  var param = new URLSearchParams(location.search).get('wear');
+  var v = /^(switch|seg|thumbs|start|swipe)$/.test(param || '') ? param : root.getAttribute('data-wear');
+  root.setAttribute('data-wear', v);
+  document.documentElement.setAttribute('data-wear', v);
+  var cb = root.querySelector('#toggle-tragebilder');
+
+  if (v === 'start') { try { if (param || localStorage.getItem(K) === null) localStorage.setItem(K, '1'); } catch (e) {} }
+  if (v === 'swipe') {
+    try { localStorage.setItem(K, '0'); } catch (e) {}
+    if (cb) cb.remove();
+    var setup = function (scope) {
+      (scope || document).querySelectorAll('#CollectionLoop .trage-hover').forEach(function (fig) {
+        if (fig.classList.contains('cm-swipe') || fig.querySelectorAll('img').length < 2) return;
+        fig.classList.add('cm-swipe');
+        var host = fig.closest('.product-item__image') || fig.parentElement;
+        var dots = document.createElement('span'); dots.className = 'cm-dots'; dots.innerHTML = '<i class="is-active"></i><i></i>';
+        host.appendChild(dots);
+        fig.addEventListener('scroll', function () {
+          var i = Math.round(fig.scrollLeft / fig.clientWidth);
+          dots.children[0].classList.toggle('is-active', i === 0);
+          dots.children[1].classList.toggle('is-active', i === 1);
+        }, { passive: true });
+        if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+          host.addEventListener('mouseenter', function () { fig.scrollTo({ left: fig.clientWidth, behavior: 'smooth' }); });
+          host.addEventListener('mouseleave', function () { fig.scrollTo({ left: 0, behavior: 'smooth' }); });
+        }
+      });
+    };
+    document.addEventListener('DOMContentLoaded', function () {
+      setup();
+      var grid = document.getElementById('CollectionLoop');
+      if (grid) new MutationObserver(function () { setup(grid); }).observe(grid, { childList: true, subtree: true });
+    });
+    return;
+  }
+  if (!cb) return;
+  var sync = function () { root.classList.toggle('is-on', cb.checked); };
+  cb.addEventListener('change', sync);
+  root.querySelectorAll('[data-on]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('data-on') === '1';
+      if (cb.checked !== on) { cb.checked = on; cb.dispatchEvent(new Event('change', { bubbles: true })); }
+    });
+  });
+  var seg = root.querySelector('.cm-seg');
+  var later = function () { if (seg) seg.classList.add('no-anim'); setTimeout(function () { sync(); setTimeout(function () { if (seg) seg.classList.remove('no-anim'); }, 80); }, 0); };
+  document.addEventListener('DOMContentLoaded', later);
+  window.addEventListener('pageshow', later);
+  window.addEventListener('storage', later);
+  sync();
+})();
+</script>
+{% schema %}
+{
+  "name": "Ciamore Kollektionskopf",
+  "settings": [
+    { "type": "checkbox", "id": "show_breadcrumb", "label": "Brotkrumen zeigen", "default": true },
+    { "type": "checkbox", "id": "show_count", "label": "Anzahl Produkte zeigen", "default": true },
+    { "type": "checkbox", "id": "show_description", "label": "Beschreibung zeigen", "default": true },
+    { "type": "checkbox", "id": "show_toggle", "label": "Tragebilder-Schalter zeigen", "default": true },
+    { "type": "select", "id": "wear_style", "label": "Tragebilder-Ansicht", "default": "switch", "options": [
+      { "value": "switch", "label": "Schalter" },
+      { "value": "seg", "label": "Produkt | Getragen" },
+      { "value": "thumbs", "label": "Mini-Vorschau" },
+      { "value": "start", "label": "Getragen als Standard" },
+      { "value": "swipe", "label": "Wischen pro Karte" }
+    ] }
+  ],
+  "presets": [{ "name": "Ciamore Kollektionskopf" }]
+}
+{% endschema %}

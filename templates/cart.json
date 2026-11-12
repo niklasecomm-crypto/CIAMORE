@@ -1,0 +1,69 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "cart",
+      "blocks": {
+        "free-shipping": {
+          "type": "free-shipping",
+          "settings": {
+            "message": "Nur noch ||amount|| bis gratis Versand in 🇩🇪",
+            "free_shipping_gradient": "linear-gradient(90deg, rgba(0, 200, 81, 1), rgba(76, 217, 100, 1) 50%, rgba(166, 255, 141, 1) 100%)"
+          }
+        },
+        "order-note": {
+          "type": "order-note",
+          "disabled": true,
+          "settings": {}
+        },
+        "code_LzYfmW": {
+          "type": "code",
+          "settings": {
+            "code": "<div class=\"icon-text-wrapper\" style=\"margin-top: 16px; margin-bottom:20px;\">\n  <ul class=\"icon-text-list\" style=\"list-style: none; padding: 0; margin: 0;\">\n    <!-- Lieferzeit -->\n    <li>\n      <div class=\"flex\" style=\"display: flex; align-items: center; margin-bottom: 8px;\">\n        <img src=\"https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg\" alt=\"Deutschland Icon\" style=\"width: 20px; height: 20px; margin-right: 6px;\">\n        <span class=\"icon-text\" style=\"font-size: 14px;\">1‑3 Tage Lieferzeit</span>\n      </div>\n    </li>\n\n    <!-- Klarna -->\n    <li>\n      <div class=\"flex\" style=\"display: flex; align-items: center;\">\n        <img src=\"https://givelove.de/cdn/shop/t/35/assets/klarna_icon.png?v=882769\" alt=\"Klarna Icon\" style=\"width: 20px; height: 20px; margin-right: 6px;\">\n        <span class=\"icon-text\" style=\"font-size: 14px;\">Jetzt shinen, später zahlen. - Mit Klarna</span>\n      </div>\n    </li>\n  </ul>\n</div>"
+          }
+        },
+        "checkout-buttons": {
+          "type": "checkout-buttons",
+          "settings": {
+            "enable_additional_buttons": false
+          }
+        },
+        "upsell-products": {
+          "type": "upsell-products",
+          "settings": {
+            "upsell_auto_open": true
+          }
+        }
+      },
+      "block_order": [
+        "free-shipping",
+        "order-note",
+        "code_LzYfmW",
+        "checkout-buttons",
+        "upsell-products"
+      ],
+      "custom_css": [
+        "/* Entfernt das Schloss-Icon vor dem \"Zur Kasse\"-Button */button[disabled]::before,.checkout-button::before,button.checkout::before,button[aria-disabled=\"true\"]::before {display: none !important;}",
+        " /* Falls das Symbol eine eigene Klasse hat (z. B. \"icon-lock\") */.icon-lock {display: none !important;}",
+        "cart-count.cart__items-count {display: none;}",
+        ".cart__button-continue {display: none !important;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "padding_top": 35,
+        "padding_bottom": 35
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

@@ -1,0 +1,463 @@
+{%- comment -%}
+  CIAMORE | Bundle-Block  "Bau dir deinen Stack" (aus der Skizze)
+{%- endcomment -%}
+{%- if section.settings.layout == 'pieces' or section.settings.layout == 'slots' -%}
+{%- assign cm_src = collections[section.settings.collection] -%}
+<section class="cm-bp cm-bp--{{ section.id }}" data-bg="{{ section.settings.card_bg | default: 'silver' }}" aria-labelledby="CmBpTitle-{{ section.id }}">
+  <div class="cm-bp__head" data-head="{{ section.settings.head_style | default: 'classic' }}">
+    {%- if section.settings.eyebrow != blank -%}<span class="cm-bp__eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+    {%- assign cm_words = section.settings.heading | split: ' ' -%}
+    <h2 class="cm-bp__title" id="CmBpTitle-{{ section.id }}">{%- for w in cm_words -%}{%- if forloop.last -%}<span class="cm-bp__hl">{{ w }}</span>{%- else -%}{{ w }} {% endif -%}{%- endfor -%}</h2>
+    {%- if section.settings.text != blank -%}<p class="cm-bp__copy">{{ section.settings.text }}</p>{%- endif -%}
+  </div>
+  <div class="cm-bp__list">
+    {%- assign off = 0 -%}
+    {%- for block in section.blocks -%}
+      {%- assign n = block.settings.pieces | default: 3 -%}
+      <a class="cm-bp__card{% if block.settings.featured %} is-featured{% endif %}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
+        <div class="cm-bp__top">
+          <div class="cm-bp__name">
+            <span class="cm-bp__label">{{ block.settings.label }}</span>
+            {%- if block.settings.badge != blank -%}<span class="cm-bp__badge">{% if block.settings.featured %}★ {% endif %}{{ block.settings.badge }}</span>{%- endif -%}
+          </div>
+          <span class="cm-bp__price">{{ block.settings.price }}</span>
+        </div>
+        <div class="cm-bp__pieces" style="--n: {{ n }}{% if block.settings.plus %} + 1{% endif %};">
+          {%- if section.settings.layout == 'slots' -%}
+            {%- for i in (1..n) -%}<span class="cm-bp__piece cm-bp__slot"><span>{{ i }}</span></span>{%- endfor -%}
+          {%- elsif cm_src != blank -%}
+            {%- for product in cm_src.products offset: off limit: n -%}
+              <span class="cm-bp__piece">{%- if product.featured_image -%}{{ product.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: product.title, widths: '120, 240', sizes: '80px' }}{%- endif -%}</span>
+            {%- endfor -%}
+          {%- endif -%}
+          {%- if block.settings.plus -%}<span class="cm-bp__piece cm-bp__piece--plus" aria-hidden="true">+</span>{%- endif -%}
+        </div>
+        <div class="cm-bp__bottom">
+          <span class="cm-bp__per">{{ block.settings.per }}</span>
+          <span class="cm-bp__go" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+      {%- assign off = off | plus: n -%}
+    {%- endfor -%}
+  </div>
+</section>
+<style>
+  .cm-bp--{{ section.id }} { --cm-gold: #c9a45c; padding: {{ section.settings.mt_mobile | plus: 18 }}px 16px 8px; }
+  .cm-bp--{{ section.id }} .cm-bp__head { padding: 0 0 18px; display: flex; flex-direction: column; gap: 8px; }
+  .cm-bp--{{ section.id }} .cm-bp__eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6e6a65; }
+  .cm-bp--{{ section.id }} .cm-bp__title { margin: 0; font-family: var(--cm-display); font-weight: 700; font-size: 32px; line-height: 1.05; letter-spacing: -0.03em; color: var(--cm-ink); }
+  .cm-bp--{{ section.id }} .cm-bp__copy { margin: 0; font-size: 15px; line-height: 1.5; color: var(--cm-muted); max-width: 460px; }
+  .cm-bp--{{ section.id }} .cm-bp__list { display: flex; flex-direction: column; gap: 12px; }
+  .cm-bp--{{ section.id }} .cm-bp__card { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 10px; border: 1px solid #e4e1dc; background: #fff; color: var(--cm-ink); text-decoration: none; transition: border-color .15s ease; }
+  .cm-bp--{{ section.id }} .cm-bp__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .cm-bp--{{ section.id }} .cm-bp__name { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
+  .cm-bp--{{ section.id }} .cm-bp__label { font-size: 16px; font-weight: 700; }
+  .cm-bp--{{ section.id }} .cm-bp__badge { padding: 3px 8px; border-radius: 6px; background: var(--cm-black); color: #fff; font-size: 10.5px; font-weight: 700; }
+  .cm-bp--{{ section.id }} .cm-bp__price { font-family: var(--cm-display); font-weight: 700; font-size: 28px; line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
+  .cm-bp--{{ section.id }} .cm-bp__pieces { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .cm-bp--{{ section.id }} .cm-bp__piece { position: relative; aspect-ratio: 1; border-radius: 6px; background: #f9f8f5; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .cm-bp--{{ section.id }} .cm-bp__piece img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  .cm-bp--{{ section.id }} .cm-bp__piece--plus { background: transparent; border: 1.5px dashed #d2cec8; font-size: 22px; font-weight: 500; color: #9d968c; }
+  .cm-bp--{{ section.id }} .cm-bp__bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .cm-bp--{{ section.id }} .cm-bp__per { font-size: 13px; color: var(--cm-muted); }
+  .cm-bp--{{ section.id }} .cm-bp__go { width: 28px; height: 28px; border-radius: 999px; background: var(--cm-black); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  /* Top-Deal */
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured { background: #161616; border-color: #161616; color: #fff; }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured .cm-bp__badge { background: transparent; color: var(--cm-gold); border: 1px solid var(--cm-gold); text-transform: uppercase; letter-spacing: .1em; font-size: 9.5px; }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured .cm-bp__per { color: var(--cm-gold); }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured .cm-bp__go { background: var(--cm-gold); color: #161616; }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured .cm-bp__piece { background: #f9f8f5; }
+  /* Zahlenfelder im Glas-Look der Rabatt-Badges */
+  .cm-bp--{{ section.id }} .cm-bp__slot {
+    background: linear-gradient(145deg, rgba(255,255,255,.95) 0%, rgba(255,255,255,.35) 38%, rgba(255,255,255,0) 60%), #f5f3ef;
+    border: 1px solid rgba(0,0,0,.07);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(0,0,0,.035), 0 4px 12px -6px rgba(20,20,20,.18);
+  }
+  .cm-bp--{{ section.id }} .cm-bp__slot::before {
+    content: ""; position: absolute; top: -60%; left: -30%; width: 60%; height: 220%;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.55), rgba(255,255,255,0));
+    transform: rotate(20deg); pointer-events: none;
+  }
+  .cm-bp--{{ section.id }} .cm-bp__slot span { position: relative; font-family: var(--cm-display); font-weight: 700; font-size: 21px; letter-spacing: -0.02em; color: #333; }
+  /* Karten mit mehr Präsenz: warme graue Fläche statt dünnem Rahmen */
+  .cm-bp--{{ section.id }} .cm-bp__card:not(.is-featured) { background: #ebe8e4; border-color: #ebe8e4; }
+  /* Schwarzer Rand nur als Klick-Bestätigung (Antippen), am Handy kein "hängenbleibender" Hover */
+  .cm-bp--{{ section.id }} .cm-bp__card:not(.is-featured):active { border-color: var(--cm-ink); }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured:active { border-color: var(--cm-gold); }
+  .cm-bp--{{ section.id }} .cm-bp__card { -webkit-tap-highlight-color: transparent; }
+  .cm-bp--{{ section.id }} .cm-bp__card:focus { outline: none; }
+  .cm-bp--{{ section.id }} .cm-bp__card:focus-visible { outline: 2px solid var(--cm-ink); outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) {
+    .cm-bp--{{ section.id }} .cm-bp__card:not(.is-featured):hover { border-color: var(--cm-ink); }
+  }
+  .cm-bp--{{ section.id }} .cm-bp__card:not(.is-featured) .cm-bp__piece--plus { border-color: #b9b3aa; color: #6e6a65; }
+  .cm-bp--{{ section.id }} .cm-bp__card { padding: 18px 18px; box-shadow: 0 10px 24px -18px rgba(20,20,20,.35); }
+  .cm-bp--{{ section.id }} .cm-bp__label { font-size: 17px; }
+  .cm-bp--{{ section.id }} .cm-bp__card:not(.is-featured) .cm-bp__per { color: #333; font-weight: 500; }
+  /* Kopf deutlicher */
+  .cm-bp--{{ section.id }} .cm-bp__eyebrow { color: #333; font-size: 13px; letter-spacing: .1em; }
+  .cm-bp--{{ section.id }} .cm-bp__title { font-size: 38px; }
+  .cm-bp--{{ section.id }} .cm-bp__copy { color: #333; font-size: 16px; }
+  .cm-bp--{{ section.id }} .cm-bp__price { font-size: 32px; }
+
+  /* ===== Kopf-Varianten (Einstellung oder ?bh=classic|center|gold|marker|badge) ===== */
+  .cm-bp--{{ section.id }} .cm-bp__hl { display: inline; }
+  /* center: mittig, Eyebrow mit goldenen Linien */
+  .cm-bp--{{ section.id }} [data-head^="center"] { align-items: center; text-align: center; }
+  .cm-bp--{{ section.id }} [data-head^="center"] .cm-bp__eyebrow { display: inline-flex; align-items: center; gap: 10px; color: #a8853f; }
+  .cm-bp--{{ section.id }} [data-head^="center"] .cm-bp__eyebrow::before, .cm-bp--{{ section.id }} [data-head^="center"] .cm-bp__eyebrow::after { content: ""; width: 26px; height: 1px; background: #c9a45c; }
+  .cm-bp--{{ section.id }} [data-head^="center"] .cm-bp__copy { margin: 0 auto; max-width: 330px; }
+  /* center2: Raute-Ornamente statt Linien, Eyebrow dunkel */
+  .cm-bp--{{ section.id }} [data-head="center2"] .cm-bp__eyebrow { color: #333; }
+  .cm-bp--{{ section.id }} [data-head="center2"] .cm-bp__eyebrow::before, .cm-bp--{{ section.id }} [data-head="center2"] .cm-bp__eyebrow::after { content: "◆"; width: auto; height: auto; background: none; color: #c9a45c; font-size: 8px; }
+  /* center3: kurzer goldener Strich unter der Überschrift */
+  .cm-bp--{{ section.id }} [data-head="center3"] .cm-bp__eyebrow::before, .cm-bp--{{ section.id }} [data-head="center3"] .cm-bp__eyebrow::after { display: none; }
+  .cm-bp--{{ section.id }} [data-head="center3"] .cm-bp__eyebrow { color: #6e6a65; }
+  .cm-bp--{{ section.id }} [data-head="center3"] .cm-bp__title::after { content: ""; display: block; width: 44px; height: 2px; margin: 14px auto 4px; background: linear-gradient(90deg, #a8853f, #e6cf93, #a8853f); }
+  /* center4: Eyebrow in feiner goldener Outline-Pill */
+  .cm-bp--{{ section.id }} [data-head="center4"] .cm-bp__eyebrow { padding: 6px 14px; border: 1px solid #c9a45c; border-radius: 999px; font-size: 11px; }
+  .cm-bp--{{ section.id }} [data-head="center4"] .cm-bp__eyebrow::before, .cm-bp--{{ section.id }} [data-head="center4"] .cm-bp__eyebrow::after { display: none; }
+  /* center5: zweizeilig, "Stack." groß in Gold */
+  .cm-bp--{{ section.id }} [data-head="center5"] .cm-bp__title { font-size: 26px; line-height: 1.1; color: #333; }
+  .cm-bp--{{ section.id }} [data-head="center5"] .cm-bp__hl { display: block; font-size: 56px; line-height: 1; letter-spacing: -0.04em; margin-top: 2px; }
+  .cm-bp--{{ section.id }} [data-head="center5"] .cm-bp__eyebrow::before, .cm-bp--{{ section.id }} [data-head="center5"] .cm-bp__eyebrow::after { width: 40px; }
+  @media (min-width: 750px) {
+    .cm-bp--{{ section.id }} [data-head="center5"] .cm-bp__title { font-size: 34px; }
+    .cm-bp--{{ section.id }} [data-head="center5"] .cm-bp__hl { font-size: 84px; }
+  }
+  /* ===== left*: linksbündig, verspielte Größen ===== */
+  .cm-bp--{{ section.id }} [data-head^="left"] { padding-left: 10px !important; padding-right: 10px; }
+  .cm-bp--{{ section.id }} [data-head^="left"] .cm-bp__eyebrow { color: #6e6a65; }
+  .cm-bp--{{ section.id }} [data-head^="left"] .cm-bp__title { font-size: 25px; line-height: 1.1; color: #333; }
+  .cm-bp--{{ section.id }} [data-head^="left"] .cm-bp__hl {
+    display: block; font-size: 62px; line-height: .95; letter-spacing: -0.045em; margin-top: 2px;
+    background: linear-gradient(100deg, #9c7a3c 0%, #c9a45c 22%, #e6cf93 42%, #c9a45c 58%, #a8853f 78%, #d9bd7c 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .cm-bp--{{ section.id }} [data-head^="left"] .cm-bp__copy { max-width: 330px; }
+  /* left1: goldener Strich unter "Stack." */
+  .cm-bp--{{ section.id }} [data-head="left1"] .cm-bp__title::after { content: ""; display: block; width: 44px; height: 2px; margin: 14px 0 4px; background: linear-gradient(90deg, #a8853f, #e6cf93, #a8853f); }
+  /* left2: versetzt – "Stack." rückt nach rechts ein, Eyebrow mit Goldlinie davor */
+  .cm-bp--{{ section.id }} [data-head="left2"] .cm-bp__eyebrow { display: inline-flex; align-items: center; gap: 10px; }
+  .cm-bp--{{ section.id }} [data-head="left2"] .cm-bp__eyebrow::before { content: ""; width: 26px; height: 1px; background: #c9a45c; }
+  .cm-bp--{{ section.id }} [data-head="left2"] .cm-bp__hl { margin-left: 36px; }
+  .cm-bp--{{ section.id }} [data-head="left2"] .cm-bp__copy { margin-left: 36px; max-width: 300px; }
+  /* left3: feine goldene Linie links über den ganzen Kopf */
+  .cm-bp--{{ section.id }} [data-head="left3"] { border-left: 2px solid transparent; border-image: linear-gradient(180deg, #e6cf93, #a8853f) 1; padding-left: 16px !important; margin-left: 8px; }
+  /* left4: "Bau dir deinen" klein über "Stack.", Text daneben kursiv-leicht */
+  .cm-bp--{{ section.id }} [data-head="left4"] .cm-bp__eyebrow { display: none; }
+  .cm-bp--{{ section.id }} [data-head="left4"] .cm-bp__title { font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #6e6a65; font-family: var(--cm-body); }
+  .cm-bp--{{ section.id }} [data-head="left4"] .cm-bp__hl { font-family: var(--cm-display); font-weight: 700; text-transform: none; font-size: 72px; letter-spacing: -0.05em; margin-top: 4px; }
+  .cm-bp--{{ section.id }} [data-head="left4"] .cm-bp__copy { padding-left: 12px; border-left: 2px solid #c9a45c; }
+  @media (min-width: 750px) {
+    .cm-bp--{{ section.id }} [data-head^="left"] .cm-bp__title { font-size: 34px; }
+    .cm-bp--{{ section.id }} [data-head^="left"] .cm-bp__hl { font-size: 92px; }
+    .cm-bp--{{ section.id }} [data-head="left4"] .cm-bp__title { font-size: 17px; }
+    .cm-bp--{{ section.id }} [data-head="left4"] .cm-bp__hl { font-size: 104px; }
+  }
+  /* gold: letztes Wort im Gold-Verlauf wie "Trending now" */
+  .cm-bp--{{ section.id }} [data-head="classic"] .cm-bp__hl, .cm-bp--{{ section.id }} [data-head="gold"] .cm-bp__hl, .cm-bp--{{ section.id }} [data-head^="center"] .cm-bp__hl {
+    background: linear-gradient(100deg, #9c7a3c 0%, #c9a45c 22%, #e6cf93 42%, #c9a45c 58%, #a8853f 78%, #d9bd7c 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .cm-bp--{{ section.id }} [data-head="gold"] .cm-bp__eyebrow { color: #a8853f; }
+  /* marker: goldene Textmarker-Unterlegung unter dem letzten Wort */
+  .cm-bp--{{ section.id }} [data-head="marker"] .cm-bp__hl { background: linear-gradient(transparent 62%, rgba(201,164,92,.38) 62%, rgba(201,164,92,.38) 92%, transparent 92%); padding: 0 2px; }
+  .cm-bp--{{ section.id }} [data-head="marker"] .cm-bp__copy { padding-left: 12px; border-left: 2px solid #c9a45c; }
+  /* badge: Eyebrow als schwarz-glänzende Pill, Text mit feiner Linie links */
+  .cm-bp--{{ section.id }} [data-head="badge"] .cm-bp__eyebrow {
+    align-self: flex-start; padding: 6px 10px; border-radius: 6px; color: #c9a45c; font-size: 10.5px; letter-spacing: .14em;
+    background: linear-gradient(155deg, #3a3a3a 0%, #0d0d0d 45%, #000 75%, #1a1a1a 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .cm-bp--{{ section.id }} [data-head="badge"] .cm-bp__title { font-size: 40px; letter-spacing: -0.04em; }
+  .cm-bp--{{ section.id }} [data-head="badge"] .cm-bp__copy { color: #6e6a65; font-size: 15px; }
+  @media (min-width: 750px) {
+    .cm-bp--{{ section.id }} [data-head^="center"] { display: flex !important; flex-direction: column; }
+    .cm-bp--{{ section.id }} [data-head^="center"] .cm-bp__copy { max-width: 520px; padding-bottom: 0; }
+    .cm-bp--{{ section.id }} [data-head="badge"] .cm-bp__eyebrow { justify-self: start; }
+  }
+  /* ===== Karten-Hintergründe (Mix + 3 Pieces). Testen per ?bp=silver|pearl|champagne|mist ===== */
+  .cm-bp--{{ section.id }} .cm-bp__card:not(.is-featured) { position: relative; overflow: hidden; isolation: isolate; }
+  .cm-bp--{{ section.id }}[data-bg="silver"] .cm-bp__card:not(.is-featured) {
+    background: linear-gradient(135deg, #fbfbfa 0%, #ecebe8 55%, #e2e0dc 100%) !important; border-color: #e6e4e0 !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 10px 24px -18px rgba(20,20,20,.35) !important;
+  }
+  .cm-bp--{{ section.id }}[data-bg="silver"] .cm-bp__card:not(.is-featured)::after {
+    content: ""; position: absolute; z-index: -1; top: -40%; left: -20%; width: 45%; height: 180%;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.55), rgba(255,255,255,0)); transform: rotate(18deg); pointer-events: none;
+  }
+  .cm-bp--{{ section.id }}[data-bg="pearl"] .cm-bp__card:not(.is-featured) {
+    background: radial-gradient(120% 140% at 0% 0%, #ffffff 0%, #f3f2ef 45%, #e7e5e1 100%) !important; border-color: #ebe9e5 !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.7), 0 12px 26px -20px rgba(20,20,20,.4) !important;
+  }
+  .cm-bp--{{ section.id }}[data-bg="champagne"] .cm-bp__card:not(.is-featured) {
+    background: linear-gradient(140deg, #fdfcf9 0%, #f3efe7 50%, #e9e2d5 100%) !important; border-color: #ece6da !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 10px 24px -18px rgba(120,95,50,.35) !important;
+  }
+  .cm-bp--{{ section.id }}[data-bg="mist"] .cm-bp__card:not(.is-featured) {
+    background: linear-gradient(180deg, #ffffff 0%, #f1f1ef 60%, #e8e8e5 100%) !important; border-color: #e4e4e1 !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 14px 30px -22px rgba(20,20,20,.45) !important;
+  }
+  /* 5 für 79: Schwarz-Glanz */
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured {
+    position: relative; overflow: hidden; isolation: isolate;
+    background: linear-gradient(155deg, #303030 0%, #0d0d0d 38%, #000 70%, #151515 100%) !important;
+    border-color: rgba(201,164,92,.6) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 18px 36px -18px rgba(0,0,0,.65), 0 10px 30px -22px rgba(201,164,92,.5) !important;
+  }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured::after {
+    content: ""; position: absolute; z-index: -1; top: -60%; left: -25%; width: 55%; height: 220%;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.09), rgba(255,255,255,0)); transform: rotate(22deg); pointer-events: none;
+  }
+  /* Zahlenfelder auf Schwarz: dunkles Glas statt Braun */
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured .cm-bp__slot {
+    background: linear-gradient(145deg, #2b2b2b 0%, #141414 60%, #0b0b0b 100%) !important;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 4px 12px -6px rgba(0,0,0,.6) !important;
+  }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured .cm-bp__slot::before {
+    display: block; content: ""; position: absolute; top: -60%; left: -30%; width: 60%; height: 220%;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.10), rgba(255,255,255,0)); transform: rotate(20deg); pointer-events: none;
+  }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured .cm-bp__slot span { color: var(--cm-gold); }
+  .cm-bp--{{ section.id }} .cm-bp__card.is-featured .cm-bp__piece--plus { border-color: #4a463f; color: #8a8378; }
+  @media (min-width: 750px) {
+    .cm-bp--{{ section.id }} { padding: {{ section.settings.mt | plus: 32 }}px var(--outer, 24px) 16px; }
+    .cm-bp--{{ section.id }} .cm-bp__head { padding: 0 0 26px; display: grid; grid-template-columns: 1fr minmax(0, 440px); column-gap: 40px; row-gap: 8px; align-items: end; }
+    .cm-bp--{{ section.id }} .cm-bp__eyebrow { grid-column: 1; grid-row: 1; }
+    .cm-bp--{{ section.id }} .cm-bp__title { grid-column: 1; grid-row: 2; font-size: 58px; }
+    .cm-bp--{{ section.id }} .cm-bp__copy { grid-column: 2; grid-row: 2; padding-bottom: 8px; font-size: 17px; }
+    .cm-bp--{{ section.id }} .cm-bp__list { display: grid; grid-template-columns: repeat({{ section.blocks.size | at_least: 1 }}, minmax(0, 1fr)); gap: 18px; }
+    .cm-bp--{{ section.id }} .cm-bp__card { padding: 22px; gap: 16px; }
+    .cm-bp--{{ section.id }} .cm-bp__price { font-size: 34px; }
+  }
+</style>
+<script>(function(){try{var q=new URLSearchParams(location.search);var v=q.get('bp');if(v)document.querySelectorAll('.cm-bp').forEach(function(n){n.dataset.bg=v;});var h=q.get('bh');if(h)document.querySelectorAll('.cm-bp__head').forEach(function(n){n.dataset.head=h;});}catch(e){}})();</script>
+{%- elsif section.settings.layout == 'tiles' -%}
+
+{%- assign cm_src = collections[section.settings.collection] -%}
+<section class="cm-bt cm-bt--{{ section.id }}" aria-labelledby="CmBtTitle-{{ section.id }}">
+  <div class="cm-bt__head">
+    {%- if section.settings.eyebrow != blank -%}<span class="cm-bt__eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+    <h2 class="cm-bt__title" id="CmBtTitle-{{ section.id }}">{{ section.settings.heading }}</h2>
+    {%- if section.settings.text != blank -%}<p class="cm-bt__copy">{{ section.settings.text }}</p>{%- endif -%}
+  </div>
+  <div class="cm-bt__track">
+    {%- for block in section.blocks -%}
+      {%- assign off = forloop.index0 | times: 3 -%}
+      <a class="cm-bt__tile{% if block.settings.featured %} is-featured{% endif %}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
+        <div class="cm-bt__media">
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', class: 'cm-bt__photo', widths: '400, 600, 900', sizes: '(min-width: 750px) 33vw, 78vw' }}
+          {%- elsif cm_src != blank -%}
+            <div class="cm-bt__collage">
+              {%- for product in cm_src.products offset: off limit: 3 -%}
+                {%- if product.featured_image -%}
+                  <span class="cm-bt__pic cm-bt__pic--{{ forloop.index }}">{{ product.featured_image | image_url: width: 500 | image_tag: loading: 'lazy', alt: product.title, widths: '250, 500', sizes: '(min-width: 750px) 20vw, 45vw' }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          {%- if block.settings.badge != blank -%}<span class="cm-bt__badge">{% if block.settings.featured %}★ {% endif %}{{ block.settings.badge }}</span>{%- endif -%}
+        </div>
+        <div class="cm-bt__info">
+          <div class="cm-bt__row">
+            <span class="cm-bt__label">{{ block.settings.label }}</span>
+            <span class="cm-bt__price">{{ block.settings.price }}</span>
+          </div>
+          <div class="cm-bt__row cm-bt__row--sub">
+            <span class="cm-bt__per">{{ block.settings.per }}</span>
+            <span class="cm-bt__go" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+<style>
+  .cm-bt--{{ section.id }} { --cm-gold: #c9a45c; padding: {{ section.settings.mt_mobile | plus: 18 }}px 0 8px; }
+  .cm-bt--{{ section.id }} .cm-bt__head { padding: 0 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .cm-bt--{{ section.id }} .cm-bt__eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6e6a65; }
+  .cm-bt--{{ section.id }} .cm-bt__title { margin: 0; font-family: var(--cm-display); font-weight: 700; font-size: 32px; line-height: 1.05; letter-spacing: -0.03em; color: var(--cm-ink); }
+  .cm-bt--{{ section.id }} .cm-bt__copy { margin: 0; font-size: 15px; line-height: 1.5; color: var(--cm-muted); max-width: 460px; }
+  .cm-bt--{{ section.id }} .cm-bt__track {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 76%; gap: 12px;
+    overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 16px 6px; scroll-padding: 0 16px;
+    scrollbar-width: none;
+  }
+  .cm-bt--{{ section.id }} .cm-bt__track::-webkit-scrollbar { display: none; }
+  .cm-bt--{{ section.id }} .cm-bt__tile { scroll-snap-align: start; display: flex; flex-direction: column; text-decoration: none; color: var(--cm-ink); border-radius: 10px; overflow: hidden; background: #f9f8f5; }
+  .cm-bt--{{ section.id }} .cm-bt__media { position: relative; aspect-ratio: 4 / 4.2; background: #f9f8f5; overflow: hidden; }
+  .cm-bt--{{ section.id }} .cm-bt__photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cm-bt--{{ section.id }} .cm-bt__collage { position: absolute; inset: 0; display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #fff; }
+  .cm-bt--{{ section.id }} .cm-bt__pic { position: relative; background: #f9f8f5; overflow: hidden; }
+  .cm-bt--{{ section.id }} .cm-bt__pic--1 { grid-row: 1 / span 2; }
+  .cm-bt--{{ section.id }} .cm-bt__pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; transition: transform .4s ease; }
+  .cm-bt--{{ section.id }} .cm-bt__tile:hover .cm-bt__pic img { transform: scale(1.04); }
+  .cm-bt--{{ section.id }} .cm-bt__badge {
+    position: absolute; top: 10px; left: 10px; z-index: 1; padding: 5px 9px; border-radius: 6px;
+    background: #fff; color: var(--cm-ink); font-size: 11px; font-weight: 700; letter-spacing: .02em;
+  }
+  .cm-bt--{{ section.id }} .cm-bt__info { padding: 14px 14px 14px; display: flex; flex-direction: column; gap: 4px; background: #fff; border: 1px solid #ebe8e4; border-top: 0; border-radius: 0 0 10px 10px; flex: 1; }
+  .cm-bt--{{ section.id }} .cm-bt__row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .cm-bt--{{ section.id }} .cm-bt__row--sub { align-items: center; }
+  .cm-bt--{{ section.id }} .cm-bt__label { font-size: 16px; font-weight: 700; }
+  .cm-bt--{{ section.id }} .cm-bt__price { font-family: var(--cm-display); font-weight: 700; font-size: 26px; line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
+  .cm-bt--{{ section.id }} .cm-bt__per { font-size: 13px; color: var(--cm-muted); }
+  .cm-bt--{{ section.id }} .cm-bt__go { width: 28px; height: 28px; border-radius: 999px; background: var(--cm-black); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  /* Top-Deal: dunkle Infozeile mit Gold */
+  .cm-bt--{{ section.id }} .cm-bt__tile.is-featured .cm-bt__info { background: #161616; border-color: #161616; color: #fff; }
+  .cm-bt--{{ section.id }} .cm-bt__tile.is-featured .cm-bt__per { color: var(--cm-gold); }
+  .cm-bt--{{ section.id }} .cm-bt__tile.is-featured .cm-bt__go { background: var(--cm-gold); color: #161616; }
+  .cm-bt--{{ section.id }} .cm-bt__tile.is-featured .cm-bt__badge { background: #161616; color: var(--cm-gold); text-transform: uppercase; letter-spacing: .1em; font-size: 10px; }
+  @media (min-width: 750px) {
+    .cm-bt--{{ section.id }} { padding: {{ section.settings.mt | plus: 32 }}px var(--outer, 24px) 16px; }
+    .cm-bt--{{ section.id }} .cm-bt__head { padding: 0 0 26px; display: grid; grid-template-columns: 1fr minmax(0, 440px); column-gap: 40px; row-gap: 8px; align-items: end; }
+    .cm-bt--{{ section.id }} .cm-bt__eyebrow { grid-column: 1; grid-row: 1; }
+    .cm-bt--{{ section.id }} .cm-bt__title { grid-column: 1; grid-row: 2; }
+    .cm-bt--{{ section.id }} .cm-bt__copy { grid-column: 2; grid-row: 2; padding-bottom: 6px; }
+    .cm-bt--{{ section.id }} .cm-bt__title { font-size: 48px; }
+    .cm-bt--{{ section.id }} .cm-bt__copy { font-size: 16px; }
+    .cm-bt--{{ section.id }} .cm-bt__track { grid-auto-flow: row; grid-template-columns: repeat({{ section.blocks.size | at_least: 1 }}, minmax(0, 1fr)); overflow: visible; padding: 0; gap: 18px; }
+    .cm-bt--{{ section.id }} .cm-bt__info { padding: 18px 18px; }
+    .cm-bt--{{ section.id }} .cm-bt__price { font-size: 32px; }
+  }
+</style>
+{%- else -%}
+<section class="cm-bun cm-bun--{{ section.id }}{% if section.settings.dark %} cm-bun--dark{% endif %}" aria-labelledby="CmBunTitle-{{ section.id }}">
+  <div class="cm-bun__inner">
+    <div class="cm-bun__text">
+      {%- if section.settings.eyebrow != blank -%}<span class="cm-bun__eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+      <h2 class="cm-bun__title" id="CmBunTitle-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<p class="cm-bun__copy">{{ section.settings.text }}</p>{%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a class="cm-bun__btn" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div>
+    <div class="cm-bun__cards">
+      {%- for block in section.blocks -%}
+        <a class="cm-bun__card{% if block.settings.highlight %} is-highlight{% endif %}{% if block.settings.featured %} is-featured{% endif %}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.badge != blank -%}<span class="cm-bun__badge">{% if block.settings.featured %}<svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7.3L12 17.8 5.8 21.5l1.6-7.3L2 9.5l7.1-.6z"/></svg>{% endif %}{{ block.settings.badge }}</span>{%- endif -%}
+          <span class="cm-bun__label">{{ block.settings.label }}</span>
+          <span class="cm-bun__price">{{ block.settings.price }}</span>
+          <span class="cm-bun__per">{{ block.settings.per }}</span>
+          <span class="cm-bun__go" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+<style>
+  .cm-bun--{{ section.id }} { margin: {{ section.settings.mt_mobile }}px 16px 0; border-radius: 26px; background: #f0ede9; color: var(--cm-ink); overflow: hidden; }
+  .cm-bun--{{ section.id }} .cm-bun__inner { padding: 30px 0 24px; display: flex; flex-direction: column; gap: 24px; }
+  .cm-bun--{{ section.id }} .cm-bun__text { padding: 0 24px; display: flex; flex-direction: column; gap: 12px; }
+  .cm-bun--{{ section.id }} .cm-bun__eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6b6b6b; }
+  .cm-bun--{{ section.id }} .cm-bun__title { margin: 0; font-family: var(--cm-display); font-weight: 700; font-size: 36px; line-height: 1.05; letter-spacing: -0.03em; color: inherit; }
+  .cm-bun--{{ section.id }} .cm-bun__copy { margin: 0; font-size: 15px; line-height: 1.5; color: var(--cm-muted); max-width: 440px; }
+  .cm-bun--{{ section.id }} .cm-bun__btn {
+    align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; height: 50px; padding: 0 26px;
+    border-radius: 999px; background: var(--cm-black); color: #fff; text-decoration: none; font-weight: 700; font-size: 15px;
+  }
+  /* Handy: Bundles untereinander als breite Karten */
+  .cm-bun--{{ section.id }} .cm-bun__cards { display: flex; flex-direction: column; gap: 14px; padding: 8px 18px 4px; }
+  .cm-bun--{{ section.id }} .cm-bun__card {
+    position: relative; box-sizing: border-box; background: #fff; border-radius: 20px; border: 2px solid #fff;
+    padding: 18px 16px 18px 20px; text-decoration: none; color: var(--cm-ink);
+    display: grid; grid-template-columns: 1fr auto auto; grid-template-areas: "label price go" "per price go";
+    align-items: center; column-gap: 14px; row-gap: 2px;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .cm-bun--{{ section.id }} .cm-bun__card:hover, .cm-bun--{{ section.id }} .cm-bun__card.is-highlight { border-color: var(--cm-ink); }
+  .cm-bun--{{ section.id }} .cm-bun__badge {
+    position: absolute; top: 0; left: 18px; transform: translateY(-50%);
+    background: var(--cm-black); color: #fff; border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 700; white-space: nowrap;
+  }
+  .cm-bun--{{ section.id }} .cm-bun__label { grid-area: label; font-size: 16px; font-weight: 600; color: var(--cm-ink); }
+  .cm-bun--{{ section.id }} .cm-bun__per { grid-area: per; font-size: 13px; font-weight: 500; color: var(--cm-muted); }
+  .cm-bun--{{ section.id }} .cm-bun__price { grid-area: price; font-family: var(--cm-display); font-weight: 700; font-size: 26px; line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
+  .cm-bun--{{ section.id }} .cm-bun__go {
+    grid-area: go; width: 34px; height: 34px; border-radius: 999px; background: var(--cm-black); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  /* Top-Angebot: VIP-Look, Schwarz mit Gold */
+  .cm-bun--{{ section.id }} { --cm-gold: #c9a45c; }
+  .cm-bun--{{ section.id }} .cm-bun__card.is-featured {
+    background: #161616; border: 1px solid var(--cm-gold); color: #fff;
+    padding-top: 24px; padding-bottom: 24px; box-shadow: 0 12px 30px -14px rgba(0,0,0,.55);
+  }
+  .cm-bun--{{ section.id }} .cm-bun__card.is-featured:hover { border-color: var(--cm-gold); }
+  .cm-bun--{{ section.id }} .cm-bun__card.is-featured .cm-bun__label { color: #fff; }
+  .cm-bun--{{ section.id }} .cm-bun__card.is-featured .cm-bun__per { color: var(--cm-gold); }
+  .cm-bun--{{ section.id }} .cm-bun__card.is-featured .cm-bun__price { color: #fff; }
+  .cm-bun--{{ section.id }} .cm-bun__card.is-featured .cm-bun__go { background: var(--cm-gold); color: #161616; }
+  .cm-bun--{{ section.id }} .cm-bun__card.is-featured .cm-bun__badge {
+    background: #161616; color: var(--cm-gold); border: 1px solid var(--cm-gold);
+    text-transform: uppercase; letter-spacing: .12em; font-size: 10px; padding: 4px 10px 4px 9px;
+  }
+  .cm-bun--{{ section.id }} .cm-bun__badge { display: inline-flex; align-items: center; gap: 4px; }
+  /* Dunkle Variante: Schwarz mit Gold */
+  .cm-bun--{{ section.id }}.cm-bun--dark {
+    background: radial-gradient(120% 80% at 50% 0%, #2a2a2a 0%, #141414 70%) !important; color: #fff;
+  }
+  .cm-bun--{{ section.id }}.cm-bun--dark .cm-bun__eyebrow { color: var(--cm-gold); }
+  .cm-bun--{{ section.id }}.cm-bun--dark .cm-bun__copy { color: #bdbdbd; }
+  .cm-bun--{{ section.id }}.cm-bun--dark .cm-bun__card.is-featured {
+    background: linear-gradient(160deg, #2b2620 0%, #1a1815 100%);
+    box-shadow: 0 0 0 1px var(--cm-gold), 0 14px 34px -12px rgba(201,164,92,.35);
+  }
+  .cm-bun--{{ section.id }}.cm-bun--dark .cm-bun__card.is-highlight:not(.is-featured) { border-color: #fff; }
+  .cm-bun--{{ section.id }}.cm-bun--dark .cm-bun__card:not(.is-featured) .cm-bun__badge { background: var(--cm-black); color: #fff; border: 1px solid #fff; }
+  @media (min-width: 750px) {
+    .cm-bun--{{ section.id }} { margin: {{ section.settings.mt }}px var(--outer, 24px) 0; border-radius: 32px; }
+    .cm-bun--{{ section.id }} .cm-bun__inner { display: grid; grid-template-columns: minmax(300px, 1fr) minmax(0, 1.4fr); align-items: center; gap: 48px; padding: 56px 48px; }
+    .cm-bun--{{ section.id }} .cm-bun__text { padding: 0; gap: 18px; }
+    .cm-bun--{{ section.id }} .cm-bun__title { font-size: 52px; }
+    .cm-bun--{{ section.id }} .cm-bun__copy { font-size: 17px; }
+    .cm-bun--{{ section.id }} .cm-bun__cards { display: grid; grid-template-columns: repeat({{ section.blocks.size | at_least: 1 }}, minmax(0, 1fr)); gap: 16px; padding: 14px 0 0; }
+    .cm-bun--{{ section.id }} .cm-bun__card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 28px 22px 22px; }
+    .cm-bun--{{ section.id }} .cm-bun__badge { left: auto; right: 14px; }
+    .cm-bun--{{ section.id }} .cm-bun__label { font-size: 14px; font-weight: 600; color: var(--cm-muted); }
+    .cm-bun--{{ section.id }} .cm-bun__per { font-size: 13.5px; font-weight: 700; color: var(--cm-ink); }
+    .cm-bun--{{ section.id }} .cm-bun__go { margin-top: 10px; }
+    .cm-bun--{{ section.id }} .cm-bun__card.is-featured { transform: translateY(-8px); padding-top: 32px; padding-bottom: 28px; }
+    .cm-bun--{{ section.id }} .cm-bun__card.is-featured:hover { transform: translateY(-11px); }
+    .cm-bun--{{ section.id }} .cm-bun__card.is-featured .cm-bun__per { color: #d8d3cb; }
+    .cm-bun--{{ section.id }} .cm-bun__card:hover { transform: translateY(-3px); }
+    .cm-bun--{{ section.id }} .cm-bun__price { font-size: 36px; }
+  }
+</style>
+{%- endif -%}
+{% schema %}
+{
+  "name": "Ciamore Bundles",
+  "settings": [
+    { "type": "select", "id": "layout", "label": "Darstellung", "options": [{ "value": "list", "label": "Liste im Kasten" }, { "value": "tiles", "label": "Bild-Kacheln" }, { "value": "pieces", "label": "Teile-Reihe" }, { "value": "slots", "label": "Nummerierte Felder" }], "default": "list" },
+    { "type": "collection", "id": "collection", "label": "Kollektion für die Kachel-Bilder" },
+    { "type": "select", "id": "head_style", "label": "Stil der Überschrift", "options": [{ "value": "classic", "label": "Klassisch" }, { "value": "center", "label": "Mittig mit Gold" }, { "value": "center2", "label": "Mittig, Rauten" }, { "value": "center3", "label": "Mittig, Gold-Strich" }, { "value": "center4", "label": "Mittig, Gold-Pill" }, { "value": "center5", "label": "Mittig, Stack groß" }, { "value": "left1", "label": "Links, Stack groß + Strich" }, { "value": "left2", "label": "Links, versetzt" }, { "value": "left3", "label": "Links, Goldlinie" }, { "value": "left4", "label": "Links, Stack XXL" }, { "value": "gold", "label": "Gold-Wort" }, { "value": "marker", "label": "Textmarker" }, { "value": "badge", "label": "Schwarz-Badge" }], "default": "classic" },
+    { "type": "select", "id": "card_bg", "label": "Hintergrund Mix/3 Pieces", "options": [{ "value": "silver", "label": "Silber-Verlauf" }, { "value": "pearl", "label": "Perlmutt" }, { "value": "champagne", "label": "Champagner" }, { "value": "mist", "label": "Nebel" }], "default": "silver" },
+    { "type": "checkbox", "id": "dark", "label": "Dunkler Hintergrund (Schwarz/Gold)", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Kleine Zeile", "default": "Bundles" },
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Bau dir deinen Stack." },
+    { "type": "textarea", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button-Text", "default": "Set starten" },
+    { "type": "url", "id": "button_link", "label": "Button-Link" },
+    { "type": "range", "id": "mt", "label": "Abstand oben (Desktop)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "mt_mobile", "label": "Abstand oben (Handy)", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    { "type": "bundle", "name": "Bundle", "limit": 4, "settings": [
+      { "type": "text", "id": "label", "label": "Name", "default": "Bundle" },
+      { "type": "text", "id": "price", "label": "Preis groß", "default": "79 €" },
+      { "type": "text", "id": "per", "label": "Zeile darunter", "default": "15,80 € pro Piece" },
+      { "type": "text", "id": "badge", "label": "Badge (optional)" },
+      { "type": "image_picker", "id": "image", "label": "Bild (optional, sonst Produkt-Collage)" },
+      { "type": "range", "id": "pieces", "label": "Anzahl Teile (Teile-Reihe)", "min": 1, "max": 5, "step": 1, "default": 3 },
+      { "type": "checkbox", "id": "plus", "label": "Plus-Feld anhängen (z. B. ab 4)", "default": false },
+      { "type": "url", "id": "link", "label": "Link" },
+      { "type": "checkbox", "id": "highlight", "label": "Hervorheben (Rahmen)", "default": false },
+      { "type": "checkbox", "id": "featured", "label": "Top-Angebot (dunkle Karte)", "default": false }
+    ] }
+  ],
+  "presets": [{ "name": "Ciamore Bundles" }]
+}
+{% endschema %}

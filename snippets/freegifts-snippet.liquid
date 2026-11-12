@@ -1,0 +1,196 @@
+<style>
+  .bogos-bundle-page-container .bogos-bp-steps-bar, 
+  .bogos-bundle-page-container .bogos-bp-step-bar-single {
+    display: none !important;
+  }
+
+
+  /* MEHR PRODUKTE ANSEHEN BUTTON */
+  .bogos-bp-product-load-more-container {
+    margin-top: 20px !important;
+    margin-bottom: -5px !important;
+  }
+  /* BIS HIER HIN */
+
+
+  /* PROGRESS BALKEN MIT 50% OFF IN DER MITTE (UNTEN AUF DER BUNDLE PAGE) */
+  .bogos-bp-widget-progress-container {
+    display: none !important;
+  }
+  /* BIS HIER HIN */
+
+
+  /* IM CONTAINER UNTEN "STEP 1" WEGMACHEN */
+  .bogos-step-items-header-title {
+    display: none !important;
+  }
+  /* BIS HIER HIN */
+
+
+  /* "WÄHLE MINDESTENS 4 PRODUKTE" TEXT WEGMACHEN */
+  .bogos-step-items-product-require {
+    display: none !important;
+  }
+  /* BIS HIER HIN */
+
+
+  /* FEATURE BADGES */
+  .ciamore-feature-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    margin-bottom: 10px;
+    justify-content: center;
+  }
+
+  .ciamore-feature-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #FBF7F0;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .ciamore-feature-badges-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .ciamore-feature-badges-center {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  /* BIS HIER HIN */
+
+
+/*HINTERGRUND BEI ZAHL IM WARENKORB / WAR DAVOR BLAU*/
+.bogos-bp-widget-count {
+  background-color: #000000 !important;
+}
+  /* BIS HIER HIN */
+
+
+/* "Dein Dankeschön-Deal 🎁" TEXT AUF DER DANKESSEITE"*/ 
+.bogos-ty-upsell h3 {
+  font-size: 16px !important;
+}
+  /* BIS HIER HIN */
+
+
+
+
+
+/*CUSTOM TEXTE UNTER DEM BUNDLE PREIS | WÄHLE MINDESTENS 4 PIECES UND SPARE 50% ETC.*/
+.bundle-50off .bogos-bp-widget-header::after {
+  content: 'Wähle mindestens 4 Pieces und spare 50%!';
+  display: block;
+  font-size: 13px;
+  color: #000000ff;
+  margin-top: 4px;
+  text-align: left;
+}
+
+.bundle-5for79 .bogos-bp-widget-header::after {
+  content: 'Wähle 5 Pieces und zahle nur 79€!';
+  display: block;
+  font-size: 13px;
+  color: #000000ff;
+  margin-top: 4px;
+  text-align: left;
+}
+
+.bundle-3for69 .bogos-bp-widget-header::after {
+  content: 'Wähle 3 Pieces und zahle nur 69€!';
+  display: block;
+  font-size: 13px;
+  color: #000000ff;
+  margin-top: 4px;
+  text-align: left;
+}
+/* BIS HIER HIN */
+
+
+</style>
+
+
+
+
+<script>
+  var path = window.location.pathname;
+  if (path.includes('28202')) {
+    document.body.classList.add('bundle-50off');
+  } else if (path.includes('28201')) {
+    document.body.classList.add('bundle-5for79');
+  } else if (path.includes('28353')) {
+    document.body.classList.add('bundle-3for69');
+  }
+</script>
+
+
+
+
+<script id="bogos_bundle_page_section" type="text/template">
+  {% raw %}
+    <div class="bogos-bundle-page-overlay"></div>
+    
+    <div class="bogos-bundle-page-container">
+      
+      <div class="bogos-bundle-page-banner {{ bogos_check_show_banner }}">
+        <img loading="lazy" class="bogos-bp-banner-img" src="{{ bogos_bundle_page_banner_img }}" alt="bogos-bundle-page-banner">
+      </div>
+    
+      <div class="bogos-bundle-page-header">
+        <div class="bogos-bp-header-title">
+          {{ bogos_bundle_page_title }}
+        </div>
+        <div class="bogos-bp-header-subtitle">
+          {{ bogos_bundle_page_subtitle }}
+        </div>
+
+        <!-- Ciamore Feature Badges -->
+        <div class="ciamore-feature-badges">
+          <div class="ciamore-feature-badges-row">
+            
+            <div class="ciamore-feature-badge">
+              <img src="https://cdn.shopify.com/s/files/1/0877/8157/2952/files/1_9d6a6793-a493-4884-81d7-007925406b1f_800x800.png?v=1777708321" style="width:14.5px; height:14.5px;" alt="Wasserfest">
+              <span>Wasserfest - Kein Abfärben</span>
+            </div>
+            
+            <div class="ciamore-feature-badge">
+              <img src="https://cdn.shopify.com/s/files/1/0877/8157/2952/files/2_61654a14-d98b-44eb-bac7-09cc9d152a3f_800x800.png?v=1777708321" style="width:16px; height:16px;" alt="Lifetime Care">
+              <span>Lifetime Care</span>
+            </div>
+            
+          </div>
+          
+          <div class="ciamore-feature-badges-center">
+            <div class="ciamore-feature-badge">
+              <img src="https://cdn.shopify.com/s/files/1/0877/8157/2952/files/3_5e648fb8-7ee2-4c76-8940-ed6064cee137_800x800.png?v=1777708320" style="width:13px; height:13px;" alt="Rückgaberecht">
+              <span>30 Tage Rückgaberecht</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="bogos-bundle-page-body">
+        <div class="bogos-bp-products-info">
+          {{ bogos_bundle_page_steps_data }}
+        </div>
+        <div class="bogos-bp-widget-container">
+          {{ bogos_bundle_page_widget }}
+        </div>
+      </div>
+
+    </div>
+  {% endraw %}
+</script>

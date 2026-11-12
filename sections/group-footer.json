@@ -1,0 +1,157 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "cm_newsletter_footer": {
+      "type": "ciamore-newsletter",
+      "settings": {
+        "eyebrow": "Werde Teil der Ciamore Family!",
+        "heading": "15 % auf deine erste Bestellung",
+        "text": "Melde dich an und erfahre als Erste von neuen Drops und Aktionen. Gilt ab 39 € Bestellwert.",
+        "placeholder": "Deine E-Mail",
+        "button": "Anmelden",
+        "success": "Danke! Du bist dabei.",
+        "klaviyo_source": "Footer",
+        "legal": "<p>Mit der Anmeldung stimmst du dem Erhalt unseres Newsletters zu. Abmeldung jederzeit möglich. Mehr in der <a href=\"/policies/privacy-policy\">Datenschutzerklärung</a>.</p>",
+        "footer_style": true,
+        "pt": 40,
+        "pb": 0,
+        "pt_mobile": 30,
+        "pb_mobile": 0
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "linklist_FUe3Ym": {
+          "type": "linklist",
+          "settings": {
+            "linklist": "footer",
+            "title": "Info",
+            "heading_font_size": "heading-small",
+            "column_width": 50,
+            "enable_accordion": false
+          }
+        },
+        "linklist_K9pXPq": {
+          "type": "linklist",
+          "settings": {
+            "linklist": "versand-r-cksendungen",
+            "title": "",
+            "heading_font_size": "heading-small",
+            "column_width": 50,
+            "enable_accordion": false
+          }
+        }
+      },
+      "block_order": [
+        "linklist_FUe3Ym",
+        "linklist_K9pXPq"
+      ],
+      "custom_css": [
+        ".footer__block__title {color: #ffffff !important;}"
+      ],
+      "settings": {
+        "logo_image_width": 150,
+        "color_scheme": "scheme-11",
+        "border_color": "#3a3a3a",
+        "padding_top": 0,
+        "padding_bottom": 40
+      }
+    },
+    "cm_promise_footer": {
+      "type": "ciamore-promise",
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "https://cdn.shopify.com/s/files/1/0877/8157/2952/files/2_61654a14-d98b-44eb-bac7-09cc9d152a3f_800x800.png?v=1777708321&width=64",
+            "heading": "Lifetime Care",
+            "text": "Geht was kaputt? Wir kümmern uns."
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "https://cdn.shopify.com/s/files/1/0877/8157/2952/files/1_9d6a6793-a493-4884-81d7-007925406b1f_800x800.png?v=1777708321&width=64",
+            "heading": "Wasserfest",
+            "text": "316L Edelstahl, läuft nicht an."
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "https://cdn.shopify.com/s/files/1/0877/8157/2952/files/4_7bcda7eb-ec97-4194-883f-db55b0faee03_800x800.png?v=1777708322&width=64",
+            "heading": "In 1–3 Tagen bei dir",
+            "text": "Versand aus DE, gratis ab 39 €."
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ],
+      "settings": {
+        "title": "Darauf kannst du dich verlassen"
+      }
+    },
+    "section_custom_code_apAipi": {
+      "type": "section-custom-code",
+      "disabled": true,
+      "name": "Newsletter EIntragung",
+      "settings": {
+        "code": "<div class=\"klaviyo-form-Tnpavc\"></div>",
+        "width": "wrapper--full",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "section_anchor_logo_KqL9Ch": {
+      "type": "section-anchor-logo",
+      "disabled": true,
+      "custom_css": [],
+      "name": "Logo",
+      "settings": {
+        "color_scheme": "scheme-11",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "section_supporting_menu_9K7Y6F": {
+      "type": "section-supporting-menu",
+      "name": "Supporting menu",
+      "settings": {
+        "linklist": "",
+        "text_font_size": "body-small",
+        "footer_payment_enable": true,
+        "show_locale_selector": true,
+        "show_globe_icon": true,
+        "show_country_selector": true,
+        "show_country_name": true,
+        "show_country_flag": true,
+        "color_scheme": "scheme-11",
+        "padding_top": 0,
+        "padding_bottom": 35
+      }
+    }
+  },
+  "order": [
+    "cm_newsletter_footer",
+    "footer",
+    "cm_promise_footer",
+    "section_custom_code_apAipi",
+    "section_anchor_logo_KqL9Ch",
+    "section_supporting_menu_9K7Y6F"
+  ]
+}

@@ -1,0 +1,165 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "subheading": "",
+        "show_title": false,
+        "heading_font_size": "heading-large",
+        "show_content": true,
+        "text_font_size": "body-medium",
+        "align_text": "text-center",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "heading_tag": "automatic"
+      }
+    },
+    "section_custom_code_VqUKyU": {
+      "type": "section-custom-code",
+      "name": "Custom code",
+      "settings": {
+        "code": "<style>\n  .contact-full-width-wrapper {\n    background-color: #f8f6f3;\n    width: 100vw;\n    position: relative;\n    left: 50%;\n    right: 50%;\n    margin-left: -50vw;\n    margin-right: -50vw;\n    box-sizing: border-box;\n    padding: 25px 10px;\n    text-align: center;\n  }\n\n  .contact-text-top {\n    font-size: 16px;\n    font-weight: bold;\n    color: #000;\n    margin: 0;\n    padding-bottom: 8px;\n  }\n\n  .contact-text-main {\n    font-size: 13px;\n    color: #000;\n    margin: 0;\n  }\n</style>\n\n<div class=\"contact-full-width-wrapper\">\n  <h2 class=\"contact-text-top\">Kontakt</h2>\n  <p class=\"contact-text-main\">\n    Kontaktiere uns bei Fragen bezüglich deiner Bestellung, unserer Qualität, dem Versand und anderen Anliegen.\n  </p>\n</div>",
+        "width": "wrapper",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "contact": {
+      "type": "contact-form",
+      "blocks": {
+        "Name": {
+          "type": "text",
+          "settings": {
+            "title": "Vollständiger Name",
+            "required": true
+          }
+        },
+        "Email": {
+          "type": "email",
+          "settings": {
+            "title": "Deine Email",
+            "required": true
+          }
+        },
+        "text_EdFkB8": {
+          "type": "text",
+          "settings": {
+            "title": "Bestellnummer (optional)",
+            "required": false
+          }
+        },
+        "Message": {
+          "type": "body",
+          "settings": {
+            "title": "Deine Nachricht",
+            "required": false
+          }
+        },
+        "Optional-text": {
+          "type": "formHeading",
+          "settings": {
+            "title": "Optional"
+          }
+        }
+      },
+      "block_order": [
+        "Name",
+        "Email",
+        "text_EdFkB8",
+        "Message",
+        "Optional-text"
+      ],
+      "settings": {
+        "title": "",
+        "heading_font_size": "heading-large",
+        "terms": false,
+        "width": "wrapper--narrow",
+        "color_scheme": "",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "heading_tag": "automatic"
+      }
+    },
+    "faq": {
+      "type": "section-accordion-group",
+      "blocks": {
+        "heading-0": {
+          "type": "heading",
+          "settings": {
+            "title": "FAQ"
+          }
+        },
+        "question-1": {
+          "type": "question",
+          "settings": {
+            "default_open": false,
+            "title": "Frequently asked question",
+            "content": "<p>Share details about your shipping policies, item returns, or customer service.</p>",
+            "show_icon": false,
+            "icon_name": "icon-award",
+            "icon_size": 20,
+            "icon_color": ""
+          }
+        },
+        "question-2": {
+          "type": "question",
+          "settings": {
+            "default_open": false,
+            "title": "Frequently asked question",
+            "content": "<p>Share details about your shipping policies, item returns, or customer service.</p>",
+            "show_icon": false,
+            "icon_name": "icon-award",
+            "icon_size": 20,
+            "icon_color": ""
+          }
+        },
+        "question-3": {
+          "type": "question",
+          "settings": {
+            "default_open": false,
+            "title": "Frequently asked question",
+            "content": "<p>Share details about your shipping policies, item returns, or customer service.</p>",
+            "show_icon": false,
+            "icon_name": "icon-award",
+            "icon_size": 20,
+            "icon_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "heading-0",
+        "question-1",
+        "question-2",
+        "question-3"
+      ],
+      "disabled": true,
+      "settings": {
+        "heading_font_size": "heading-medium",
+        "question_font_size": "heading-small",
+        "width": "wrapper--narrow",
+        "columns": "1",
+        "color_scheme": "",
+        "padding_top": 50,
+        "padding_bottom": 50
+      }
+    }
+  },
+  "order": [
+    "main",
+    "section_custom_code_VqUKyU",
+    "contact",
+    "faq"
+  ]
+}

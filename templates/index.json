@@ -1,0 +1,738 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "17596791132a7e12b4": {
+      "type": "apps",
+      "disabled": true,
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "cm_chips": {
+      "type": "ciamore-chips",
+      "blocks": {
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "label": "Bestseller",
+            "link": "/collections/besteller",
+            "style": "outline"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "label": "Mix your Set",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28202",
+            "style": "outline"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "label": "5 für 79€",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28201",
+            "style": "vip"
+          }
+        },
+        "chip_4": {
+          "type": "chip",
+          "settings": {
+            "label": "3 für 69€",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28353",
+            "style": "outline"
+          }
+        },
+        "chip_5": {
+          "type": "chip",
+          "settings": {
+            "label": "Ringe",
+            "link": "/collections/ringe",
+            "style": "outline"
+          }
+        },
+        "chip_6": {
+          "type": "chip",
+          "settings": {
+            "label": "Halsketten",
+            "link": "/collections/ketten",
+            "style": "outline"
+          }
+        },
+        "chip_7": {
+          "type": "chip",
+          "settings": {
+            "label": "Armbänder",
+            "link": "/collections/armbander",
+            "style": "outline"
+          }
+        },
+        "chip_8": {
+          "type": "chip",
+          "settings": {
+            "label": "Ohrringe",
+            "link": "/collections/ohrringe",
+            "style": "outline"
+          }
+        },
+        "chip_9": {
+          "type": "chip",
+          "settings": {
+            "label": "Kombi-Sets",
+            "link": "/collections/kombi-sets",
+            "style": "outline"
+          }
+        },
+        "chip_10": {
+          "type": "chip",
+          "settings": {
+            "label": "Sale",
+            "link": "/collections/sale",
+            "style": "sale"
+          }
+        },
+        "chip_11": {
+          "type": "chip",
+          "settings": {
+            "label": "New In",
+            "link": "/collections/new-in",
+            "style": "outline"
+          }
+        },
+        "chip_12": {
+          "type": "chip",
+          "settings": {
+            "label": "Clover Kollektion",
+            "link": "/collections/clover-kollektion",
+            "style": "outline"
+          }
+        }
+      },
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "chip_4",
+        "chip_5",
+        "chip_6",
+        "chip_7",
+        "chip_8",
+        "chip_9",
+        "chip_10",
+        "chip_11",
+        "chip_12"
+      ],
+      "settings": {
+        "aria": "Kategorien",
+        "variant": "text",
+        "center_desktop": true,
+        "pt": 20,
+        "pb": 22,
+        "pt_mobile": 16,
+        "pb_mobile": 20
+      }
+    },
+    "rotating_banner_YjiPmL": {
+      "type": "rotating-banner",
+      "blocks": {
+        "slide_9GrUGg": {
+          "type": "slide",
+          "name": "Banner Slide 1",
+          "settings": {
+            "image": "shopify://shop_images/72_c48dac60-b21c-4475-a99e-e1f1573a95da.png",
+            "image_mobile": "shopify://shop_images/72_c48dac60-b21c-4475-a99e-e1f1573a95da.png",
+            "link": "",
+            "alt": "Fall Sale bei Ciamore: ab 69 € 20 % extra mit dem Code FALL20"
+          }
+        },
+        "slide_ka4XBF": {
+          "type": "slide",
+          "name": "Banner Slide 2",
+          "settings": {
+            "image": "shopify://shop_images/73_ae9919bd-f251-4ac3-af32-613d4a51ce44.png",
+            "image_mobile": "shopify://shop_images/73_ae9919bd-f251-4ac3-af32-613d4a51ce44.png",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28201",
+            "alt": "5 für 79 €: Wähle deine 5 Pieces und zahle nur 79 €"
+          }
+        }
+      },
+      "block_order": [
+        "slide_9GrUGg",
+        "slide_ka4XBF"
+      ],
+      "name": "Rotierendes Banner",
+      "settings": {
+        "interval": 6,
+        "show_dots": true
+      }
+    },
+    "cm_bundles": {
+      "type": "ciamore-bundles",
+      "blocks": {
+        "mix": {
+          "type": "bundle",
+          "settings": {
+            "label": "Mix your Set",
+            "price": "-50 %",
+            "per": "ab 4 Pieces",
+            "badge": "Beliebt",
+            "pieces": 4,
+            "plus": true,
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28202",
+            "highlight": true,
+            "featured": false
+          }
+        },
+        "five": {
+          "type": "bundle",
+          "settings": {
+            "label": "5 Pieces",
+            "price": "79 €",
+            "per": "nur 15,80 € pro Piece",
+            "badge": "Top-Deal",
+            "pieces": 5,
+            "plus": false,
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28201",
+            "highlight": false,
+            "featured": true
+          }
+        },
+        "three": {
+          "type": "bundle",
+          "settings": {
+            "label": "3 Pieces",
+            "price": "69 €",
+            "per": "23 € pro Piece",
+            "badge": "",
+            "pieces": 3,
+            "plus": false,
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28353",
+            "highlight": false,
+            "featured": false
+          }
+        }
+      },
+      "block_order": [
+        "mix",
+        "five",
+        "three"
+      ],
+      "settings": {
+        "layout": "slots",
+        "collection": "besteller",
+        "head_style": "classic",
+        "card_bg": "silver",
+        "dark": false,
+        "eyebrow": "Unsere Bundles",
+        "heading": "Bau dir deinen Stack.",
+        "text": "Kombinier deine Lieblinge zu deinem eigenen Set. Such dir einfach das Bundle aus, das zu dir passt.",
+        "button_label": "",
+        "button_link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28202",
+        "mt": 24,
+        "mt_mobile": 14
+      }
+    },
+    "hero": {
+      "type": "section-hero",
+      "disabled": true,
+      "settings": {
+        "image_1": "shopify://shop_images/Ciamore_Banner_ALLE_10_2893f334-fdf8-4371-ad54-dfc79314167a.png",
+        "link": "",
+        "width": "wrapper--full",
+        "height": "image-height",
+        "flex_align_desktop": "align--bottom-left-desktop",
+        "content_width": 50,
+        "mobile_height": "image-height--mobile",
+        "flex_align_mobile": "align--middle-center-mobile",
+        "color_scheme": "scheme-2",
+        "show_text_background": false,
+        "overlay_opacity": 0,
+        "show_overlay_text": false,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "show_placeholder": true
+      }
+    },
+    "cm_heading_clover": {
+      "type": "ciamore-heading",
+      "disabled": true,
+      "settings": {
+        "heading": "Die neue Clover Kollektion",
+        "subline": "",
+        "link_label": "Jetzt shoppen",
+        "link_url": "/collections/clover-kollektion",
+        "round_arrow": false,
+        "size": 42,
+        "size_mobile": 28,
+        "pt": 48,
+        "pb": 4,
+        "pt_mobile": 28,
+        "pb_mobile": 0
+      }
+    },
+    "section_collection_VHpQr8": {
+      "type": "section-collection",
+      "disabled": true,
+      "name": "Featured collection",
+      "settings": {
+        "featured_collection": "clover-kollektion",
+        "heading": "",
+        "heading_font_size": "heading-small",
+        "description": "",
+        "text_font_size": "body-medium",
+        "layout": "inline",
+        "link_text": "",
+        "link_url": "",
+        "button_type": "btn--primary",
+        "button_size": "",
+        "button_style": "btn--solid",
+        "show_arrow": false,
+        "layout_desktop": "grid",
+        "grid": 5,
+        "rows": 1,
+        "width": "wrapper--full-padded",
+        "layout_mobile": "slider",
+        "color_scheme": "",
+        "padding_top": 16,
+        "padding_bottom": 8,
+        "heading_tag": "automatic"
+      }
+    },
+    "section_divider_ejGUpr": {
+      "type": "section-divider",
+      "disabled": true,
+      "name": "Divider",
+      "settings": {
+        "show_line": true,
+        "width": "wrapper--full-padded",
+        "color_scheme": "",
+        "padding_top": 20,
+        "padding_bottom": 30
+      }
+    },
+    "ciamore_reviews_marquee_UKJaPP": {
+      "type": "ciamore-reviews-marquee",
+      "blocks": {
+        "review_Ky4yp9": {
+          "type": "review",
+          "settings": {
+            "text": "Wirklich wasserfest! Trage den Schmuck seit drei Monaten und er sieht immer noch sehr gut aus.",
+            "name": "Helena",
+            "rating": 5,
+            "handle": "clean-girl-set"
+          }
+        },
+        "review_jQGwWa": {
+          "type": "review",
+          "settings": {
+            "text": "Hatte schon Tennis Armbänder von mehreren Marken, das hier hat zu 100% die beste Qualität.",
+            "name": "Rana",
+            "rating": 5,
+            "handle": "tennis-armband"
+          }
+        },
+        "review_KAggj7": {
+          "type": "review",
+          "settings": {
+            "text": "Super schönes Armband, sieht noch schöner aus als auf dem Bild 🤩",
+            "name": "Denise",
+            "rating": 5,
+            "handle": "gold-clover-armband"
+          }
+        },
+        "review_LPcbpT": {
+          "type": "review",
+          "settings": {
+            "text": "Schon das dritte Mal bestellt und immer wieder zufrieden. Gute Qualität und schneller Versand 💗",
+            "name": "Lorena",
+            "rating": 5,
+            "handle": "select-clover-kette"
+          }
+        },
+        "review_3pLbJJ": {
+          "type": "review",
+          "settings": {
+            "text": "Wunderschönes Armband, hat den Urlaub problemlos überstanden 😘",
+            "name": "Fernanda",
+            "rating": 5,
+            "handle": "glossy-pink-clover-armband"
+          }
+        },
+        "review_hXVEz3": {
+          "type": "review",
+          "settings": {
+            "text": "Toller Ring, färbt nicht ab und ein sehr guter Preis.",
+            "name": "Thea",
+            "rating": 5,
+            "handle": "miroa-ring"
+          }
+        },
+        "review_bEcnhq": {
+          "type": "review",
+          "settings": {
+            "text": "Das Pink ist nicht zu knallig, sondern richtig schön. Und die Qualität ist der Hammer.",
+            "name": "Jana",
+            "rating": 5,
+            "handle": "pink-halo-armreif"
+          }
+        },
+        "review_GQi3Jr": {
+          "type": "review",
+          "settings": {
+            "text": "Nicht zu groß, fallen aber trotzdem auf und funkeln richtig stark mit den Steinen.",
+            "name": "Valerie",
+            "rating": 5,
+            "handle": "linea-zirconia-ohrringe"
+          }
+        }
+      },
+      "block_order": [
+        "review_Ky4yp9",
+        "review_jQGwWa",
+        "review_KAggj7",
+        "review_LPcbpT",
+        "review_3pLbJJ",
+        "review_hXVEz3",
+        "review_bEcnhq",
+        "review_GQi3Jr"
+      ],
+      "name": "Bewertungen Laufband",
+      "settings": {
+        "heading": "Was unsere Kundinnen sagen",
+        "subheading": "",
+        "direction": "right",
+        "duration": 50,
+        "resume_delay": 1,
+        "pause_hover": true,
+        "bg": "#ffffff",
+        "card_bg": "#f4f4f2",
+        "text": "#1a1a1a",
+        "star": "#f0ae00",
+        "pt": 40,
+        "pb": 0
+      }
+    },
+    "section_divider_kVBKgQ": {
+      "type": "section-divider",
+      "name": "Divider",
+      "settings": {
+        "show_line": true,
+        "width": "wrapper--full-padded",
+        "color_scheme": "",
+        "padding_top": 20,
+        "padding_bottom": 30
+      }
+    },
+    "cm_heading_bestseller": {
+      "type": "ciamore-heading",
+      "settings": {
+        "heading": "Bestseller",
+        "subline": "Trending now",
+        "link_label": "Jetzt shoppen",
+        "link_url": "shopify://collections/besteller",
+        "round_arrow": false,
+        "size": 42,
+        "size_mobile": 28,
+        "pt": 64,
+        "pb": 4,
+        "pt_mobile": 34,
+        "pb_mobile": 0
+      }
+    },
+    "section_collection_C3EL8x": {
+      "type": "section-collection",
+      "custom_css": [
+        "/* Produkttitel & Preis in der Kollektionsansicht links ausrichten */.product-item__info.body-medium {display: flex !important; flex-direction: column !important; align-items: flex-start !important;}",
+        " /* Produkttitel links ausrichten */.product-item__title {text-align: left !important; width: 100%;}",
+        " /* Produktpreis links ausrichten */.product-item__price {text-align: left !important; width: 100%;}",
+        ".product-item_swatches_holder {align-self: center !important; display: flex !important; justify-content: center !important; gap: 5px;}"
+      ],
+      "settings": {
+        "featured_collection": "besteller",
+        "heading": "",
+        "heading_font_size": "heading-medium",
+        "description": "",
+        "text_font_size": "body-medium",
+        "layout": "center",
+        "link_text": "",
+        "link_url": "",
+        "button_type": "btn--primary",
+        "button_size": "",
+        "button_style": "btn--solid",
+        "show_arrow": false,
+        "layout_desktop": "grid",
+        "grid": 5,
+        "rows": 2,
+        "width": "wrapper--full-padded",
+        "layout_mobile": "2",
+        "color_scheme": "",
+        "padding_top": 16,
+        "padding_bottom": 0,
+        "heading_tag": "automatic"
+      }
+    },
+    "cm_heading_ringe": {
+      "type": "ciamore-heading",
+      "settings": {
+        "heading": "Unsere Ringe",
+        "subline": "",
+        "link_label": "Jetzt shoppen",
+        "link_url": "/collections/ringe",
+        "round_arrow": false,
+        "size": 42,
+        "size_mobile": 28,
+        "pt": 64,
+        "pb": 4,
+        "pt_mobile": 40,
+        "pb_mobile": 0
+      }
+    },
+    "section_collection_chWgTx": {
+      "type": "section-collection",
+      "settings": {
+        "featured_collection": "ringe",
+        "heading": "",
+        "heading_font_size": "heading-x-small",
+        "description": "",
+        "text_font_size": "body-medium",
+        "layout": "inline",
+        "link_text": "",
+        "link_url": "",
+        "button_type": "btn--primary",
+        "button_size": "",
+        "button_style": "btn--solid",
+        "show_arrow": false,
+        "layout_desktop": "grid",
+        "grid": 6,
+        "rows": 1,
+        "width": "wrapper--full-padded",
+        "layout_mobile": "slider",
+        "color_scheme": "",
+        "padding_top": 16,
+        "padding_bottom": 0,
+        "heading_tag": "automatic"
+      }
+    },
+    "cm_benefits": {
+      "type": "ciamore-benefits",
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "icon-fast-shipment",
+            "title": "Kostenloser Versand ab 39 €",
+            "text": "Schnell & zuverlässig direkt zu dir nach Hause"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "icon-leaf",
+            "title": "CO₂-reduzierter Versand",
+            "text": "Wir verschicken CO₂-reduziert mit DHL GoGreen"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "icon-heart",
+            "title": "Wasserfester Edelstahl",
+            "text": "316L Edelstahl mit 18K Vergoldung bzw. Platinbeschichtung"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ],
+      "disabled": true,
+      "settings": {
+        "pt": 72,
+        "pt_mobile": 44
+      }
+    },
+    "section_divider_YRURBE": {
+      "type": "section-divider",
+      "settings": {
+        "show_line": true,
+        "width": "wrapper--full-padded",
+        "color_scheme": "",
+        "padding_top": 70,
+        "padding_bottom": 30
+      }
+    },
+    "section_multicolumn_mcEfAr": {
+      "type": "section-multicolumn",
+      "blocks": {
+        "icon_wKgKkV": {
+          "type": "icon",
+          "settings": {
+            "column_width": 33,
+            "icon_name": "icon-fast-shipment",
+            "icon_size": 25,
+            "icon_alignment": "icon--top",
+            "icon_color": "",
+            "title": "Kostenloser Versand ab 39 €",
+            "heading_font_size": "heading-mini",
+            "text": "<p>Schnell & zuverlässig direkt zu dir nach Hause</p>",
+            "text_font_size": "body-medium",
+            "heading_tag": "automatic"
+          }
+        },
+        "icon_XEgJGM": {
+          "type": "icon",
+          "settings": {
+            "column_width": 33,
+            "icon_name": "icon-leaf",
+            "icon_size": 25,
+            "icon_alignment": "icon--top",
+            "icon_color": "",
+            "title": "CO₂-reduzierter Versand",
+            "heading_font_size": "heading-mini",
+            "text": "<p>Wir verschicken CO₂-reduziert mit DHL GoGreen</p>",
+            "text_font_size": "body-medium",
+            "heading_tag": "automatic"
+          }
+        },
+        "icon_4MW6p9": {
+          "type": "icon",
+          "settings": {
+            "column_width": 33,
+            "icon_name": "icon-heart",
+            "icon_size": 25,
+            "icon_alignment": "icon--top",
+            "icon_color": "",
+            "title": "Wasserfester Edelstahl",
+            "heading_font_size": "heading-mini",
+            "text": "<p>316L Edelstahl mit 18K Vergoldung bzw. Platinbeschichtung</p>",
+            "text_font_size": "body-medium",
+            "heading_tag": "automatic"
+          }
+        }
+      },
+      "block_order": [
+        "icon_wKgKkV",
+        "icon_XEgJGM",
+        "icon_4MW6p9"
+      ],
+      "settings": {
+        "title": "",
+        "heading_font_size": "heading-medium",
+        "description": "",
+        "align_heading": "text-left",
+        "align_text": "text-left",
+        "width": "wrapper--full-padded",
+        "align_columns": "flex-align-top",
+        "layout_mobile": "1",
+        "color_scheme": "scheme-10",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "heading_tag": "automatic"
+      },
+      "disabled": true
+    },
+    "cm_newsletter": {
+      "type": "ciamore-newsletter",
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Newsletter",
+        "heading": "Werde Teil der Ciamore Family!",
+        "text": "",
+        "placeholder": "Deine E-Mail",
+        "button": "Abonnieren",
+        "success": "Danke! Du bist dabei.",
+        "legal": "<p>Mit der Anmeldung stimmst du dem Erhalt unseres Newsletters zu. Abmeldung jederzeit möglich. Mehr in der <a href=\"/policies/privacy-policy\">Datenschutzerklärung</a>.</p>",
+        "footer_style": false,
+        "pt": 16,
+        "pb": 56,
+        "pt_mobile": 16,
+        "pb_mobile": 32
+      }
+    },
+    "1759679076d801a6e6": {
+      "type": "apps",
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "cm_faq": {
+      "type": "ciamore-faq",
+      "settings": {
+        "eyebrow": "Gut zu wissen",
+        "heading": "Noch Fragen?",
+        "bg": "#ffffff",
+        "pt": 64,
+        "pb": 64,
+        "pt_mobile": 44,
+        "pb_mobile": 44
+      },
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Ist der Schmuck wirklich wasserfest?",
+            "answer": "<p>Ja. Unser Schmuck besteht aus 316L Edelstahl mit 18K Echtgold- oder Platin-Veredelung. Duschen, Schwimmen, Sauna: alles getestet, er läuft nicht an.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Was bedeutet Lifetime Care?",
+            "answer": "<p>Geht was kaputt, kümmern wir uns. Schreib uns an <a href=\"mailto:help@ciamore.de\">help@ciamore.de</a> und du bekommst Ersatz oder dein Geld zurück.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "Wie schnell ist meine Bestellung da?",
+            "answer": "<p>In 1–3 Werktagen. Wir versenden aus Deutschland, ab 39 € ist der Versand kostenlos.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "Wie funktionieren die Bundles?",
+            "answer": "<p>Bei <a href=\"/apps/secomapp_freegifts_get_order/bundle/28202\">Mix your Set</a> wählst du mindestens 4 Pieces und sparst 50 %. Außerdem gibt es 5 für 79 € und 3 für 69 €.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ]
+    }
+  },
+  "order": [
+    "17596791132a7e12b4",
+    "cm_chips",
+    "rotating_banner_YjiPmL",
+    "cm_bundles",
+    "hero",
+    "cm_heading_clover",
+    "section_collection_VHpQr8",
+    "section_divider_ejGUpr",
+    "ciamore_reviews_marquee_UKJaPP",
+    "section_divider_kVBKgQ",
+    "cm_heading_bestseller",
+    "section_collection_C3EL8x",
+    "cm_heading_ringe",
+    "section_collection_chWgTx",
+    "cm_benefits",
+    "section_divider_YRURBE",
+    "section_multicolumn_mcEfAr",
+    "cm_faq",
+    "cm_newsletter",
+    "1759679076d801a6e6"
+  ]
+}

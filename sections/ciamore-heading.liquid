@@ -1,0 +1,64 @@
+{%- comment -%}
+  CIAMORE | Überschrift mit "Jetzt shoppen" + rundem Pfeil (Skizzen-Stil)
+{%- endcomment -%}
+<div class="cm-head cm-head--{{ section.id }}">
+  <h2 class="cm-head__title">
+    {{- section.settings.heading -}}
+    {%- if section.settings.subline != blank -%}<br><span class="cm-head__sub">{{ section.settings.subline }}</span>{%- endif -%}
+  </h2>
+  {%- if section.settings.link_label != blank and section.settings.link_url != blank -%}
+    <a class="cm-head__link" href="{{ section.settings.link_url }}">
+      <span class="cm-head__label">{{ section.settings.link_label }}</span>
+      {%- if section.settings.round_arrow -%}
+        <span class="cm-head__circle" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      {%- endif -%}
+    </a>
+  {%- endif -%}
+</div>
+<style>
+  .cm-head--{{ section.id }} {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+    padding: {{ section.settings.pt_mobile }}px 16px {{ section.settings.pb_mobile }}px;
+    color: var(--cm-ink);
+  }
+  .cm-head--{{ section.id }} .cm-head__title {
+    margin: 0; max-width: 240px;
+    font-family: var(--cm-display); font-weight: 800; font-size: {{ section.settings.size_mobile }}px;
+    line-height: 1; letter-spacing: -0.035em; color: inherit; text-transform: none;
+  }
+  .cm-head--{{ section.id }} .cm-head__sub { color: #7d705e; }
+  .cm-head--{{ section.id }} .cm-head__link {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+    font-family: var(--cm-body); font-size: 14px; font-weight: 700; color: var(--cm-ink); text-decoration: none;
+  }
+  .cm-head--{{ section.id }} .cm-head__circle {
+    width: 32px; height: 32px; border-radius: 999px; background: var(--cm-black); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center; transition: transform .2s ease;
+  }
+  .cm-head--{{ section.id }} .cm-head__link:hover .cm-head__circle { transform: translateX(3px); }
+  @media (min-width: 750px) {
+    .cm-head--{{ section.id }} { padding: {{ section.settings.pt }}px var(--outer, 24px) {{ section.settings.pb }}px; }
+    .cm-head--{{ section.id }} .cm-head__title { max-width: none; font-size: {{ section.settings.size }}px; }
+    .cm-head--{{ section.id }} .cm-head__link { font-size: 15px; }
+    .cm-head--{{ section.id }} .cm-head__circle { width: 38px; height: 38px; }
+  }
+</style>
+{% schema %}
+{
+  "name": "Ciamore Überschrift",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Überschrift" },
+    { "type": "text", "id": "subline", "label": "Zweite Zeile (farbig, optional)" },
+    { "type": "text", "id": "link_label", "label": "Link-Text", "default": "Jetzt shoppen" },
+    { "type": "url", "id": "link_url", "label": "Link" },
+    { "type": "checkbox", "id": "round_arrow", "label": "Runder Pfeil", "default": true },
+    { "type": "range", "id": "size", "label": "Schriftgröße Desktop", "min": 24, "max": 64, "step": 2, "unit": "px", "default": 42 },
+    { "type": "range", "id": "size_mobile", "label": "Schriftgröße Handy", "min": 20, "max": 40, "step": 1, "unit": "px", "default": 28 },
+    { "type": "range", "id": "pt", "label": "Abstand oben (Desktop)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "pb", "label": "Abstand unten (Desktop)", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range", "id": "pt_mobile", "label": "Abstand oben (Handy)", "min": 0, "max": 100, "step": 2, "unit": "px", "default": 28 },
+    { "type": "range", "id": "pb_mobile", "label": "Abstand unten (Handy)", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 0 }
+  ],
+  "presets": [{ "name": "Ciamore Überschrift" }]
+}
+{% endschema %}

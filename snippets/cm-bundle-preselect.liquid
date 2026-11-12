@@ -1,0 +1,68 @@
+{%- comment -%}
+  CIAMORE | Newsletter-Links "Ins Set": ?cm_add=<produkt-handle> auf einer Bundle-Seite
+  legt das Produkt direkt in "Dein Bundle". Produkte mit Ringgröße werden nur markiert
+  (Größe muss die Kundin selbst wählen).
+{%- endcomment -%}
+<script>
+(function () {
+  if (location.pathname.indexOf('/apps/secomapp_freegifts_get_order/bundle/') === -1) return;
+  var handle = new URLSearchParams(location.search).get('cm_add');
+  if (!handle) return;
+  fetch('/products/' + encodeURIComponent(handle) + '.js')
+    .then(function (r) { return r.json(); })
+    .then(function (p) {
+      var title = String(p.title || '').trim().toLowerCase();
+      var needsSize = (p.options || []).some(function (o) { return /^gr(ö|oe)(ß|ss)e$|^size$/i.test(String(o.name || o).trim()); });
+      var tries = 0, moreClicks = 0;
+      (function run() {
+        tries++;
+        var hit = null;
+        Array.prototype.slice.call(document.querySelectorAll('button')).forEach(function (b) {
+          if (hit || !/in den warenkorb/i.test(b.textContent)) return;
+          var c = b;
+          for (var i = 0; i < 6 && c; i++) { c = c.parentElement; if (c && c.querySelector('img') && /€/.test(c.textContent)) break; }
+          if (c && c.textContent.trim().toLowerCase().indexOf(title) === 0) hit = { b: b, c: c };
+        });
+        if (!hit) {
+          var more = Array.prototype.slice.call(document.querySelectorAll('button,a')).filter(function (e) { return /mehr produkte ansehen/i.test(e.textContent); })[0];
+          if (more && moreClicks < 15) { moreClicks++; more.click(); }
+          if (tries < 50) setTimeout(run, 400);
+          return;
+        }
+        hit.c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (needsSize) {
+          hit.c.style.outline = '2px solid #c99a3c'; hit.c.style.outlineOffset = '6px'; hit.c.style.borderRadius = '14px';
+        } else {
+          hit.b.click();
+        }
+        try { history.replaceState(null, '', location.pathname); } catch (e) {}
+      })();
+    })
+    .catch(function () {});
+})();
+</script>
+
+
+<script>
+/* Bundle-Varianten: nicht verfuegbare Optionen durchgestrichen markieren */
+(function(){
+  if (!document.body.classList.contains('cm-multi-pdp')) return;
+  setTimeout(function(){
+    var c = document.querySelector('[id^="Product--"]');
+    if (!c) return;
+    var j = c.querySelector('script[type="application/json"]');
+    if (!j) return;
+    try { var d = JSON.parse(j.textContent); } catch(e) { return; }
+    var v = d.variants || [];
+    c.querySelectorAll('.radio__fieldset').forEach(function(f, i) {
+      f.querySelectorAll('input[type="radio"]').forEach(function(inp) {
+        var k = 'option' + (i + 1);
+        if (!v.some(function(x) { return x[k] === inp.value && x.available; })) {
+          var p = inp.closest('.radio__button');
+          if (p) p.classList.add('cm-unavailable');
+        }
+      });
+    });
+  }, 200);
+})();
+</script>

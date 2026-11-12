@@ -1,0 +1,213 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "cm_chips": {
+      "type": "ciamore-chips",
+      "blocks": {
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "label": "Bestseller",
+            "link": "/collections/besteller",
+            "style": "outline"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "label": "Mix your Set",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28202",
+            "style": "outline"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "label": "5 für 79€",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28201",
+            "style": "vip"
+          }
+        },
+        "chip_4": {
+          "type": "chip",
+          "settings": {
+            "label": "3 für 69€",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28353",
+            "style": "outline"
+          }
+        },
+        "chip_5": {
+          "type": "chip",
+          "settings": {
+            "label": "Ringe",
+            "link": "/collections/ringe",
+            "style": "outline"
+          }
+        },
+        "chip_6": {
+          "type": "chip",
+          "settings": {
+            "label": "Halsketten",
+            "link": "/collections/ketten",
+            "style": "outline"
+          }
+        },
+        "chip_7": {
+          "type": "chip",
+          "settings": {
+            "label": "Armbänder",
+            "link": "/collections/armbander",
+            "style": "outline"
+          }
+        },
+        "chip_8": {
+          "type": "chip",
+          "settings": {
+            "label": "Ohrringe",
+            "link": "/collections/ohrringe",
+            "style": "outline"
+          }
+        },
+        "chip_9": {
+          "type": "chip",
+          "settings": {
+            "label": "Kombi-Sets",
+            "link": "/collections/kombi-sets",
+            "style": "outline"
+          }
+        },
+        "chip_10": {
+          "type": "chip",
+          "settings": {
+            "label": "Sale",
+            "link": "/collections/sale",
+            "style": "sale"
+          }
+        },
+        "chip_11": {
+          "type": "chip",
+          "settings": {
+            "label": "New In",
+            "link": "/collections/new-in",
+            "style": "outline"
+          }
+        },
+        "chip_12": {
+          "type": "chip",
+          "settings": {
+            "label": "Clover Kollektion",
+            "link": "/collections/clover-kollektion",
+            "style": "outline"
+          }
+        }
+      },
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "chip_4",
+        "chip_5",
+        "chip_6",
+        "chip_7",
+        "chip_8",
+        "chip_9",
+        "chip_10",
+        "chip_11",
+        "chip_12"
+      ],
+      "name": "Ciamore Pills ( In Kollektionen angezeigt)",
+      "settings": {
+        "aria": "Kategorien",
+        "variant": "text",
+        "center_desktop": true,
+        "pt": 20,
+        "pb": 22,
+        "pt_mobile": 16,
+        "pb_mobile": 20
+      }
+    },
+    "cm_colhead": {
+      "type": "ciamore-collection-head",
+      "settings": {
+        "show_breadcrumb": false,
+        "show_count": false,
+        "show_description": true,
+        "show_toggle": true,
+        "wear_style": "seg"
+      }
+    },
+    "hero": {
+      "type": "collection-image-with-title",
+      "settings": {
+        "show_title": false,
+        "show_description": true,
+        "flex_align": "align-middle-left",
+        "color_scheme": "",
+        "show_text_background": false,
+        "show_image": true,
+        "banner_layout": "overlay",
+        "height": "screen-height-one-third",
+        "mobile_height": "screen-height-one-half--mobile",
+        "overlay_opacity": 0,
+        "show_overlay_text": false,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "subcollections": {
+      "type": "subcollections",
+      "settings": {
+        "subcollection_layout": "grid",
+        "subcollection_description": false,
+        "select_image": "collection",
+        "color_scheme": "",
+        "color": "#ffffff",
+        "bg_color": "",
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    "1762802079151fdd19": {
+      "type": "apps",
+      "disabled": true,
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "main": {
+      "type": "collection",
+      "custom_css": [
+        "/* Mobile (Standard) */.swatch__button {margin-right: 3px !important; margin-left: 5px !important;}"
+      ],
+      "settings": {
+        "enable_sort": false,
+        "enable_filters": false,
+        "filter_layout": "slide-out",
+        "default_open": true,
+        "collection_linklist": "",
+        "grid": 4,
+        "grid_mobile": "2",
+        "products_per_page": 24,
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "cm_chips",
+    "cm_colhead",
+    "hero",
+    "subcollections",
+    "1762802079151fdd19",
+    "main"
+  ]
+}

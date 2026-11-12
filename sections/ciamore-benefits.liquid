@@ -1,0 +1,61 @@
+{%- comment -%}
+  CIAMORE | Vorteile als dunkle Karte mit Nummern-Kacheln (Skizzen-Stil)
+{%- endcomment -%}
+<div class="cm-ben cm-ben--{{ section.id }}">
+  <ul class="cm-ben__card" role="list">
+    {%- for block in section.blocks -%}
+      <li class="cm-ben__item" {{ block.shopify_attributes }}>
+        <span class="cm-ben__icon" aria-hidden="true">{%- if block.settings.icon != blank -%}{% render 'animated-icon', filename: block.settings.icon %}{%- else -%}{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}{%- endif -%}</span>
+        <span class="cm-ben__text">
+          <b class="cm-ben__title">{{ block.settings.title }}</b>
+          {%- if block.settings.text != blank -%}<span class="cm-ben__desc">{{ block.settings.text }}</span>{%- endif -%}
+        </span>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+<style>
+  .cm-ben--{{ section.id }} { padding: {{ section.settings.pt_mobile }}px 16px 0; }
+  .cm-ben--{{ section.id }} .cm-ben__card {
+    list-style: none; margin: 0; padding: 4px 20px;
+    background: #f6f4f0; color: var(--cm-ink); border-radius: 14px;
+  }
+  .cm-ben--{{ section.id }} .cm-ben__item {
+    display: flex; gap: 16px; align-items: center; padding: 18px 0; border-top: 1px solid #e4e1dc;
+  }
+  .cm-ben--{{ section.id }} .cm-ben__item:first-child { border-top: 0; }
+  .cm-ben--{{ section.id }} .cm-ben__icon {
+    width: 46px; height: 46px; border-radius: 999px; flex-shrink: 0; background: #fff; color: var(--cm-ink);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px -4px rgba(0,0,0,.15);
+  }
+  .cm-ben--{{ section.id }} .cm-ben__icon svg { width: 22px; height: 22px; }
+  .cm-ben--{{ section.id }} .cm-ben__text { display: flex; flex-direction: column; gap: 3px; }
+  .cm-ben--{{ section.id }} .cm-ben__title { font-family: var(--cm-body); font-size: 15.5px; font-weight: 700; color: var(--cm-ink); }
+  .cm-ben--{{ section.id }} .cm-ben__desc { font-size: 13.5px; line-height: 1.45; color: var(--cm-muted); }
+  @media (min-width: 750px) {
+    .cm-ben--{{ section.id }} { padding: {{ section.settings.pt }}px var(--outer, 24px) 0; }
+    .cm-ben--{{ section.id }} .cm-ben__card { display: grid; grid-template-columns: repeat({{ section.blocks.size | at_least: 1 }}, minmax(0, 1fr)); padding: 32px 28px; }
+    .cm-ben--{{ section.id }} .cm-ben__item { border-top: 0; border-left: 1px solid #e4e1dc; padding: 4px 28px; align-items: flex-start; }
+    .cm-ben--{{ section.id }} .cm-ben__item:first-child { border-left: 0; padding-left: 0; }
+    .cm-ben--{{ section.id }} .cm-ben__title { font-size: 16.5px; }
+    .cm-ben--{{ section.id }} .cm-ben__desc { font-size: 14.5px; }
+  }
+</style>
+{% schema %}
+{
+  "name": "Ciamore Vorteile",
+  "settings": [
+    { "type": "range", "id": "pt", "label": "Abstand oben (Desktop)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "pt_mobile", "label": "Abstand oben (Handy)", "min": 0, "max": 100, "step": 2, "unit": "px", "default": 44 }
+  ],
+  "blocks": [
+    { "type": "benefit", "name": "Vorteil", "limit": 4, "settings": [
+      { "type": "text", "id": "icon", "label": "Symbol (z. B. icon-fast-shipment, icon-leaf, icon-heart, icon-shield)" },
+      { "type": "text", "id": "title", "label": "Titel", "default": "Vorteil" },
+      { "type": "textarea", "id": "text", "label": "Text" }
+    ] }
+  ],
+  "presets": [{ "name": "Ciamore Vorteile", "blocks": [{ "type": "benefit" }, { "type": "benefit" }, { "type": "benefit" }] }]
+}
+{% endschema %}

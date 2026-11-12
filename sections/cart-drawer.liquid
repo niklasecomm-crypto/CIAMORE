@@ -1,0 +1,1121 @@
+{%- liquid
+  assign animation_name = 'cart-items-fade'
+  assign animation_duration = 500
+  assign animation_delay_initial = 200
+  assign animation_delay_increment = 50
+  assign block_index_pinned = 1
+  assign block_index_static = 1
+  assign cart_item_count = cart.item_count
+  assign cart_title_default = 'cart.general.title' | t
+  assign show_empty_cart_menu = settings.show_empty_cart_menu | default: null
+  assign empty_cart_menu = settings.empty_cart_menu
+  assign empty_cart_products = settings.empty_cart_products | default: null
+  assign has_cart_title = false
+  assign has_checkout_buttons = false
+
+  assign title_block = section.blocks | where: 'type', 'title'
+  assign product_block = section.blocks | where: 'type', 'products'
+  assign checkout_buttons_block = section.blocks | where: 'type', 'checkout-buttons'
+  assign color_scheme = 'color-' | append: section.settings.color_scheme
+
+  for block in section.blocks
+    case block.type
+      when 'title'
+        assign has_cart_title = true
+        assign title_block_index = forloop.index
+
+      when 'products'
+        assign products_block_index = forloop.index
+
+      when 'checkout-buttons'
+        assign has_checkout_buttons = true
+    endcase
+  endfor
+-%}
+
+<script src="{{ 'quantity-counter.js' | asset_url }}" defer="defer"></script>
+
+{%- capture cart_title -%}
+  <h3 class="cart__title caps">
+    {{ title_block[0].settings.title | default: cart_title_default }}
+
+    <cart-count class="cart__items-count" data-cart-count="{{ cart_item_count }}">{{ cart_item_count }}</cart-count>
+  </h3>
+
+  <button type="button" class="drawer__close" data-cart-drawer-close aria-label="{{ 'general.accessibility.close' | t }} {{ 'cart.general.title' | t }}">
+    {%- render 'icon-cancel' -%}
+  </button>
+{%- endcapture -%}
+
+{%- capture cart_items -%}
+  {%- assign animation_delay = products_block_index | times: animation_delay_increment | plus: animation_delay_initial -%}
+
+  <div class="cart__errors drawer__errors"
+    data-cart-errors
+    data-animation="{{ animation_name }}"
+    data-animation-duration="{{ animation_duration }}"
+    data-animation-delay="{{ animation_delay }}">
+    <div class="cart__errors__inner">
+      <h5 class="cart__errors__heading">{{ 'cart.general.limit_message' | t }}</h5>
+
+      <p class="cart__errors__content" data-error-message></p>
+
+      <button class="cart__errors__close" type="button" data-cart-error-close aria-label="{{ 'general.accessibility.close' | t }} {{ 'cart.general.title' | t }}">
+        {%- render 'icon-cancel' -%}
+      </button>
+    </div>
+  </div>
+
+
+  
+  <cart-items class="drawer__items" data-items-holder style="--base-animation-delay: {{ animation_delay }}ms">
+    {%- render 'cart-line-items', part: 'line-items' -%}
+  </cart-items>
+{%- endcapture -%}
+
+{%- capture checkout_buttons -%}
+  {%- assign animation_delay = buttons_block_index | times: animation_delay_increment | plus: animation_delay_initial -%}
+  <form id="cartForm" class="cart__form" action="{{ routes.cart_url }}" method="post" novalidate data-cart-form>
+
+    <div class="cart__foot__inner">
+
+
+
+
+       
+      {%- render 'express-toggle' -%}
+      <div class="cart__price__holder" data-cart-price-holder>
+        {%- render 'cart-price' -%}
+      </div>
+
+
+
+
+      <div class="cart__buttons-all">
+
+        <div class="cart__buttons-wrapper">
+          {%- if settings.enable_accept_terms -%}
+            <input type="hidden" name="attributes[{{ 'cart.general.accepted_terms' | t }}]" value="Yes"/>
+            <input type="checkbox" class="cart__acceptance__input" name="acceptance" id="acceptance" data-cart-acceptance-checkbox>
+            <label for="acceptance" class="cart__acceptance__label" data-cart-acceptance-label>{{ settings.accept_terms_text }}</label>
+
+            <p class="cart__terms cart__errors__content" data-terms-error-message></p>
+          {%- endif -%}
+
+          <div class="cart__buttons{% if settings.enable_accept_terms %} cart__buttons--disabled{% endif %}" data-cart-checkout-buttons>
+            <fieldset class="cart__buttons__fieldset" data-cart-checkout-button>
+              
+              <p class="promoCodeText">Rabattcodes im nächsten Schritt</p>
+              
+              <button type="submit" name="checkout" class="btn btn--primary btn--solid btn--full cart__checkout">
+                {%- if settings.show_lock_icon -%}
+                  {%- render 'animated-icon', filename: 'icon-lock' -%}
+                {%- endif -%}
+
+                {{- 'cart.general.checkout' | t -}}
+              </button>
+
+              
+
+{% comment %} Zahlungslogos unter dem "Zur Kasse" Button im Warenkorb-Drawer {% endcomment %}
+
+<!-- Zahlungsicons Wrapper -->
+<div class="payment-icons-wrapper">
+  <ul class="supporting-menu__payment payment-icons inline-list">
+    <li><img src="{{ 'klarna-svgrepo-com.svg' | file_url }}" alt="Klarna"></li>
+    <li><img src="{{ 'paypal-svgrepo-com.svg' | file_url }}" alt="PayPal"></li>
+    <li><img src="{{ 'visa-svgrepo-com.svg' | file_url }}" alt="Visa"></li>
+    <li><img src="{{ 'mastercard-full-svgrepo-com.svg' | file_url }}" alt="Mastercard"></li>
+    <li><img src="{{ 'maestro-subtext-svgrepo-com_1.svg' | file_url }}" alt="Maestro"></li>
+    <li><img src="{{ 'applepay-svgrepo-com.svg' | file_url }}" alt="Apple Pay"></li>
+  </ul>
+</div>
+
+
+
+
+
+              {%- if checkout_buttons_block[0].settings.enable_additional_buttons and additional_checkout_buttons -%}
+                <div class="additional-checkout-buttons additional-checkout-buttons--vertical">
+                  {{- content_for_additional_checkout_buttons -}}
+                </div>
+              {%- endif -%}
+            </fieldset>
+          </div>
+        </div>
+
+        {%- if checkout_buttons_block[0].settings.show_view_cart_button -%}
+          {%- assign additional_checkout_buttons = checkout_buttons_block[0].settings.enable_additional_buttons -%}
+          <a href="{{ routes.cart_url }}" class="cart__view{% if additional_checkout_buttons %} cart__view--additional-checkout-buttons{% endif %} btn btn--primary btn--outline">{{- 'cart.general.view_cart' | t -}}</a>
+        {%- endif -%}
+      </div>
+
+      <em class="cart__note">
+        {{- 'cart.general.subtotal_note' | t -}}
+      </em>
+    </div>
+  </form>
+{%- endcapture -%}
+
+{%- if template.name != 'cart' -%}
+  <div
+    data-section-id="{{ section.id }}"
+    data-section-type="cart-drawer"
+  >
+    <cart-drawer
+      class="drawer drawer--cart{% if cart_item_count == 0 %} is-empty{% endif %} {{ color_scheme }}"
+      id="cart-drawer"
+      tabindex="0"
+    >
+      <collapsible-elements class="drawer__inner" single="true" data-cart-drawer-inner data-scroll-lock-scrollable>
+        <div class="drawer__body" data-cart-drawer-body data-scroll-lock-scrollable>
+
+{%- comment -%} Redesign: 10-Minuten-Countdown entfernt (künstliche Verknappung, siehe Audit).
+<div class="cartCountdownWrapper">
+  <div class="cartCountdownAlert">
+    ⏰ Dein Warenkorb ist für <span id="cartCountdown">10:00</span> Minuten reserviert.
+  </div>
+</div>
+{%- endcomment -%}
+          
+          {%- unless has_cart_title -%}
+            {%- assign title_block_index = title_block_index | default: 1 -%}
+            {%- assign animation_delay = title_block_index
+              | times: animation_delay_increment
+              | plus: animation_delay_initial
+            -%}
+
+            <div
+              class="cart-block cart-block--top drawer__head"
+              data-animation="{{ animation_name }}"
+              data-animation-duration="{{ animation_duration }}"
+              data-animation-delay="{{ animation_delay }}"
+            >
+              {{ cart_title }}
+            </div>
+          {%- endunless -%}
+
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign pin_to_bottom = block.settings.pin_to_bottom
+
+              if pin_to_bottom
+                assign animation_delay = block_index_pinned | times: animation_delay_increment | plus: animation_delay_initial
+                assign block_index_pinned = block_index_pinned | plus: 1
+              else
+                assign animation_delay = block_index_static | times: animation_delay_increment | plus: animation_delay_initial
+                assign block_index_static = block_index_static | plus: 1
+              endif
+
+              capture cart_block_class
+                echo 'cart-block'
+
+                case block.type
+                  when 'title'
+                    echo ' cart-block--top drawer__head'
+                  when 'products'
+                    if settings.quantity_style == 'dropdown'
+                      echo ' cart-block--items'
+                    endif
+                endcase
+              endcapture
+            -%}
+
+            {%- capture block_content -%}
+              <div class="{{ cart_block_class }}"
+                data-animation="{{ animation_name }}"
+                data-animation-duration="{{ animation_duration }}"
+                data-animation-delay="{{ animation_delay }}"
+                {{ block.shopify_attributes }}
+              >
+                {%- case block.type -%}
+                  {%- when 'title' -%}
+                    {{ cart_title }}
+
+                  {%- when 'cart-message' -%}
+                    {%- liquid
+                      assign cart_custom_message_text = block.settings.cart_custom_message_text
+                      assign custom_message_color = block.settings.cart_custom_message_color
+                    -%}
+
+                    {%- unless custom_message_color == 'rgba(0,0,0,0)' or custom_message_color == blank -%}
+                      {%- capture style -%}
+                        --text: {{ custom_message_color }};
+                      {%- endcapture -%}
+                    {%- endunless -%}
+
+                    {%- if cart_custom_message_text != blank -%}
+                      <div class="cart__message drawer__message drawer__message--custom" style="{{ style }}">
+                        {{ cart_custom_message_text }}
+                      </div>
+                    {%- endif -%}
+
+                  {%- when 'products' -%}
+                    {{ cart_items }}
+
+                  {%- when 'upsell-products' -%}
+                    {%- render 'cart-block-upsell', block: block -%}
+
+                  {%- when 'product-list' -%}
+                    {%- render 'cart-block-upsell', block: block -%}
+
+                  {%- when 'free-shipping' -%}
+                    {%- render 'free-shipping' message: block.settings.message, gradient: block.settings.free_shipping_gradient, show_wheel: false, show_progress_bar: true, is_cart_drawer: true -%}
+
+                  {%- when 'order-note' -%}
+                    {%- render 'cart-block-order-note', block: block -%}
+
+                  {%- when 'gift-note' -%}
+                    {%- render 'cart-block-gift-note', block: block -%}
+
+                  {%- when 'shipping-estimate' -%}
+                    {%- render 'cart-block-shipping-calculator', block: block -%}
+
+                  {%- when 'icon' -%}
+                    {%- render 'icon' block: block -%}
+
+                  {%- when 'payment-icons' -%}
+                    {%- unless shop.enabled_payment_types == empty -%}
+                      <ul class="cart__payment-icons{% if block.settings.icon_alignment == 'center' %} justify-center{% endif %}">
+                        {%- for type in shop.enabled_payment_types -%}
+                          <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endunless -%}
+
+                  {%- when 'code' -%}
+                    {%- if block.settings.code != blank -%}
+                      <div class="cart__custom-code">
+                        {{ block.settings.code }}
+                      </div>
+                    {%- endif -%}
+
+                  {%- when 'checkout-buttons' -%}
+                    {{ checkout_buttons }}
+
+                {%- endcase -%}
+              </div>
+            {%- endcapture -%}
+
+            {%- liquid
+              if pin_to_bottom
+                capture pinned_blocks
+                  echo pinned_blocks
+                  echo block_content
+                endcapture
+              else
+                capture static_blocks
+                  echo static_blocks
+                  echo block_content
+                endcapture
+              endif
+            -%}
+          {%- endfor -%}
+
+          {%- if static_blocks != blank -%}
+            {{ static_blocks }}
+          {%- endif -%}
+
+          {%- if product_block.size == 0 -%}
+            <div
+              class="cart-block"
+              data-animation="{{ animation_name }}"
+              data-animation-duration="{{ animation_duration }}"
+              data-animation-delay="{{ animation_delay }}"
+            >
+              {{ cart_items }}
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- if has_checkout_buttons == false or pinned_blocks != blank -%}
+          <div
+            class="drawer__foot"
+            data-checkout-buttons
+            style="--base-animation-delay: {{ block_index_static | times: animation_delay_increment }}ms;"
+          >
+            {%- if pinned_blocks != blank -%}
+              {{ pinned_blocks }}
+            {%- endif -%}
+
+            {%- unless has_checkout_buttons -%}
+              <div
+                data-animation="{{ animation_name }}"
+                data-animation-duration="{{ animation_duration }}"
+                data-animation-delay="{{ block_index_pinned | times: animation_delay_increment | plus: animation_delay_initial }}"
+              >
+                {{ checkout_buttons }}
+              </div>
+            {%- endunless -%}
+          </div>
+        {%- endif -%}
+
+        <div
+          class="drawer__empty"
+          data-cart-empty
+          data-scroll-lock-scrollable
+          style="--base-animation-delay: {{ animation_delay_initial }}ms"
+        >
+          <div class="drawer__empty__inner">
+            <p
+              class="drawer__empty__message"
+              data-animation="{{ animation_name }}"
+              data-animation-duration="{{ animation_duration }}"
+              data-animation-delay="{{ animation_delay_initial }}"
+            >
+              {{- 'cart.general.empty' | t -}}
+            </p>
+            {%- comment -%} CIAMORE: Bestseller zum Wischen im leeren Warenkorb {%- endcomment -%}
+            {%- assign cm_rec = collections['bestseller'] -%}{%- if cm_rec == empty or cm_rec.products_count == 0 -%}{%- assign cm_rec = collections['besteller'] -%}{%- endif -%}
+            {%- if cm_rec.products.size > 0 -%}
+              <div class="cm-erecs">
+                <p class="cm-erecs__title">Unsere Bestseller</p>
+                <div class="cm-erecs__track" data-scroll-lock-scrollable data-cm-swipe>
+                  {%- for p in cm_rec.products limit: 5 -%}
+                    {%- liquid
+                      assign v = p.selected_or_first_available_variant
+                      assign needs_choice = false
+                      for o in p.options
+                        assign od = o | downcase
+                        if od contains 'größe' or od contains 'groesse' or od contains 'size' or od contains 'länge'
+                          assign needs_choice = true
+                        endif
+                      endfor
+                    -%}
+                    <div class="cm-erecs__card">
+                      <div class="cm-erecs__media">
+                      <a class="cm-erecs__img" href="{{ p.url }}" aria-label="{{ p.title | escape }}">
+                        {%- if p.featured_image -%}{{ p.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200, 300, 400', sizes: '150px', alt: p.title }}{%- endif -%}
+                      </a>
+                      {%- if p.available -%}
+                        {%- if needs_choice -%}
+                          <a class="cm-erecs__add" href="{{ p.url }}" aria-label="Größe wählen: {{ p.title | escape }}"><span aria-hidden="true">+</span></a>
+                        {%- else -%}
+                          <button type="button" class="cm-erecs__add" data-cm-add="{{ v.id }}" aria-label="{{ p.title | escape }} in den Warenkorb"><span aria-hidden="true">+</span></button>
+                        {%- endif -%}
+                      {%- endif -%}
+                      </div>
+                      <a class="cm-erecs__name" href="{{ p.url }}">{{ p.title }}</a>
+                      <div class="cm-erecs__price">
+                        <span class="cm-erecs__now{% if p.compare_at_price > p.price %} is-sale{% endif %}">{{ p.price | money }}</span>
+                        {%- if p.compare_at_price > p.price -%}<s class="cm-erecs__was">{{ p.compare_at_price | money }}</s>{%- endif -%}
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endif -%}
+            {%- assign animation_delay = animation_delay_initial | plus: animation_delay_increment -%}
+
+            {%- if show_empty_cart_menu and linklists[empty_cart_menu].links.size > 0 -%}
+
+
+
+
+
+
+
+              
+<div class="drawer__empty__menu">
+  <!-- Hauptmenü -->
+  <div class="drawer__menu drawer__menu--main" style="display: block;">
+    <div class="drawer__empty__grid">
+      <a href="{{ cm_rec.url | default: '/collections/besteller' }}" class="btn btn--outline btn--primary drawer__menu-btn">Bestseller</a>
+      <a href="#" class="btn btn--outline btn--primary drawer__menu-btn" data-submenu="products">Produkte</a>
+      <a href="/collections/new-in" class="btn btn--outline btn--primary drawer__menu-btn">New In</a>
+      <a href="/collections/Sale" class="btn btn--outline btn--primary drawer__menu-btn">Sale</a>
+      <a href="/collections/Clover-kollektion" class="btn btn--outline btn--primary drawer__menu-btn">Clover</a>
+      {%- comment -%} Geschenke-Kollektion im neuen Shop entfernt {%- endcomment -%}
+      </div>
+  </div>
+
+  <!-- Untermenü Produkte -->
+  <div class="drawer__menu drawer__menu--products" style="display: none;">
+    <h4 class="drawer__submenu-heading">Produkte</h4>
+    <div class="drawer__submenu-list">
+      <a href="/collections/ringe" class="btn btn--outline btn--primary drawer__submenu-btn">Ringe</a>
+      <a href="/collections/Ohrringe" class="btn btn--outline btn--primary drawer__submenu-btn">Ohrringe</a>
+      <a href="/collections/ketten" class="btn btn--outline btn--primary drawer__submenu-btn">Halsketten</a>
+      <a href="/collections/Armbänder" class="btn btn--outline btn--primary drawer__submenu-btn">Armbänder</a>
+      <a href="#" class="btn btn--outline btn--primary drawer__submenu-btn drawer__btn-back">Zurück</a>
+    </div>
+  </div>
+
+  {%- comment -%} Untermenü Geschenke entfernt {%- endcomment -%}
+</div>
+
+
+
+
+              
+              
+            {%- endif -%}
+
+            {%- if empty_cart_products -%}
+              <div
+                class="drawer__empty__product product__upsell--stacked"
+                data-animation="{{ animation_name }}"
+                data-animation-duration="{{ animation_duration }}"
+                data-animation-delay="{{ animation_delay }}"
+              >
+                {%- liquid
+                  assign animation_delay = animation_delay | plus: animation_delay_increment
+                  if empty_cart_products != blank
+                    for upsell_product in empty_cart_products
+                      render 'upsell-product', upsell_product: upsell_product
+                    endfor
+                  endif
+                -%}
+              </div>
+            {%- endif -%}
+
+            {%- if settings.show_recently_viewed_products -%}
+              <script src="{{ 'recently-viewed.js' | asset_url }}" defer="defer"></script>
+
+              <recently-viewed
+                class="drawer__empty__product product__upsell--stacked hidden"
+                id="recently-viewed-products-cart"
+                data-limit="3"
+                data-target="api-upsell-product"
+                data-animation="{{ animation_name }}"
+                data-animation-duration="{{ animation_duration }}"
+                data-animation-delay="{{ animation_delay }}"
+              ></recently-viewed>
+            {%- endif -%}
+          </div>
+        </div>
+      </collapsible-elements>
+
+      <span class="underlay drawer__underlay" data-drawer-underlay></span>
+    </cart-drawer>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme_1",
+      "label": "Color scheme"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Text",
+          "default": "Cart"
+        }
+      ]
+    },
+    {
+      "type": "cart-message",
+      "name": "Cart message",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "cart_custom_message_text",
+          "label": "Text",
+          "default": "<p>Use coupon code <strong>WELCOME10</strong> for 10% off your first order.</p>"
+        },
+        {
+          "type": "color",
+          "id": "cart_custom_message_color",
+          "label": "Text color"
+        },
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "free-shipping",
+      "name": "Free shipping message",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Set a minimum amount for free shipping in [Theme settings](/admin/themes/current/editor?context=theme)"
+        },
+        {
+          "type": "textarea",
+          "id": "message",
+          "label": "Message",
+          "info": "Use ||amount|| to display progress towards free shipping.",
+          "default": "You are ||amount|| away from free shipping."
+        },
+        {
+          "type": "color_background",
+          "id": "free_shipping_gradient",
+          "label": "Custom progress bar gradient"
+        },
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "products",
+      "name": "Products",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "upsell-products",
+      "name": "Upsell products",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "upsell_auto_open",
+          "label": "Show upsell products automatically when cart drawer is open",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "order-note",
+      "name": "Order note",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "gift-note",
+      "name": "Gift note",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "shipping-estimate",
+      "name": "Shipping estimate",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "name": "Icon",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon_name",
+          "label": "Icon",
+          "default": "icon-award",
+          "options": [
+            {"label": "Award", "value": "icon-award"},
+            {"label": "Box", "value": "icon-box"},
+            {"label": "Chat", "value": "icon-chat"},
+            {"label": "Check", "value": "icon-check"},
+            {"label": "Check circle", "value": "icon-check-circle"},
+            {"label": "Cloud", "value": "icon-cloud"},
+            {"label": "Diameter", "value": "icon-diameter"},
+            {"label": "Discount", "value": "icon-discount"},
+            {"label": "Donation", "value": "icon-donation"},
+            {"label": "Droplet", "value": "icon-droplet"},
+            {"label": "Info", "value": "icon-info-empty"},
+            {"label": "Email", "value": "icon-email"},
+            {"label": "Fast shipment", "value": "icon-fast-shipment"},
+            {"label": "Flare", "value": "icon-flare"},
+            {"label": "Flower", "value": "icon-flower"},
+            {"label": "Gift", "value": "icon-gift"},
+            {"label": "Green shipment", "value": "icon-green-shipment"},
+            {"label": "Heart", "value": "icon-heart"},
+            {"label": "Leaf", "value": "icon-leaf"},
+            {"label": "Lightning", "value": "icon-lightning"},
+            {"label": "Location", "value": "icon-location"},
+            {"label": "Mail", "value": "icon-mail"},
+            {"label": "Notes", "value": "icon-notes"},
+            {"label": "Pants", "value": "icon-pants"},
+            {"label": "Peace", "value": "icon-peace"},
+            {"label": "Pin", "value": "icon-pin"},
+            {"label": "Planet", "value": "icon-planet"},
+            {"label": "Phone", "value": "icon-phone"},
+            {"label": "Recycle", "value": "icon-recycle"},
+            {"label": "Ruler", "value": "icon-ruler"},
+            {"label": "Shield", "value": "icon-shield"},
+            {"label": "Smile", "value": "icon-smile"},
+            {"label": "Star", "value": "icon-star"},
+            {"label": "Tree", "value": "icon-tree"},
+            {"label": "Trophy", "value": "icon-trophy"},
+            {"label": "Truck", "value": "icon-truck"},
+            {"label": "Vegan", "value": "icon-vegan"},
+            {"label": "Wash", "value": "icon-wash"},
+            {"label": "Washing machine", "value": "icon-washing-machine"}
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Alternative icon/image",
+          "info": "160 x 160px .svg recommended"
+        },
+        {
+          "type": "range",
+          "id": "icon_size",
+          "label": "Size",
+          "unit": "px",
+          "min": 20,
+          "max": 80,
+          "step": 5,
+          "default": 20
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon color"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Title<\/p>"
+        },
+        {
+          "type": "select",
+          "id": "text_font_size",
+          "label": "Text size",
+          "default": "body-medium",
+          "info": "Automatically generated by the base size. Applies only when content in Text field is set to Paragraph.",
+          "options": [
+            {"value": "body-x-small", "label": "Extra small"},
+            {"value": "body-small", "label": "Small"},
+            {"value": "body-medium", "label": "Medium"},
+            {"value": "body-large", "label": "Large"},
+            {"value": "body-x-large", "label": "Extra large"}
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "product-list",
+      "name": "Product list",
+      "settings": [
+        {
+          "type": "product_list",
+          "id": "product_list",
+          "label": "Product list",
+          "limit": 3,
+          "info": "Choose up to 3 products"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Buy it with"
+        },
+        {
+          "type": "checkbox",
+          "id": "upsell_auto_open",
+          "label": "Show products list automatically when cart drawer is open",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "name": "Custom code",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "code",
+          "label": "Custom code",
+          "info": "Add app snippets or other Liquid code to create advanced customizations."
+        },
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "payment-icons",
+      "name": "Payment icons",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon_alignment",
+          "label": "Icon alignment",
+          "default": "left",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "checkout-buttons",
+      "name": "Checkout buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enable_additional_buttons",
+          "label": "Enable additional checkout buttons",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_view_cart_button",
+          "label": "Show 'View cart' button",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "pin_to_bottom",
+          "label": "Pin to bottom",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart drawer",
+      "blocks": [
+        {
+          "type": "cart-message"
+        },
+        {
+          "type": "title"
+        },
+        {
+          "type": "free-shipping",
+          "settings": {
+            "message": "You are ||amount|| away from free shipping.",
+            "free_shipping_gradient": ""
+          }
+        },
+        {
+          "type": "order-note",
+          "settings": {}
+        },
+        {
+          "type": "gift-note",
+          "settings": {}
+        },
+        {
+          "type": "products",
+          "settings": {}
+        },
+        {
+          "type": "upsell-products",
+          "settings": {}
+        },
+        {
+          "type": "checkout-buttons"
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["aside"]
+  }
+}
+{% endschema %}
+
+
+
+
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // =====================
+    // ⏰ Countdown-Logik
+    // =====================
+    var countdownEl = document.getElementById("cartCountdown");
+    var COUNTDOWN_KEY = "cartCountdownEndTime";
+    var DEFAULT_TIME = 600; // 10 Minuten
+    var endTime = null;
+    var ticking = false;
+
+    function formatMMSS(totalSeconds) {
+      var minutes = Math.floor(totalSeconds / 60);
+      var seconds = totalSeconds % 60;
+      return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    }
+
+    function updateCountdown() {
+      if (!countdownEl || endTime === null) return;
+
+      var currentTime = Math.floor(Date.now() / 1000);
+      var remaining = endTime - currentTime;
+
+      if (remaining <= 0) {
+        countdownEl.textContent = "00:00";
+        ticking = false;
+        return;
+      }
+
+      countdownEl.textContent = formatMMSS(remaining);
+      ticking = true;
+      setTimeout(updateCountdown, 1000);
+    }
+
+    function initCountdownWith(endTs) {
+      endTime = endTs;
+      sessionStorage.setItem(COUNTDOWN_KEY, String(endTime));
+      updateCountdown();
+    }
+
+    function startCountdownIfNotStarted() {
+      if (sessionStorage.getItem(COUNTDOWN_KEY)) return; // schon gestartet
+      var newEnd = Math.floor(Date.now() / 1000) + DEFAULT_TIME;
+      initCountdownWith(newEnd);
+    }
+
+    function showStaticDefaultIfIdle() {
+      if (!countdownEl) return;
+      // Zeige "10:00", solange der Countdown noch nicht gestartet hat
+      if (!sessionStorage.getItem(COUNTDOWN_KEY)) {
+        countdownEl.textContent = formatMMSS(DEFAULT_TIME);
+      }
+    }
+
+    async function checkCartAndMaybeStart() {
+      try {
+        const res = await fetch("/cart.js", { credentials: "same-origin" });
+        if (!res.ok) throw new Error("Cart fetch failed");
+        const cart = await res.json();
+        if (cart && typeof cart.item_count === "number" && cart.item_count > 0) {
+          // Bereits Artikel im Warenkorb → Countdown starten (falls nicht schon)
+          startCountdownIfNotStarted();
+        } else {
+          // Noch leer → statische Anzeige
+          showStaticDefaultIfIdle();
+        }
+      } catch (e) {
+        // Fallback: statische Anzeige, wenn /cart.js nicht erreichbar ist
+        showStaticDefaultIfIdle();
+      }
+    }
+
+    if (countdownEl) {
+      // Falls der Countdown früher schon gestartet wurde (gleiche Session)
+      var storedEnd = sessionStorage.getItem(COUNTDOWN_KEY);
+      if (storedEnd) {
+        initCountdownWith(parseInt(storedEnd, 10));
+      } else {
+        // Sonst prüfen, ob der Warenkorb bereits Artikel enthält
+        checkCartAndMaybeStart();
+      }
+
+      // ▶️ Add-to-Cart Listener (Form-Submit)
+      document.addEventListener("submit", function (e) {
+        var form = e.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        // Greife gängige Shopify-Formen ab
+        if (form.matches('form[action*="/cart/add"], form.product-form, form[action*="/cart/add.js"]')) {
+          startCountdownIfNotStarted();
+        }
+      }, true);
+
+      // ▶️ Add-to-Cart Listener (Button-Klick)
+      document.addEventListener("click", function (e) {
+        var btn = e.target && (e.target.closest('button[name="add"], button.add-to-cart, .product-form__submit, [data-add-to-cart], [data-action="add-to-cart"]'));
+        if (btn) {
+          startCountdownIfNotStarted();
+        }
+      }, true);
+    }
+
+    // =====================================================
+    // 📦 Menü-Umschaltfunktion im leeren Cart-Drawer (unverändert)
+    // =====================================================
+    const mainMenu = document.querySelector('.drawer__menu--main');
+    const productsMenu = document.querySelector('.drawer__menu--products');
+    const productButton = document.querySelector('[data-submenu="products"]');
+    const backButton = document.querySelector('.drawer__btn-back');
+
+    if (productButton && backButton && mainMenu && productsMenu) {
+      productButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        mainMenu.style.display = 'none';
+        productsMenu.style.display = 'block';
+      });
+
+      backButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        productsMenu.style.display = 'none';
+        mainMenu.style.display = 'block';
+      });
+    }
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var productsBtn = document.querySelector('[data-submenu="products"]');
+    var productsMenu = document.querySelector('.drawer__menu--products');
+
+    if (productsBtn && productsMenu) {
+      productsBtn.addEventListener('click', function () {
+        // Entferne die Animation kurz und triggere sie neu
+        productsMenu.classList.remove('animate');
+        void productsMenu.offsetWidth; // Reflow trick
+        productsMenu.classList.add('animate');
+      });
+    }
+  });
+
+  
+  document.addEventListener("DOMContentLoaded", function () {
+    var productsBtn = document.querySelector('[data-submenu="products"]');
+    var productsMenu = document.querySelector('.drawer__menu--products');
+    var emptyInner = document.querySelector('.drawer__empty__inner');
+
+    if (productsBtn && productsMenu && emptyInner) {
+      productsBtn.addEventListener("click", function () {
+        productsMenu.classList.remove("animate"); // Reset Animation
+        void productsMenu.offsetWidth;
+        productsMenu.classList.add("animate");
+
+        emptyInner.classList.add("submenu-open");
+      });
+    }
+
+    var backButtons = document.querySelectorAll('.drawer__btn-back');
+    backButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        emptyInner.classList.remove('submenu-open');
+      });
+    });
+  });
+  
+</script>
+
+
+
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var emptyInner = document.querySelector('.drawer__empty__inner');
+
+    // Menü-Konfiguration
+    var menuButtons = [
+      { trigger: '[data-submenu="products"]', menu: '.drawer__menu--products' },
+      { trigger: '[data-submenu="geschenke"]', menu: '.drawer__menu--geschenke' }
+    ];
+
+    menuButtons.forEach(function (item) {
+      var triggerBtn = document.querySelector(item.trigger);
+      var targetMenu = document.querySelector(item.menu);
+
+      if (triggerBtn && targetMenu) {
+        triggerBtn.addEventListener("click", function () {
+          // Animation neu triggern
+          targetMenu.classList.remove("animate");
+          void targetMenu.offsetWidth;
+          targetMenu.classList.add("animate");
+
+          // Menüumschaltung
+          document.querySelector(".drawer__menu--main").style.display = "none";
+          targetMenu.style.display = "flex";
+
+          // Hinweistext ausblenden
+          if (emptyInner) emptyInner.classList.add("submenu-open");
+        });
+      }
+    });
+
+    // Zurück-Button
+    var backButtons = document.querySelectorAll("[data-menu-back]");
+    backButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".drawer__menu").forEach(function (menu) {
+          menu.style.display = "none";
+        });
+        document.querySelector(".drawer__menu--main").style.display = "block";
+        if (emptyInner) emptyInner.classList.remove("submenu-open");
+      });
+    });
+  });
+</script>
