@@ -1679,7 +1679,7 @@ html body.cm-multi-pdp .product__selectors .radio__button input:checked + label 
 }
 /* Bundle-Veredelung: unchecked label = transparent, gleiche Schrift wie Einzelprodukte */
 html body.cm-multi-pdp .product__selectors .radio__button label {
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   color: #000 !important;
   background: transparent !important;
   border: none !important;
