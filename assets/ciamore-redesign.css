@@ -1013,7 +1013,7 @@ html body.template-product .radio__fieldset--swatches .radio__buttons::after {
 /* Bundle-Produkt: nicht verfügbare Variante — gleicher Stil wie Einzelprodukte (sold-out) */
 .cm-multi-pdp .product__selectors .radio__button.cm-unavailable label {
   opacity: 1 !important; text-decoration: line-through !important;
-  color: var(--cm-muted) !important; cursor: default !important;
+  color: #000 !important; cursor: default !important;
 }
 .cm-multi-pdp .product__selectors .radio__button.cm-unavailable label::before {
   opacity: .55 !important;
