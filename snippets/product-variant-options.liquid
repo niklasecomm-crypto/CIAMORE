@@ -261,7 +261,17 @@
                       {%- assign veredelung_farben = 'Gold,Platin,Roségold' | split: ',' -%}
                       <span class="radio__legend__option-name">
                         {%- if veredelung_farben contains option.selected_value -%}
-                          Veredelung:
+                          {%- if option.name contains '(' -%}
+                            {%- assign _parts = option.name | split: '(' -%}
+                            {%- assign _label = _parts[0] | strip -%}
+                            {%- if _label != blank -%}
+                              {{ _label }}:
+                            {%- else -%}
+                              Veredelung:
+                            {%- endif -%}
+                          {%- else -%}
+                            Veredelung:
+                          {%- endif -%}
                         {%- else -%}
                           {{ option.name }}:
                         {%- endif -%}
