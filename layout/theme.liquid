@@ -317,6 +317,24 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 <script>
+/* Set-Produkte (cm-multi-pdp): Slider-Pill wie bei Einzelprodukten */
+(function () {
+  function upd(box, anim) {
+    var items = [].slice.call(box.querySelectorAll('.radio__button'));
+    if (!items.length) return;
+    var i = items.findIndex(function (b) { var x = b.querySelector('input'); return x && x.checked; });
+    if (!anim) box.classList.add('no-anim');
+    box.style.setProperty('--n', items.length); box.style.setProperty('--i', Math.max(0, i));
+    if (!anim) setTimeout(function () { box.classList.remove('no-anim'); }, 60);
+  }
+  function all(anim) { document.querySelectorAll('.cm-multi-pdp .product__selectors .radio__buttons').forEach(function (b) { upd(b, anim); }); }
+  document.addEventListener('change', function (e) { var b = e.target.closest && e.target.closest('.cm-multi-pdp .product__selectors .radio__buttons'); if (b) upd(b, true); });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { all(false); }); else all(false);
+  window.addEventListener('pageshow', function () { all(false); });
+  new MutationObserver(function () { all(false); }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+<script>
 /* BOGOS: fest eingebaute englische Texte auf Deutsch */
 (function(){
   var R=[
