@@ -976,23 +976,28 @@ html body.template-product .radio__fieldset--swatches .radio__buttons::after {
 
 /* Bundle-Produkte (cm-multi-pdp): Veredelung-Toggle im selben Stil wie Einzelprodukte */
 .cm-multi-pdp .product__selectors .radio__buttons {
-  display: grid !important; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px;
-  padding: 4px; border-radius: 999px; background: var(--cm-soft) !important;
-  box-shadow: none !important; position: relative; isolation: auto; overflow: visible;
+  display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0 !important;
+  padding: 4px; border-radius: 10px !important;
+  position: relative; isolation: isolate; overflow: hidden;
+  background: linear-gradient(135deg, #fbfbfa 0%, #ecebe8 55%, #e2e0dc 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px #e6e4e0 !important;
 }
-.cm-multi-pdp .product__selectors .radio__buttons::after { display: none !important; }
-.cm-multi-pdp .product__selectors .radio__button { display: flex !important; width: auto !important; align-items: center; justify-content: center; }
+.cm-multi-pdp .product__selectors .radio__buttons::after {
+  content: ""; position: absolute; z-index: -1; top: -60%; left: -10%; width: 40%; height: 220%; pointer-events: none;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0)); transform: rotate(18deg);
+}
+.cm-multi-pdp .product__selectors .radio__button { display: block !important; width: auto !important; }
 .cm-multi-pdp .product__selectors .radio__button label {
   display: flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important;
   width: 100% !important; height: 44px !important; padding: 0 12px !important;
-  border: none !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important;
+  border: none !important; border-radius: 8px !important; background: transparent !important; box-shadow: none !important;
   font-family: var(--cm-body) !important; font-size: 14px !important; font-weight: 600 !important;
   color: var(--cm-muted) !important; cursor: pointer; transition: background .15s ease, box-shadow .15s ease;
   white-space: nowrap;
 }
 .cm-multi-pdp .product__selectors .radio__button input:checked + label {
-  background: #fff !important;
-  box-shadow: 0 2px 6px rgba(30,30,30,.1) !important;
+  background: rgba(255,255,255,.55) !important;
+  box-shadow: 0 2px 5px rgba(20,20,20,.14), 0 1px 1px rgba(20,20,20,.05) !important;
   color: var(--cm-ink) !important; font-weight: 700 !important;
 }
 .cm-multi-pdp .product__selectors .radio__button label::before {
