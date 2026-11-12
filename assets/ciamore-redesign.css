@@ -1668,7 +1668,20 @@ html body .bogos-bp-product-variant-option-item[aria-selected="true"] {
   color: #212121 !important;
 }
 
-/* Bundle-Set: checked-Label Farbe an normale Produkte angleichen */
-html body .cm-multi-pdp .radio__fieldset:not(.radio__fieldset--swatches) .radio__button input:checked + label {
-    color: #000 !important;
-    }
+/* Bundle-Veredelung: checked label = weißer Hintergrund wie bei Einzelprodukten, NICHT Silber-Verlauf */
+html body.cm-multi-pdp .product__selectors .radio__button input:checked + label {
+  background: #fff !important;
+  border: none !important;
+  box-shadow: 0 2px 5px rgba(20,20,20,.14), 0 1px 1px rgba(20,20,20,.05) !important;
+  color: var(--cm-ink) !important;
+  font-weight: 700 !important;
+  outline: 0 !important;
+}
+/* Bundle-Veredelung: unchecked label = transparent, gleiche Schrift wie Einzelprodukte */
+html body.cm-multi-pdp .product__selectors .radio__button label {
+  font-weight: 600 !important;
+  color: #6b6b6b !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
