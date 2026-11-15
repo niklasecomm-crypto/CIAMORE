@@ -254,7 +254,7 @@ document.addEventListener('click', function (e) {
 <script>
 /* Veredelung: die ganze Fläche (Kreis + Text) ist antippbar, auch bei ausverkauften Varianten */
 document.addEventListener('click', function (e) {
-  var t = e.target.closest && e.target.closest('.template-product .radio__fieldset--swatches tooltip-component');
+  var t = e.target.closest && e.target.closest('.radio__fieldset--swatches tooltip-component');
   if (!t || e.target.closest('label, input')) return;
   var inp = t.querySelector('input[type="radio"]');
   if (inp && !inp.checked) { inp.checked = true; inp.dispatchEvent(new Event('change', { bubbles: true })); inp.dispatchEvent(new Event('input', { bubbles: true })); }
