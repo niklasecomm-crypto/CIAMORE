@@ -1704,3 +1704,17 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 .cm-multi-pdp .product__selectors .radio__button input:checked + label .option-title {
   font-weight: 700 !important;
 }
+
+/* ── BOGOS Bundle: Ausverkauft-Button im Produkt-Modal wie auf der Produktseite ── */
+.bogos-product-add-btn[disabled],
+.bogos-product-add-btn:disabled {
+  background-color: #212121 !important;
+  color: #fff !important;
+  border: 1px solid #212121 !important;
+  border-radius: 10px !important;
+  opacity: 0.5 !important;
+  cursor: default !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  padding: 14px 0 !important;
+}
