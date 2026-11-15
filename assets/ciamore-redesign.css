@@ -1664,7 +1664,7 @@ html body .product-quick-add__form__inner > .product__block--buttons, html body 
 html body .bogos-product-detail-modal .bogos-product-add-btn { font-size: 0 !important; }
 html body .bogos-product-detail-modal .bogos-product-add-btn::after { content: "In den Warenkorb"; font-size: 16px; font-weight: 600; font-family: "DM Sans", sans-serif; }
 html body .bogos-product-detail-modal .bogos-product-add-btn[disabled]::after { content: "Ausverkauft"; }
-html body .bogos-product-detail-modal .bogos-product-add-btn[disabled] { background: #fff !important; color: #9d9d9d !important; border-color: #dcdcdc !important; cursor: default !important; }
+html body .bogos-product-detail-modal .bogos-product-add-btn[disabled] { background: #212121 !important; color: #fff !important; border-color: #212121 !important; cursor: default !important; opacity: 0.5 !important; }
 /* Bundle-Fenster: Versand/Klarna-Badges zwischen Button und Tabelle */
 html body .bogos-product-detail-modal .cm-pdp-tiles { margin: 16px 0 0 !important; }
 
@@ -1703,18 +1703,4 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 }
 .cm-multi-pdp .product__selectors .radio__button input:checked + label .option-title {
   font-weight: 700 !important;
-}
-
-/* ── BOGOS Bundle: Ausverkauft-Button im Produkt-Modal wie auf der Produktseite ── */
-.bogos-product-add-btn[disabled],
-.bogos-product-add-btn:disabled {
-  background-color: #212121 !important;
-  color: #fff !important;
-  border: 1px solid #212121 !important;
-  border-radius: 10px !important;
-  opacity: 0.5 !important;
-  cursor: default !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  padding: 14px 0 !important;
 }
