@@ -231,11 +231,18 @@ document.addEventListener('DOMContentLoaded', function() {
   
 <script>
 /* Quick-Add: kurzer Puls am gewählten Kreis und weicher Wechsel des Namens neben "Veredelung" */
+/* Capture-Phase: blendet den Wert SOFORT aus, BEVOR theme.js den Text ändert */
+document.addEventListener('change', function (e) {
+  var t = e.target.closest && e.target.closest('.product-quick-add__form__inner .radio__fieldset--swatches tooltip-component'); if (!t) return;
+  var v = t.closest('.radio__fieldset') && t.closest('.radio__fieldset').querySelector('.radio__legend__value');
+  if (v) { v.style.transition = 'none'; v.style.opacity = '0'; }
+}, true);
+/* Bubble-Phase: Puls-Animation + nach dem Textwechsel sanft einblenden */
 document.addEventListener('change', function (e) {
   var t = e.target.closest && e.target.closest('.product-quick-add__form__inner .radio__fieldset--swatches tooltip-component'); if (!t) return;
   t.classList.remove('cm-pulse'); void t.offsetWidth; t.classList.add('cm-pulse'); setTimeout(function () { t.classList.remove('cm-pulse'); }, 500);
   var v = t.closest('.radio__fieldset') && t.closest('.radio__fieldset').querySelector('.radio__legend__value');
-  if (v) { v.classList.add('cm-fade'); setTimeout(function () { v.classList.remove('cm-fade'); }, 180); }
+  if (v) { requestAnimationFrame(function () { v.style.transition = 'opacity .2s ease'; v.style.opacity = '1'; }); }
 });
 /* Leerer Warenkorb: Bestseller per Plus direkt hinzufügen */
 /* Wischen im leeren Warenkorb nicht an die Drawer-Gesten (Schließen per Wischen) weitergeben */

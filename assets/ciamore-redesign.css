@@ -1461,8 +1461,7 @@ html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-com
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component:has(input:checked) label { opacity: 1; transform: scale(1.12); box-shadow: 0 4px 10px -3px rgba(20,20,20,.3) !important; }
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component.cm-pulse label { animation: cmSwPulse .45s cubic-bezier(.3,.7,.4,1); }
 @keyframes cmSwPulse { 0% { transform: scale(.94); } 55% { transform: scale(1.22); } 100% { transform: scale(1.12); } }
-html body .product-quick-add__form__inner .radio__legend__value { transition: opacity .2s ease; }
-html body .product-quick-add__form__inner .radio__legend__value.cm-fade { opacity: 0; }
+/* Transition wird jetzt per inline-style gesetzt (capture → sofort aus, bubble → sanft ein) */
 @media (prefers-reduced-motion: reduce) { html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component.cm-pulse label { animation: none; } }
 .cm-pdp-tiles--qa { margin: 14px 0 18px !important; }
 
