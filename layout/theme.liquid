@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
 (function(){ try { var v = new URLSearchParams(location.search).get('fbt'); if (v) sessionStorage.setItem('cmFbt', v); v = v || sessionStorage.getItem('cmFbt') || 'dark'; if (v && v !== 'off') document.documentElement.setAttribute('data-fbt', v); } catch(e){} })();
 </script>
 <script>
-/* Veredelung: Position der gleitenden weißen Fläche setzen */
+/* Veredelung: Position der gleitenden weißen Fläche setzen – überall im Shop */
 (function () {
   function upd(box, anim) {
     var items = [].slice.call(box.querySelectorAll('tooltip-component'));
@@ -310,10 +310,28 @@ document.addEventListener('DOMContentLoaded', function () {
     box.style.setProperty('--n', items.length); box.style.setProperty('--i', Math.max(0, i));
     if (!anim) setTimeout(function () { box.classList.remove('no-anim'); }, 60);
   }
+  /* Alle Veredelung-Slider auf der Seite initialisieren (Produktseite) */
   function all(anim) { document.querySelectorAll('.template-product .radio__fieldset--swatches .radio__buttons').forEach(function (b) { upd(b, anim); }); }
+  /* Change-Events global abfangen – funktioniert auch in Quick-Add Modals */
   document.addEventListener('change', function (e) { var b = e.target.closest && e.target.closest('.radio__fieldset--swatches .radio__buttons'); if (b) upd(b, true); });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { all(false); }); else all(false);
   window.addEventListener('pageshow', function () { all(false); });
+  /* Quick-Add Modals: Slider initialisieren wenn Modal-Inhalt per AJAX geladen wird */
+  new MutationObserver(function (mutations) {
+    mutations.forEach(function (m) {
+      m.addedNodes.forEach(function (n) {
+        if (n.nodeType !== 1) return;
+        /* Prüfe ob das neue Element ein Quick-Add-Container ist oder einen enthält */
+        var boxes = [];
+        if (n.matches && n.matches('.product-quick-add .radio__fieldset--swatches .radio__buttons')) boxes.push(n);
+        if (n.querySelectorAll) {
+          var found = n.querySelectorAll('.product-quick-add .radio__fieldset--swatches .radio__buttons, .product-quick-add__form__inner .radio__fieldset--swatches .radio__buttons');
+          for (var j = 0; j < found.length; j++) boxes.push(found[j]);
+        }
+        boxes.forEach(function (b) { upd(b, false); });
+      });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
 <script>
