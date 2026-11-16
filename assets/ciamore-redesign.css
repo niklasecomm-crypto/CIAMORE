@@ -1073,24 +1073,7 @@ html body.template-product .tooltip-default { display: none !important; }
 .cm-usp__text small { font-size: 12.5px; color: #4d4d4d; }
 @media (min-width: 750px) { .cm-usp__text b { font-size: 14px; } }
 
-/* ===== Benefits-Varianten zum Vergleichen: ?usp=grid|cards|discs|accent|marquee ===== */
-/* cards: 2er-Kacheln im Silber-Verlauf, Wasserfest breit */
-.cm-usp[data-v="cards"] { border: 0; gap: 8px; }
-.cm-usp[data-v="cards"] .cm-usp__item { border: 0 !important; padding: 12px !important; border-radius: 8px; background: linear-gradient(135deg, #fbfbfa 0%, #ecebe8 55%, #e2e0dc 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px #e6e4e0; }
-.cm-usp[data-v="cards"] .cm-usp__item::before { display: none !important; }
-
-/* discs: luftig, ohne Linien, Icons in runden Silber-Scheiben */
-.cm-usp[data-v="discs"] { border: 0; row-gap: 14px; column-gap: 12px; padding: 6px 0; }
-.cm-usp[data-v="discs"] .cm-usp__item { border: 0 !important; padding: 0 !important; gap: 12px; }
-.cm-usp[data-v="discs"] .cm-usp__item::before { display: none !important; }
-.cm-usp[data-v="discs"] .cm-usp__icon { box-sizing: content-box; padding: 9px; border-radius: 50%; background: linear-gradient(135deg, #fbfbfa 0%, #e7e5e1 100%); box-shadow: inset 0 1px 0 #fff, 0 2px 6px rgba(20,20,20,.08); width: 20px !important; height: 20px !important; flex: 0 0 auto !important; }
-
-/* accent: Wasserfest als dunkle Glanz-Kachel, Rest im Linien-Raster */
-.cm-usp[data-v="accent"] { border-top: 0; }
-.cm-usp[data-v="accent"] .cm-usp__item--wide { border: 0; border-radius: 8px; padding: 14px 14px !important; margin-bottom: 4px; background: linear-gradient(135deg, #3a3a3a 0%, #161616 55%, #2b2b2b 100%); }
-.cm-usp[data-v="accent"] .cm-usp__item--wide b { color: #fff; }
-.cm-usp[data-v="accent"] .cm-usp__item--wide small { color: #c9c9c9; }
-.cm-usp[data-v="accent"] .cm-usp__item--wide .cm-usp__icon { filter: invert(1) brightness(1.6); }
+/* ===== Benefits: Laufleiste (marquee) ===== */
 
 /* marquee: Laufband mit allen Benefits, läuft langsam durch */
 
@@ -1110,7 +1093,7 @@ html body.template-product .tooltip-default { display: none !important; }
 .cm-usp-run__set .cm-usp__item--wide b::after { content: ", auch unter der Dusche"; }
 .cm-usp-run__set .cm-usp__item--wide small { display: none; }
 
-/* ===== "Was unsere Kunden lieben" (BOGOS) – Varianten zum Vergleichen ===== */
+/* ===== "Was unsere Kunden lieben" (BOGOS), data-fbt="dark" steht fest am <html> ===== */
 /* gemeinsam für alle Varianten */
 html[data-fbt] body.template-product .bogos-fbt-upsell-container { border: 0 !important; border-radius: 10px !important; padding: 18px 16px !important; font-family: var(--cm-body) !important; position: relative; overflow: hidden; isolation: isolate; }
 html[data-fbt] body.template-product .bogos-fbt-upsell-container * { font-family: var(--cm-body) !important; }
@@ -1128,15 +1111,6 @@ html[data-fbt] body.template-product .bogos-fbt-product-title { color: #212121 !
 html[data-fbt] body.template-product .bogos-fbt-upsell-product-discounted-price { color: #d82323 !important; font-weight: 600 !important; }
 html[data-fbt] body.template-product .bogos-fbt-upsell-product-original-price { color: #4d4d4d !important; }
 html[data-fbt] body.template-product .bogos-fbt-upsell-body-item-checkbox { accent-color: #212121; }
-
-/* 1 warm: warmes Grau wie Header/Leiste */
-html[data-fbt="warm"] body.template-product .bogos-fbt-upsell-container { background: #f3f1ee !important; }
-html[data-fbt="warm"] body.template-product .bogos-fbt-upsell-img { box-shadow: 0 1px 0 rgba(0,0,0,.03) !important; }
-
-/* 2 silver: Silber-Verlauf mit Glanzstreifen, Bilder schweben auf weißen Kacheln */
-html[data-fbt="silver"] body.template-product .bogos-fbt-upsell-container { background: linear-gradient(135deg, #fbfbfa 0%, #ecebe8 55%, #e2e0dc 100%) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px #e6e4e0 !important; }
-html[data-fbt="silver"] body.template-product .bogos-fbt-upsell-container::after { content: ""; position: absolute; z-index: -1; top: -40%; left: -15%; width: 40%; height: 180%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0)); transform: rotate(18deg); pointer-events: none; }
-html[data-fbt="silver"] body.template-product .bogos-fbt-upsell-img { box-shadow: 0 6px 14px -8px rgba(20,20,20,.35) !important; }
 
 /* 3 dark: Schwarz-Glanz wie die 5-Pieces-Kachel, Preis und Button hell */
 html[data-fbt="dark"] body.template-product .bogos-fbt-upsell-container { background: linear-gradient(135deg, #3a3a3a 0%, #161616 55%, #2b2b2b 100%) !important; }
@@ -1156,14 +1130,6 @@ html[data-fbt="dark"] body.template-product .bogos-fbt-footer-button-add { backg
 html[data-fbt="dark"] body.template-product .bogos-fbt-this-item { background: linear-gradient(100deg, #a8853f, #e6cf93, #a8853f) !important; color: #161616 !important; }
 html[data-fbt="dark"] body.template-product .bogos-fbt-plus { color: #6b6b6b !important; }
 html[data-fbt="dark"] body.template-product .bogos-fbt-upsell-body-item-checkbox { accent-color: #c9a45c; }
-
-/* 4 split: oben warm-hell mit Produkten, unten eine dunkle Leiste mit Gesamtpreis und weißem Button */
-html[data-fbt="split"] body.template-product .bogos-fbt-upsell-container { background: #f6f4f0 !important; padding-bottom: 0 !important; }
-html[data-fbt="split"] body.template-product .bogos-fbt-upsell-footer { margin: 14px -16px 0 !important; padding: 16px !important; background: #212121 !important; width: auto !important; }
-html[data-fbt="split"] body.template-product .bogos-fbt-upsell-footer .bogos-fbt-footer-price-title,
-html[data-fbt="split"] body.template-product .bogos-fbt-upsell-footer .bogos-fbt-footer-discounted-price { color: #fff !important; }
-html[data-fbt="split"] body.template-product .bogos-fbt-upsell-footer .bogos-fbt-footer-original-price { color: #a8a8a8 !important; }
-html[data-fbt="split"] body.template-product .bogos-fbt-footer-button-add { background: #fff !important; color: #212121 !important; box-shadow: none !important; margin-top: 10px !important; }
 
 /* Versand / Rücksendung: abgesetzt von den Details, Plus ohne Hintergrund, Aufklappen wie bei den FAQs */
 html body.template-product .shopify-section:has(.shipping-accordion) { margin-top: 22px; }
@@ -1275,58 +1241,7 @@ html body .drawer--cart .express-toggle__icon { width: 16px !important; height: 
 .drawer--cart .drawer__submenu-heading { font-family: var(--cm-display) !important; font-weight: 800 !important; font-size: 19px !important; letter-spacing: -0.03em; text-align: left !important; margin: 0 0 10px !important; color: #212121; }
 .drawer--cart .drawer__menu--products ~ * , .drawer--cart .drawer__empty__menu:has(.drawer__menu--products[style*="block"])::before { display: none; }
 
-/* ===== Leerer Warenkorb – 7 Varianten (?ecart=1..7). 1 = aktueller Stand ===== */
-/* 2 Silber: ganze Bestseller-Karte als Silber-Kachel, Kategorien als kleine Pills in einer Reihe */
-html[data-ecart="2"] .cm-erecs__card { padding: 6px 6px 10px; border-radius: 12px; background: linear-gradient(135deg, #fdfdfc 0%, #f1f0ed 60%, #e9e7e3 100%); box-shadow: inset 0 0 0 1px #ebe9e5; }
-html[data-ecart="2"] .cm-erecs__img { border-radius: 8px; background: #fff; }
-html[data-ecart="2"] .cm-erecs__name, html[data-ecart="2"] .cm-erecs__price { padding: 0 4px; }
-html[data-ecart="2"] .drawer--cart .drawer__empty__grid { display: flex !important; flex-wrap: wrap; gap: 8px !important; }
-html[data-ecart="2"] .drawer--cart .drawer__menu-btn { width: auto !important; min-height: 38px; padding: 0 14px !important; border-radius: 999px !important; flex: 0 0 auto; }
-html[data-ecart="2"] .drawer--cart .drawer__menu-btn::after { display: none; }
-
-/* 3 Dunkel: Bestseller auf Schwarz-Glanz-Fläche, Kategorien Silber */
-html[data-ecart="3"] .cm-erecs { margin: 0 -16px 18px; padding: 18px 16px 20px; border: 0; background: linear-gradient(135deg, #3a3a3a 0%, #161616 55%, #2b2b2b 100%); }
-html[data-ecart="3"] .cm-erecs__title { color: #fff; }
-html[data-ecart="3"] .cm-erecs__title::before { content: "★ "; color: #c9a45c; }
-html[data-ecart="3"] .cm-erecs__img { background: #fff; }
-html[data-ecart="3"] .cm-erecs__name { color: #fff; }
-html[data-ecart="3"] .cm-erecs__now { color: #fff; }
-html[data-ecart="3"] .cm-erecs__now.is-sale { color: #e6cf93; }
-html[data-ecart="3"] .cm-erecs__was { color: #a8a8a8; }
-
-/* 4 Groß: große Karten (ca. 1,5 sichtbar), Text mittig, Kategorien als schlichte Liste mit Linien */
-html[data-ecart="4"] .cm-erecs__card { flex-basis: 62%; max-width: 240px; text-align: center; }
-html[data-ecart="4"] .cm-erecs__name { font-size: 14px; }
-html[data-ecart="4"] .cm-erecs__price { justify-content: center; font-size: 14px; }
-html[data-ecart="4"] .drawer--cart .drawer__empty__grid { display: block !important; border-top: 1px solid #dcdcdc; }
-html[data-ecart="4"] .drawer--cart .drawer__menu-btn { background: none !important; box-shadow: none !important; border-radius: 0 !important; border-bottom: 1px solid #dcdcdc !important; min-height: 52px; padding: 0 2px !important; font-size: 15px !important; }
-
-/* 5 Kompakt: kleine Karten (gut 3 sichtbar), Kategorien als 3er-Raster */
-html[data-ecart="5"] .cm-erecs__card { flex-basis: 30%; max-width: 128px; }
-html[data-ecart="5"] .cm-erecs__name { font-size: 12px; }
-html[data-ecart="5"] .cm-erecs__price { font-size: 12px; }
-html[data-ecart="5"] .cm-erecs__was { font-size: 11px; }
-html[data-ecart="5"] .cm-erecs__add { width: 28px; height: 28px; font-size: 18px; right: 5px; bottom: 5px; }
-html[data-ecart="5"] .drawer--cart .drawer__empty__grid { grid-template-columns: repeat(3, 1fr) !important; }
-html[data-ecart="5"] .drawer--cart .drawer__empty__grid > :last-child:nth-child(odd) { grid-column: auto; }
-html[data-ecart="5"] .drawer--cart .drawer__menu-btn { justify-content: center !important; min-height: 44px; font-size: 13px !important; padding: 0 8px !important; }
-html[data-ecart="5"] .drawer--cart .drawer__menu-btn::after { display: none; }
-
-/* 6 Schwebend: weiße Karten mit weichem Schatten, Kategorien als Text-Leiste mit Strich (wie oben im Header) */
-html[data-ecart="6"] .cm-erecs { border-bottom: 0; }
-html[data-ecart="6"] .cm-erecs__track { padding-bottom: 14px; }
-html[data-ecart="6"] .cm-erecs__card { padding: 6px 6px 10px; border-radius: 12px; background: #fff; box-shadow: 0 8px 20px -12px rgba(20,20,20,.35), 0 0 0 1px rgba(0,0,0,.04); }
-html[data-ecart="6"] .cm-erecs__name, html[data-ecart="6"] .cm-erecs__price { padding: 0 4px; }
-html[data-ecart="6"] .drawer--cart .drawer__empty__grid { display: flex !important; flex-wrap: wrap; gap: 6px 22px !important; }
-html[data-ecart="6"] .drawer--cart .drawer__menu-btn { width: auto !important; min-height: 0; padding: 0 0 7px !important; background: none !important; box-shadow: none !important; border-radius: 0 !important; font-size: 15px !important; }
-html[data-ecart="6"] .drawer--cart .drawer__menu-btn::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; width: auto; height: 1.5px; margin: 0; border: 0; transform: none; background: #212121; }
-
-/* 7 Gold-Akzent: Überschriften mit goldenem Schlusswort, Kategorien als dunkle Glanz-Kacheln */
-html[data-ecart="7"] .cm-erecs__title, html[data-ecart="7"] .drawer--cart .drawer__empty__menu::before { font-size: 21px; }
-html[data-ecart="7"] .cm-erecs__title::after { content: " ✦"; background: linear-gradient(100deg, #9c7a3c, #e6cf93, #a8853f); -webkit-background-clip: text; background-clip: text; color: transparent; }
-html[data-ecart="7"] .cm-erecs__img { box-shadow: inset 0 0 0 1px rgba(201,164,92,.35); }
-html[data-ecart="7"] .drawer--cart .drawer__menu-btn { background: linear-gradient(135deg, #3a3a3a 0%, #161616 55%, #2b2b2b 100%) !important; box-shadow: none !important; color: #fff !important; }
-html[data-ecart="7"] .drawer--cart .drawer__menu-btn::after { border-color: #c9a45c; }
+/* ===== Leerer Warenkorb (data-ecart="mix" steht fest am <html>) ===== */
 
 /* Leerer Warenkorb – fest gewählt "mix": Produktkarten kompakt (Variante 5) + Kategorien als Liste (Variante 4) */
 html[data-ecart="mix"] .cm-erecs__card { flex-basis: 30%; max-width: 128px; }

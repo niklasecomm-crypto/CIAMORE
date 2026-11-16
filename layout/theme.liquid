@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js no-touch supports-no-cookies" lang="{{ request.locale.iso_code }}">
+<html class="no-js no-touch supports-no-cookies" lang="{{ request.locale.iso_code }}" data-ecart="mix" data-fbt="dark">
   
   <head>
     {%- render 'head' -%}
@@ -63,12 +63,6 @@
         {%- render 'icon-arrow-up' -%}
       </button>
     {%- endif -%}
-
-    {%- comment -%}
-      In order to use your custom javascript file at assets/custom.js
-      just cut this next line and paste it outside this comment:
-      <script src="{{ 'custom.js' | asset_url }}" defer="defer"></script>
-    {%- endcomment -%}
     <!-- Paste marketing code or third party scripts below this comment line ============== -->
 
 
@@ -380,14 +374,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
-</script>
-<script>
-/* Leerer Warenkorb: Standard = mix (Karten kompakt wie 5, Kategorien als Liste wie 4). Testvarianten ?ecart=1..7 */
-(function(){ try { sessionStorage.removeItem('cmEcart'); var v = new URLSearchParams(location.search).get('ecart'); if (v) sessionStorage.setItem('cmEcart2', v); v = v || sessionStorage.getItem('cmEcart2') || 'mix'; if (v && v !== 'off') document.documentElement.setAttribute('data-ecart', v); } catch(e){} })();
-</script>
-<script>
-/* "Was unsere Kunden lieben": Standard = dark (Schwarz-Glanz). Alternative silver liegt bereit. Zum Testen ?fbt=warm|silver|dark|split|off */
-(function(){ try { var v = new URLSearchParams(location.search).get('fbt'); if (v) sessionStorage.setItem('cmFbt', v); v = v || sessionStorage.getItem('cmFbt') || 'dark'; if (v && v !== 'off') document.documentElement.setAttribute('data-fbt', v); } catch(e){} })();
 </script>
 <script>
 /* Veredelung: Position der gleitenden weißen Fläche setzen – überall im Shop */
