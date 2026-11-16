@@ -230,6 +230,17 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- And above this comment line ================================================== -->
   
 <script>
+/* Anti-Flash: Transitions im gesamten Formular während des Variantenwechsels
+   unterdrücken, damit SelloutVariants.update() keinen sichtbaren Flash erzeugt
+   wenn es sold-out Klassen kurz entfernt und wieder setzt. Capture-Phase = läuft
+   VOR dem Theme-Handler. Doppeltes rAF = wird erst nach dem nächsten Paint entfernt. */
+document.addEventListener('change', function (e) {
+  if (!e.target.matches || !e.target.matches('[name^="options"]')) return;
+  var f = e.target.closest('.product__form, .product-quick-add__form, .product-quick-add__form__inner, [data-product-form]');
+  if (!f) return;
+  f.classList.add('cm-no-flash');
+  requestAnimationFrame(function () { requestAnimationFrame(function () { f.classList.remove('cm-no-flash'); }); });
+}, true);
 /* Quick-Add: kurzer Puls am gewählten Kreis und weicher Wechsel des Namens neben "Veredelung" */
 /* Capture-Phase: blendet den Wert SOFORT aus, BEVOR theme.js den Text ändert */
 document.addEventListener('change', function (e) {

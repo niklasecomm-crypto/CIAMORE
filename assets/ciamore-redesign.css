@@ -1442,11 +1442,29 @@ html[data-ecart="mix"] .cm-erecs { border-bottom: 0; padding-bottom: 6px; }
 html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component label,
 html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component input:checked + label,
 html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component input:checked ~ label,
-html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component label::before,
-html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component label::after {
+html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component label::before {
   border: 0 !important; outline: 0 !important; box-shadow: none !important;
 }
+html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component label::after {
+  display: none !important;
+}
 html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component::before { box-shadow: none !important; border: 0 !important; outline: 0 !important; }
+/* ─── Anti-Flash: Verhindert "Zucken" beim Variantenwechsel ───
+   Theme-JS (SelloutVariants.update) entfernt kurz sold-out/unavailable Klassen
+   und setzt sie neu. Die Theme-Transitions (0.5s background/color/border auf
+   .radio__button label) machen den Zwischenzustand als Flash sichtbar.
+   Fix: Transitions auf allen betroffenen Elementen komplett unterdrücken. */
+html body .radio__fieldset .radio__button label { transition: none !important; }
+html body .radio__fieldset--swatches tooltip-component label { transition: none !important; }
+html body .radio__fieldset--swatches tooltip-component label::before { transition: none !important; }
+/* Zusätzlich JS-gesteuert: .cm-no-flash wird per capture-phase während des
+   Variantenwechsels gesetzt und nach dem Paint entfernt (doppeltes rAF) */
+.cm-no-flash .radio__button label,
+.cm-no-flash tooltip-component label,
+.cm-no-flash tooltip-component label::before,
+.cm-no-flash tooltip-component label::after,
+.cm-no-flash tooltip-component::before,
+.cm-no-flash tooltip-component::after { transition: none !important; }
 html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component:has(input:checked) { box-shadow: none; outline: 0; }
 /* Quick-Add: Punkte unter Gold/Platin und das Namens-Kästchen (Tooltip) weg */
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component::before,
