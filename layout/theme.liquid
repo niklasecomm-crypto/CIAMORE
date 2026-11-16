@@ -680,6 +680,77 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
   {%- render 'freegifts-snippet' -%}
+  <script>
+/* BOGOS Geschenk-Fenster: aus den Varianten-Karten eine Auswahl im Shop-Stil bauen
+   (Farbe, Größe, ein Button). Beim Bestätigen wird der passende BOGOS-Button geklickt.
+   Schlägt hier etwas fehl, bleibt das Original-Karussell von BOGOS sichtbar. */
+(function () {
+  var COLORS = /^(gold|platin|silber|ros[eé]gold|ros[eé])$/i;
+  function t(el, sel) { var e = el.querySelector(sel); return e ? e.textContent.replace(/\s+/g, ' ').trim() : ''; }
+  function uniq(a) { return a.filter(function (v, i) { return a.indexOf(v) === i; }); }
+  function read(offer) {
+    return [].slice.call(offer.querySelectorAll('.bogos-offer-gift-item')).map(function (c) {
+      var parts = t(c, '.bogos-gift-variant-title').split('/').map(function (s) { return s.trim(); }).filter(Boolean);
+      var color = parts.length && COLORS.test(parts[0]) ? parts.shift() : '';
+      var img = c.querySelector('.bogos-gift-item-image');
+      return { name: t(c, '.bogos-gift-product-title'), color: color, size: parts[0] || '', sizeSub: (parts[1] || '').replace(/^EUR\s*/i, 'EU '), img: img ? img.currentSrc || img.src : '', old: t(c, '.bogos-gift-item-compare-price'), btn: c.querySelector('.bogos-gift-item-add-container button') };
+    }).filter(function (i) { return i.btn; });
+  }
+  function build(offer) {
+    var items = read(offer); if (!items.length) return;
+    var sig = items.map(function (i) { return [i.name, i.color, i.size].join('|'); }).join(';');
+    if (offer.__cmSig === sig && offer.querySelector('.cm-gift')) return;
+    offer.__cmSig = sig;
+    var old = offer.querySelector('.cm-gift'); if (old) old.remove();
+    var sel = { name: items[0].name, color: items[0].color, size: items[0].size };
+    var box = document.createElement('div'); box.className = 'cm-gift';
+    function pick() {
+      var pool = items.filter(function (i) { return i.name === sel.name; });
+      if (!pool.some(function (i) { return i.color === sel.color; })) sel.color = pool[0].color;
+      pool = pool.filter(function (i) { return i.color === sel.color; });
+      var hit = pool.filter(function (i) { return i.size === sel.size; })[0] || pool[0];
+      sel.size = hit.size; return hit;
+    }
+    function row(label, value) { return '<div class="cm-gift__label">' + label + (value ? ' <b>' + value + '</b>' : '') + '</div>'; }
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function render() {
+      var cur = pick();
+      var names = uniq(items.map(function (i) { return i.name; }));
+      var byName = items.filter(function (i) { return i.name === sel.name; });
+      var colors = uniq(byName.map(function (i) { return i.color; })).filter(Boolean);
+      var sizes = byName.filter(function (i) { return i.color === sel.color && i.size; });
+      var h = '<div class="cm-gift__top">' + (cur.img ? '<img class="cm-gift__img" src="' + esc(cur.img) + '" alt="">' : '') +
+        '<div><p class="cm-gift__name">' + esc(cur.name) + '</p><div class="cm-gift__price"><span class="cm-gift__free">Gratis</span>' + (cur.old ? '<span class="cm-gift__old">' + esc(cur.old) + '</span>' : '') + '</div></div></div>';
+      if (names.length > 1) h += row('Geschenk') + '<div class="cm-gift__seg">' + names.map(function (n) { return '<button type="button" data-k="name" data-v="' + esc(n) + '" class="' + (n === sel.name ? 'is-on' : '') + '">' + esc(n) + '</button>'; }).join('') + '</div>';
+      if (colors.length > 1) h += row('Veredelung', esc(sel.color)) + '<div class="cm-gift__seg">' + colors.map(function (c) { return '<button type="button" data-k="color" data-v="' + esc(c) + '" class="' + (c === sel.color ? 'is-on' : '') + '"><span class="cm-gift__dot cm-gift__dot--' + esc(c.toLowerCase()) + '"></span>' + esc(c) + '</button>'; }).join('') + '</div>';
+      if (sizes.length > 1) h += row('Größe', esc(sel.size)) + '<div class="cm-gift__pills">' + sizes.map(function (i) { return '<button type="button" data-k="size" data-v="' + esc(i.size) + '" class="' + (i.size === sel.size ? 'is-on' : '') + '">' + esc(i.size) + (i.sizeSub ? '<small>' + esc(i.sizeSub) + '</small>' : '') + '</button>'; }).join('') + '</div>';
+      h += '<button type="button" class="cm-gift__cta"' + (cur.btn.disabled ? ' disabled' : '') + '>' + (cur.btn.disabled ? 'Bereits gewählt' : 'Gratis hinzufügen') + '</button>';
+      box.innerHTML = h;
+    }
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.classList.contains('cm-gift__cta')) { var cur = pick(); if (cur.btn.disabled) return; b.disabled = true; b.textContent = 'Wird hinzugefügt …'; cur.btn.click(); setTimeout(function () { offer.__cmSig = ''; run(); }, 2500); return; }
+      sel[b.getAttribute('data-k')] = b.getAttribute('data-v'); render();
+    });
+    render();
+    offer.insertBefore(box, offer.firstChild);
+    offer.classList.add('cm-gift-on');
+  }
+  function run() {
+    var pop = document.getElementById('freegifts-main-popup-container'); if (!pop) return;
+    try {
+      var title = pop.querySelector('#bogos-gift-popup-title');
+      if (title && title.textContent.trim() !== 'Dein Gratis-Geschenk') title.textContent = 'Dein Gratis-Geschenk';
+      var head = pop.querySelector('.bogos-gifts-slider-header');
+      if (head && !pop.querySelector('.cm-gift__sub')) { var p = document.createElement('p'); p.className = 'cm-gift__sub'; p.textContent = 'Wähle deine Variante, wir legen es kostenlos dazu.'; head.parentNode.insertBefore(p, head.nextSibling); }
+      [].forEach.call(pop.querySelectorAll('.bogos-slider-offer'), build);
+    } catch (err) { [].forEach.call(pop.querySelectorAll('.cm-gift-on'), function (o) { o.classList.remove('cm-gift-on'); }); }
+  }
+  var queued = false;
+  new MutationObserver(function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; run(); }); }).observe(document.documentElement, { childList: true, subtree: true });
+  run();
+})();
+  </script>
   {%- render 'cm-bundle-preselect' -%}
 
 </html>

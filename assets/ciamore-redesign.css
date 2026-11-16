@@ -1540,3 +1540,41 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
    Taps durch auf den Bild-Link darunter. */
 .product-item[data-grid-item] { cursor: pointer; }
 .product-item[data-grid-item] .product-item__bg__inner { pointer-events: none; }
+
+/* ===== BOGOS Geschenk-Fenster im Shop-Stil =====
+   BOGOS zeigt jede Variante als eigene Karte in einem Karussell. Das Skript in theme.liquid
+   baut daraus eine Auswahl (Farbe, Größe, ein Button) und klickt beim Bestätigen den
+   passenden BOGOS-Button. Das Original-Karussell bleibt im DOM, ist aber ausgeblendet. */
+#freegifts-main-popup-container .bogos-gift-slider-modal { width: min(92vw, 400px) !important; max-height: 88vh; padding: 22px 20px 20px !important; border-radius: 20px !important; font-family: var(--cm-body) !important; color: var(--cm-ink); box-shadow: 0 18px 50px rgba(20,20,20,.25); }
+#freegifts-main-popup-container .bogos-gifts-slider-header { margin: 0 0 4px !important; padding: 0 !important; border: 0 !important; }
+#freegifts-main-popup-container #bogos-gift-popup-title { font-family: var(--cm-display) !important; font-size: 24px !important; line-height: 1.15 !important; font-weight: 700 !important; letter-spacing: -.01em; color: var(--cm-ink) !important; text-align: left !important; padding-right: 36px; }
+#freegifts-main-popup-container .bogos-slider-close-btn { position: absolute !important; top: 16px; right: 16px; width: 34px; height: 34px; display: grid !important; place-items: center; border-radius: 50%; background: #f3f1ee !important; border: 0 !important; color: var(--cm-ink) !important; -webkit-tap-highlight-color: transparent; }
+#freegifts-main-popup-container .bogos-slider-close-btn svg { width: 14px; height: 14px; }
+#freegifts-main-popup-container .bogos-slider-offers-container { display: block !important; padding: 0 !important; background: none !important; overflow: visible auto !important; }
+#freegifts-main-popup-container .bogos-slider-offer.cm-gift-on { display: block !important; padding: 0 !important; margin: 0 !important; background: none !important; border: 0 !important; }
+#freegifts-main-popup-container .bogos-slider-offer.cm-gift-on + .bogos-slider-offer.cm-gift-on { margin-top: 18px !important; padding-top: 18px !important; border-top: 1px solid #eceae6 !important; }
+/* Original-Karussell ausblenden, aber klickbar per Skript lassen */
+#freegifts-main-popup-container .cm-gift-on > .glider-contain,
+#freegifts-main-popup-container .cm-gift-on > .dots,
+#freegifts-main-popup-container .cm-gift-on > .bogos-slider-offer-badge-container,
+#freegifts-main-popup-container .cm-gift-on > .bogos-slider-offer-header { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; opacity: 0 !important; pointer-events: none !important; clip-path: inset(50%); }
+.cm-gift__sub { margin: 0 0 16px; font-size: 14px; line-height: 1.4; color: var(--cm-muted); }
+.cm-gift__top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.cm-gift__img { flex: 0 0 96px; width: 96px; height: 96px; border-radius: 12px; background: #f6f3ee; object-fit: cover; }
+.cm-gift__name { font-size: 17px; font-weight: 700; line-height: 1.2; margin: 0 0 6px; color: var(--cm-ink); }
+.cm-gift__price { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.cm-gift__free { display: inline-block; padding: 3px 9px; border-radius: 999px; background: var(--cm-ink); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.cm-gift__old { color: var(--cm-muted); text-decoration: line-through; }
+.cm-gift__label { display: flex; gap: 6px; margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--cm-muted); }
+.cm-gift__label b { color: var(--cm-ink); font-weight: 700; }
+.cm-gift__seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; padding: 4px; margin: 0 0 16px; border-radius: 10px; background: #f3f1ee; }
+.cm-gift__seg button { display: flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; font: 600 14px/1 var(--cm-body); color: var(--cm-muted); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cm-gift__seg button.is-on { background: #fff; color: var(--cm-ink); font-weight: 700; box-shadow: 0 2px 5px rgba(20,20,20,.14), 0 1px 1px rgba(20,20,20,.05); }
+.cm-gift__dot { width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #f3dfa6, #cfa349); }
+.cm-gift__dot--platin, .cm-gift__dot--silber { background: linear-gradient(135deg, #f4f4f2, #bdbcb8); }
+.cm-gift__pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+.cm-gift__pills button { min-width: 64px; height: 48px; padding: 0 14px; border: 1px solid #d6d3ce; border-radius: 8px; background: #fff; font: 600 15px/1.1 var(--cm-body); color: var(--cm-ink); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cm-gift__pills button small { display: block; margin-top: 3px; font-size: 11px; font-weight: 500; color: var(--cm-muted); }
+.cm-gift__pills button.is-on { background: linear-gradient(115deg, rgba(255,255,255,0) 18%, rgba(255,255,255,.55) 28%, rgba(255,255,255,0) 38%), linear-gradient(135deg, #fbfbfa 0%, #ecebe8 55%, #e2e0dc 100%); border-color: #1e1e1e; box-shadow: inset 0 1px 0 rgba(255,255,255,.9); }
+.cm-gift__cta { display: block; width: 100%; height: 54px; border: 0; border-radius: 10px; background: var(--cm-ink); color: #fff; font: 700 16px/1 var(--cm-body); letter-spacing: .01em; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cm-gift__cta[disabled] { opacity: .55; cursor: default; }
