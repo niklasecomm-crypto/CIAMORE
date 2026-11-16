@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
    VOR dem Theme-Handler. Doppeltes rAF = wird erst nach dem nächsten Paint entfernt. */
 document.addEventListener('change', function (e) {
   if (!e.target.matches || !e.target.matches('[name^="options"]')) return;
-  var f = e.target.closest('.product__form, .product-quick-add__form, .product-quick-add__form__inner, [data-product-form]');
+  var f = e.target.closest('.product__form__outer, .product__form, .product-form, .product-quick-add__form, .product-quick-add__form__inner, [data-product-form]');
   if (!f) return;
   f.classList.add('cm-no-flash');
   requestAnimationFrame(function () { requestAnimationFrame(function () { f.classList.remove('cm-no-flash'); }); });

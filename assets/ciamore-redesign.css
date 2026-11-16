@@ -348,7 +348,7 @@ mobile-menu .header__logo__link--drawer figure,
 .template-product .product__form__outer .radio__fieldset--swatches tooltip-component {
   position: relative; display: flex !important; align-items: center; justify-content: center; gap: 8px;
   width: auto !important; height: 44px; margin: 0 !important; padding: 0 12px; border-radius: 999px; cursor: pointer;
-  transition: background .15s ease, box-shadow .15s ease;
+  transition: none;
 }
 .template-product .product__form__outer .radio__fieldset--swatches tooltip-component::before { display: none !important; }
 .template-product .product__form__outer .radio__fieldset--swatches tooltip-component::after {
@@ -1140,7 +1140,7 @@ html body.template-product .radio__fieldset--swatches .radio__buttons::before {
 html body.template-product .radio__fieldset--swatches .radio__buttons.no-anim::before { transition: none; }
 html body.template-product .radio__fieldset--swatches tooltip-component,
 html body.template-product .radio__fieldset--swatches tooltip-component:has(input:checked) { background: transparent !important; box-shadow: none !important; position: relative; z-index: 1; }
-html body.template-product .radio__fieldset--swatches tooltip-component::after { transition: color .3s ease; }
+html body.template-product .radio__fieldset--swatches tooltip-component::after { transition: none; }
 
 /* Veredelung-Punkte: Originalbilder, ohne Ring */
 /* Kein Tooltip-Kästchen ("Gold"/"Platin") unter der Veredelung, der Name steht ja schon im Schalter */
@@ -1455,11 +1455,16 @@ html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-componen
    .radio__button label) machen den Zwischenzustand als Flash sichtbar.
    Fix: Transitions auf allen betroffenen Elementen komplett unterdrücken. */
 html body .radio__fieldset .radio__button label { transition: none !important; }
+html body .radio__fieldset--swatches tooltip-component { transition: none !important; }
 html body .radio__fieldset--swatches tooltip-component label { transition: none !important; }
 html body .radio__fieldset--swatches tooltip-component label::before { transition: none !important; }
+html body .radio__fieldset--swatches tooltip-component label::after { transition: none !important; }
+html body .radio__fieldset--swatches tooltip-component::before { transition: none !important; }
+html body .radio__fieldset--swatches tooltip-component::after { transition: none !important; }
 /* Zusätzlich JS-gesteuert: .cm-no-flash wird per capture-phase während des
    Variantenwechsels gesetzt und nach dem Paint entfernt (doppeltes rAF) */
 .cm-no-flash .radio__button label,
+.cm-no-flash tooltip-component,
 .cm-no-flash tooltip-component label,
 .cm-no-flash tooltip-component label::before,
 .cm-no-flash tooltip-component label::after,
@@ -1663,7 +1668,7 @@ html body .product-quick-add__form__inner .radio__legend__option-name { font-wei
 html body .product-quick-add__form__inner .radio__fieldset--swatches .radio__buttons { --n: 2; --i: 0; display: grid !important; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; width: 100% !important; box-sizing: border-box; padding: 4px !important; border-radius: 999px !important; background: linear-gradient(135deg, #fbfbfa 0%, #ecebe8 55%, #e2e0dc 100%) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px #e6e4e0 !important; position: relative; isolation: isolate; overflow: hidden; }
 html body .product-quick-add__form__inner .radio__fieldset--swatches .radio__buttons::before { content: ""; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px - (var(--n) - 1) * 6px) / var(--n)); border-radius: 999px; background: #fff; box-shadow: 0 2px 5px rgba(20,20,20,.14), 0 1px 1px rgba(20,20,20,.05); transform: translateX(calc(var(--i) * (100% + 6px))); transition: transform .38s cubic-bezier(.65,0,.25,1); }
 html body .product-quick-add__form__inner .radio__fieldset--swatches .radio__buttons.no-anim::before { transition: none; }
-html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component { position: relative !important; z-index: 1; display: flex !important; align-items: center; justify-content: center; gap: 8px; width: auto !important; height: 44px !important; margin: 0 !important; padding: 0 12px !important; border-radius: 999px !important; cursor: pointer; transition: background .15s ease, box-shadow .15s ease; }
+html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component { position: relative !important; z-index: 1; display: flex !important; align-items: center; justify-content: center; gap: 8px; width: auto !important; height: 44px !important; margin: 0 !important; padding: 0 12px !important; border-radius: 999px !important; cursor: pointer; transition: none; }
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component::before { display: none !important; }
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component::after { display: block !important; content: attr(data-tooltip) !important; position: static !important; transform: none !important; opacity: 1 !important; visibility: visible !important; background: none !important; width: auto !important; height: auto !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: 0 !important; font-family: var(--cm-body); font-size: 14px; font-weight: 600; color: var(--cm-muted); white-space: nowrap; line-height: 1; }
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component label { position: static !important; width: 16px !important; height: 16px !important; flex: 0 0 16px; margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; outline: 0 !important; opacity: 1 !important; transform: none !important; animation: none !important; overflow: visible !important; }
