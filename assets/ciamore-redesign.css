@@ -1566,16 +1566,20 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 .cm-gift__price { display: flex; align-items: center; gap: 8px; font-size: 14px; }
 .cm-gift__free { display: inline-block; padding: 3px 9px; border-radius: 999px; background: var(--cm-ink); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
 .cm-gift__old { color: var(--cm-muted); text-decoration: line-through; }
-.cm-gift__label { display: flex; gap: 6px; margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--cm-muted); }
-.cm-gift__label b { color: var(--cm-ink); font-weight: 700; }
-.cm-gift__seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; padding: 4px; margin: 0 0 16px; border-radius: 10px; background: #f3f1ee; }
-.cm-gift__seg button { display: flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; font: 600 14px/1 var(--cm-body); color: var(--cm-muted); cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.cm-gift__seg button.is-on { background: #fff; color: var(--cm-ink); font-weight: 700; box-shadow: 0 2px 5px rgba(20,20,20,.14), 0 1px 1px rgba(20,20,20,.05); }
-.cm-gift__dot { width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #f3dfa6, #cfa349); }
-.cm-gift__dot--platin, .cm-gift__dot--silber { background: linear-gradient(135deg, #f4f4f2, #bdbcb8); }
-.cm-gift__pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
-.cm-gift__pills button { min-width: 64px; height: 48px; padding: 0 14px; border: 1px solid #d6d3ce; border-radius: 8px; background: #fff; font: 600 15px/1.1 var(--cm-body); color: var(--cm-ink); cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.cm-gift__pills button small { display: block; margin-top: 3px; font-size: 11px; font-weight: 500; color: var(--cm-muted); }
-.cm-gift__pills button.is-on { background: linear-gradient(115deg, rgba(255,255,255,0) 18%, rgba(255,255,255,.55) 28%, rgba(255,255,255,0) 38%), linear-gradient(135deg, #fbfbfa 0%, #ecebe8 55%, #e2e0dc 100%); border-color: #1e1e1e; box-shadow: inset 0 1px 0 rgba(255,255,255,.9); }
+.cm-gift__label { display: flex; align-items: baseline; gap: 8px; margin: 0 0 10px; font-size: 14px; line-height: 1.3; color: #000; }
+.cm-gift__label b { font-weight: 600; }
+.cm-gift__label small { font-size: 12px; font-weight: 400; }
+/* Veredelung: gleicher Umschalter wie auf der Produktseite (Silber-Verlauf, gleitende weiße Fläche, Swatch-Kreis) */
+.cm-gift__seg { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; padding: 4px; margin: 0 0 18px; border-radius: 10px; background: linear-gradient(135deg, #fbfbfa, #ecebe8 55%, #e2e0dc); box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px #e6e4e0; }
+.cm-gift__seg button { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 12px; border: 0; border-radius: 6px; background: transparent; font: 600 14px/1 var(--cm-body); color: #000; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cm-gift__seg button.is-on { font-weight: 700; }
+.cm-gift__seg:not(.cm-gift__seg--color) button.is-on { background: #fff; box-shadow: 0 2px 5px rgba(20,20,20,.14), 0 1px 1px rgba(20,20,20,.05); }
+.cm-gift__seg--color::before { content: ""; position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px - (var(--n) - 1) * 6px) / var(--n)); border-radius: 6px; background: #fff; box-shadow: 0 2px 5px rgba(20,20,20,.14), 0 1px 1px rgba(20,20,20,.05); transform: translateX(calc(var(--i) * (100% + 6px))); transition: transform .38s cubic-bezier(.65,0,.25,1); }
+.cm-gift__dot { flex: 0 0 16px; width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #f3dfa6, #cfa349) center / cover no-repeat; }
+.cm-gift__dot--platin, .cm-gift__dot--silber { background-color: #dcdbd8; background-image: linear-gradient(135deg, #f4f4f2, #bdbcb8); }
+/* Größe: gleiche Pills wie auf der Produktseite */
+.cm-gift__pills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 20px; }
+.cm-gift__pills button { min-height: 36px; padding: 8px 12px; border: 1px solid #808080; border-radius: 999px; background: transparent; font: 600 14px/19px var(--cm-body); color: #000; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cm-gift__pills button.is-on { background: linear-gradient(115deg, rgba(255,255,255,0) 18%, rgba(255,255,255,.55) 28%, rgba(255,255,255,0) 38%), linear-gradient(135deg, #fbfbfa 0%, #ecebe8 55%, #e2e0dc 100%); border-color: #d6d3ce; box-shadow: inset 0 1px 0 rgba(255,255,255,.9); color: #212121; }
 .cm-gift__cta { display: block; width: 100%; height: 54px; border: 0; border-radius: 10px; background: var(--cm-ink); color: #fff; font: 700 16px/1 var(--cm-body); letter-spacing: .01em; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .cm-gift__cta[disabled] { opacity: .55; cursor: default; }
