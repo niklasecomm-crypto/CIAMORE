@@ -358,7 +358,7 @@ mobile-menu .header__logo__link--drawer figure,
 }
 .template-product .product__form__outer .radio__fieldset--swatches label {
   position: static !important; width: 16px !important; height: 16px !important; flex: 0 0 16px; margin: 0 !important; padding: 0 !important;
-  border: 0 !important; box-shadow: none !important; outline: 0 !important;
+  border: 0 !important; box-shadow: none !important; outline: 0 !important; -webkit-tap-highlight-color: transparent;
 }
 .template-product .product__form__outer .radio__fieldset--swatches label::after { display: none !important; }
 .template-product .product__form__outer .radio__fieldset--swatches label::before {
@@ -1450,26 +1450,17 @@ html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-componen
 }
 html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component::before { box-shadow: none !important; border: 0 !important; outline: 0 !important; }
 /* ─── Anti-Flash: Verhindert "Zucken" beim Variantenwechsel ───
-   Theme-JS (SelloutVariants.update) entfernt kurz sold-out/unavailable Klassen
-   und setzt sie neu. Die Theme-Transitions (0.5s background/color/border auf
-   .radio__button label) machen den Zwischenzustand als Flash sichtbar.
-   Fix: Transitions auf allen betroffenen Elementen komplett unterdrücken. */
-html body .radio__fieldset .radio__button label { transition: none !important; }
-html body .radio__fieldset--swatches tooltip-component { transition: none !important; }
-html body .radio__fieldset--swatches tooltip-component label { transition: none !important; }
+   1) Transitions komplett gekillt auf allen Swatch/Radio-Elementen
+   2) sold-out Styling per .cm-so statt :has(input.sold-out) (JS-gesteuert)
+   3) -webkit-tap-highlight-color: transparent verhindert den Touch-Flash auf Mobile */
+html body .radio__fieldset .radio__button label { transition: none !important; -webkit-tap-highlight-color: transparent; }
+html body .radio__fieldset--swatches tooltip-component { transition: none !important; -webkit-tap-highlight-color: transparent; }
+html body .radio__fieldset--swatches tooltip-component input { -webkit-tap-highlight-color: transparent; }
+html body .radio__fieldset--swatches tooltip-component label { transition: none !important; -webkit-tap-highlight-color: transparent; }
 html body .radio__fieldset--swatches tooltip-component label::before { transition: none !important; }
 html body .radio__fieldset--swatches tooltip-component label::after { transition: none !important; }
 html body .radio__fieldset--swatches tooltip-component::before { transition: none !important; }
 html body .radio__fieldset--swatches tooltip-component::after { transition: none !important; }
-/* Zusätzlich JS-gesteuert: .cm-no-flash wird per capture-phase während des
-   Variantenwechsels gesetzt und nach dem Paint entfernt (doppeltes rAF) */
-.cm-no-flash .radio__button label,
-.cm-no-flash tooltip-component,
-.cm-no-flash tooltip-component label,
-.cm-no-flash tooltip-component label::before,
-.cm-no-flash tooltip-component label::after,
-.cm-no-flash tooltip-component::before,
-.cm-no-flash tooltip-component::after { transition: none !important; }
 html body .radio__fieldset--swatches:not(.radio__fieldset--pgi) tooltip-component:has(input:checked) { box-shadow: none; outline: 0; }
 /* Quick-Add: Punkte unter Gold/Platin und das Namens-Kästchen (Tooltip) weg */
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component::before,
@@ -1478,7 +1469,7 @@ html body .tooltip-default { display: none !important; }
 
 /* Quick-Add: dezente Auswahl-Bestätigung ohne Ring – gewählter Kreis etwas größer mit weichem Schatten, die anderen leicht zurückgenommen, kurzer Puls beim Tippen */
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component label {
-  transition: transform .25s cubic-bezier(.3,.7,.4,1), opacity .25s ease, box-shadow .25s ease !important; border-radius: 50% !important;
+  transition: transform .25s cubic-bezier(.3,.7,.4,1), opacity .25s ease, box-shadow .25s ease !important; border-radius: 50% !important; -webkit-tap-highlight-color: transparent;
 }
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component:not(:has(input:checked)) label { opacity: .65; transform: scale(.94); }
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component:has(input:checked) label { opacity: 1; transform: scale(1.12); box-shadow: 0 4px 10px -3px rgba(20,20,20,.3) !important; }
