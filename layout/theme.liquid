@@ -230,17 +230,42 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- And above this comment line ================================================== -->
   
 <script>
-/* Anti-Flash: Transitions im gesamten Formular während des Variantenwechsels
-   unterdrücken, damit SelloutVariants.update() keinen sichtbaren Flash erzeugt
-   wenn es sold-out Klassen kurz entfernt und wieder setzt. Capture-Phase = läuft
-   VOR dem Theme-Handler. Doppeltes rAF = wird erst nach dem nächsten Paint entfernt. */
-document.addEventListener('change', function (e) {
-  if (!e.target.matches || !e.target.matches('[name^="options"]')) return;
-  var f = e.target.closest('.product__form__outer, .product__form, .product-form, .product-quick-add__form, .product-quick-add__form__inner, [data-product-form]');
-  if (!f) return;
-  f.classList.add('cm-no-flash');
-  requestAnimationFrame(function () { requestAnimationFrame(function () { f.classList.remove('cm-no-flash'); }); });
-}, true);
+/* Anti-Flash: sold-out Styling wird NICHT per :has(input.sold-out) gesteuert
+   (das flasht auf Mobile wenn das Theme die Klasse kurz entfernt und wieder setzt),
+   sondern per eigener .cm-so Klasse auf dem tooltip-component. Diese Klasse wird
+   nur geändert wenn sich der tatsächliche Zustand ändert. */
+(function () {
+  /* cm-so auf alle tooltip-components setzen deren input sold-out ist */
+  function syncAll(root) {
+    (root || document).querySelectorAll('.radio__fieldset--swatches tooltip-component').forEach(function (tc) {
+      var inp = tc.querySelector('input');
+      if (!inp) return;
+      tc.classList.toggle('cm-so', inp.classList.contains('sold-out'));
+    });
+  }
+  /* Initial + bei Quick-Add Modals die erst später ins DOM kommen */
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { syncAll(); }); } else { syncAll(); }
+  new MutationObserver(function (muts) {
+    for (var i = 0; i < muts.length; i++) {
+      for (var j = 0; j < muts[i].addedNodes.length; j++) {
+        var n = muts[i].addedNodes[j];
+        if (n.nodeType === 1 && n.querySelector && n.querySelector('.radio__fieldset--swatches')) syncAll(n);
+      }
+    }
+  }).observe(document.body || document.documentElement, { childList: true, subtree: true });
+  /* Nach jedem Variantenwechsel: Theme-Handler laufen lassen (sold-out Klassen
+     werden vom Theme entfernt+gesetzt), dann im nächsten Microtask den tatsächlichen
+     Endzustand in cm-so übernehmen. Der Microtask läuft VOR dem nächsten Paint,
+     also sieht der User nie den Zwischenzustand. */
+  document.addEventListener('change', function (e) {
+    if (!e.target.matches || !e.target.matches('[name^="options"]')) return;
+    var fs = e.target.closest('.radio__fieldset');
+    var root = fs ? fs.closest('.product__form__outer, .product-quick-add__form__inner, [data-product-form]') : null;
+    if (!root) root = fs;
+    if (!root) return;
+    Promise.resolve().then(function () { syncAll(root); });
+  });
+})();
 /* Quick-Add: kurzer Puls am gewählten Kreis und weicher Wechsel des Namens neben "Veredelung" */
 /* Capture-Phase: blendet den Wert SOFORT aus, BEVOR theme.js den Text ändert */
 document.addEventListener('change', function (e) {

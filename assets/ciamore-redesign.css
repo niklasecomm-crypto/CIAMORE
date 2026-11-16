@@ -366,7 +366,7 @@ mobile-menu .header__logo__link--drawer figure,
 }
 .template-product .product__form__outer .radio__fieldset--swatches tooltip-component:has(input:checked) { background: #fff; box-shadow: 0 2px 6px rgba(30,30,30,.1); }
 .template-product .product__form__outer .radio__fieldset--swatches tooltip-component:has(input:checked)::after { color: var(--cm-ink); font-weight: 700; }
-.template-product .product__form__outer .radio__fieldset--swatches tooltip-component:has(input.sold-out)::after { text-decoration: line-through; opacity: .55; }
+.template-product .product__form__outer .radio__fieldset--swatches tooltip-component.cm-so::after { text-decoration: line-through; opacity: .55; }
 .template-product .product__form__outer .radio__fieldset--swatches tooltip-component:has(input:focus-visible) { outline: 2px solid var(--cm-ink); outline-offset: 2px; }
 
 /* Sonstige Varianten (Größen) als Pills */
@@ -1676,7 +1676,7 @@ html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-com
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component label::before { content: ""; position: absolute; inset: 0; border-radius: 999px; display: block !important; background: none !important; border: 0 !important; }
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component:has(input:checked) { background: transparent !important; box-shadow: none !important; }
 html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component:has(input:checked)::after { color: var(--cm-ink); font-weight: 700; }
-html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component:has(input.sold-out)::after { text-decoration: line-through; opacity: .55; }
+html body .product-quick-add__form__inner .radio__fieldset--swatches tooltip-component.cm-so::after { text-decoration: line-through; opacity: .55; }
 html body .product-quick-add__form .cm-bm-specs { margin: 0; }
 
 /* Quick-Add: Badges (Versand/Klarna) über der Specs-Tabelle wie auf der Produktseite */
