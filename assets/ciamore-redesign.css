@@ -1717,3 +1717,9 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 .cm-multi-pdp .product__selectors .radio__button input:checked + label .option-title {
   font-weight: 700 !important;
 }
+
+/* Produktkarte: ganze Karte tippbar (JS in theme.liquid). cursor:pointer ist nötig, damit
+   iOS Safari den Klick auf Nicht-Link-Flächen überhaupt auslöst. Das Variantenbild lässt
+   Taps durch auf den Bild-Link darunter. */
+.product-item[data-grid-item] { cursor: pointer; }
+.product-item[data-grid-item] .product-item__bg__inner { pointer-events: none; }

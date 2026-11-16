@@ -266,6 +266,53 @@ document.addEventListener('DOMContentLoaded', function() {
     Promise.resolve().then(function () { syncAll(root); });
   });
 })();
+/* Produktkarte (Kollektion, Startseite, Suche): ganze Karte führt zum Produkt, auch
+   nachdem Farbkreise getippt wurden, und zwar direkt zur gerade angezeigten Variante.
+   Hintergrund: Das Variantenbild (.product-item__bg__inner) liegt nach dem Tippen über
+   dem Standardbild und steckt in keinem Link. Welche Variante gilt, wird beim Klick aus
+   dem sichtbaren Bild abgelesen, es wird also nirgends ein Zustand gespeichert. */
+(function () {
+  var touch = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  function handle(href) { var m = /\/products\/([^\/?#]+)/.exec(href || ''); return m ? m[1] : ''; }
+  function activeSwatch(card) {
+    var img = card.querySelector('[data-product-image] .product-item__bg__inner.is-visible[data-variant-title]');
+    if (!img) return null;
+    var name = img.getAttribute('data-variant-title'), found = null;
+    card.querySelectorAll('grid-swatch [data-swatch-button]').forEach(function (b) {
+      if (!found && b.getAttribute('data-swatch-variant-name') && b.getAttribute('data-swatch-variant-name').replace(/"/g, "'") === name) found = b;
+    });
+    return found;
+  }
+  function target(card, main) {
+    var u = new URL(main.href, location.href), sw = activeSwatch(card);
+    var id = sw && sw.getAttribute('data-swatch-variant');
+    if (id) u.searchParams.set('variant', id);
+    return u.href;
+  }
+  function show(card, sw) {
+    var box = card.querySelector('[data-product-image]'); if (!box) return;
+    var name = (sw.getAttribute('data-swatch-variant-name') || '').replace(/"/g, "'");
+    box.querySelectorAll('.product-item__bg__inner[data-variant-title]').forEach(function (i) {
+      i.classList.toggle('is-visible', i.getAttribute('data-variant-title') === name);
+    });
+  }
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var t = e.target; if (!t || !t.closest) return;
+    var card = t.closest('.product-item[data-grid-item]'); if (!card) return;
+    /* Farbkreis: auf Touch-Geräten nur Vorschau, nie wegnavigieren */
+    var sw = t.closest('grid-swatch [data-swatch-button]');
+    if (sw) { if (touch) { e.preventDefault(); show(card, sw); } return; }
+    var main = card.querySelector('a.product-link[href]'); if (!main) return;
+    var link = t.closest('a[href]');
+    if (link) { if (handle(link.getAttribute('href')) !== handle(main.getAttribute('href'))) return; }
+    else if (t.closest('button, input, select, textarea, label, summary, form, dialog, [role="dialog"], [role="button"], quick-add-product, product-siblings, native-scrollbar')) return;
+    var url = target(card, main);
+    if (link && link.href === url) return; /* normaler Link, Browser macht den Rest */
+    e.preventDefault();
+    location.assign(url);
+  });
+})();
 /* Quick-Add: kurzer Puls am gewählten Kreis und weicher Wechsel des Namens neben "Veredelung" */
 /* Capture-Phase: blendet den Wert SOFORT aus, BEVOR theme.js den Text ändert */
 document.addEventListener('change', function (e) {
