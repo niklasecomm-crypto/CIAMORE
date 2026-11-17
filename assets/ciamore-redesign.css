@@ -1586,5 +1586,18 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 
 /* ===== Back-in-Stock-Button "Benachrichtige mich, wenn verfügbar" (Klaviyo BIS) ===== */
 .cm-notify { overflow: hidden; max-height: 0; opacity: 0; margin-top: 0; pointer-events: none; transition: max-height .35s cubic-bezier(.4,0,.2,1), opacity .3s ease, margin-top .35s cubic-bezier(.4,0,.2,1); }
-.cm-notify.is-on { max-height: 160px; opacity: 1; margin-top: 10px; pointer-events: auto; }
-.cm-notify__btn { display: flex !important; align-items: center; justify-content: center; width: 100%; text-align: center; -webkit-tap-highlight-color: transparent; }
+.cm-notify.is-on { max-height: 200px; opacity: 1; margin-top: 10px; pointer-events: auto; }
+/* Unser Anker ist nur Platzierungspunkt + Traeger der Varianten-ID fuer Klaviyo: unsichtbar, bleibt aber im DOM */
+.cm-notify .cm-notify__btn.klaviyo-bis-trigger { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: 0 !important; border: 0 !important; overflow: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+/* Klaviyo setzt seinen eigenen Button als <div> in den Wrapper: auf Shop-Stil bringen */
+.cm-notify > div { width: 100% !important; margin: 0 !important; }
+.cm-notify > div > div { display: block !important; width: 100% !important; max-width: 100% !important; }
+.cm-notify > div button {
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  width: 100% !important; max-width: 100% !important; min-height: 56px !important; padding: 0 20px !important;
+  background: #212121 !important; color: #fff !important;
+  font-family: "DM Sans", sans-serif !important; font-size: 16px !important; font-weight: 600 !important;
+  line-height: 1.2 !important; letter-spacing: normal !important; text-transform: none !important;
+  border: 0 !important; border-radius: 10px !important; box-shadow: none !important;
+  cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;
+}
