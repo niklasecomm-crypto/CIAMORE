@@ -756,6 +756,65 @@ document.addEventListener('DOMContentLoaded', function () {
   run();
 })();
   </script>
+  <script>
+/* Back-in-Stock: unter dem Ausverkauft-Button erscheint ein "Benachrichtige mich,
+   wenn verfügbar"-Button (Klaviyo BIS), aber nur wenn die GEWÄHLTE Variante existiert
+   und ausverkauft ist. Verfügbare oder nicht existierende Kombi => Button eingeklappt.
+   Sanftes Ein-/Ausblenden per CSS (.is-on). */
+(function () {
+  if (!document.querySelector('.template-product')) return;
+  var product = null, wrap = null;
+  function handle() { var m = /\/products\/([^\/?#]+)/.exec(location.pathname); return m ? m[1] : ''; }
+  function scope() {
+    var outer = document.querySelector('.product__form__outer');
+    if (!outer) return null;
+    var sec = outer.closest('.shopify-section, [data-section-type], main') || document;
+    return { outer: outer, submit: sec.querySelector('.product__submit') || document.querySelector('[data-product-form] .product__submit') };
+  }
+  function ensure(s) {
+    if (wrap && document.body.contains(wrap)) return wrap;
+    if (!s.submit) return null;
+    wrap = s.submit.querySelector('.cm-notify');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.className = 'cm-notify';
+      wrap.innerHTML = '<a href="#" class="klaviyo-bis-trigger btn btn--solid btn--primary cm-notify__btn"><span>Benachrichtige mich, wenn verfügbar</span></a>';
+      s.submit.appendChild(wrap);
+    }
+    return wrap;
+  }
+  function options(outer) {
+    return [].map.call(outer.querySelectorAll('.radio__fieldset'), function (fs) {
+      var c = fs.querySelector('input:checked'); return c ? c.value : null;
+    });
+  }
+  function match(opts) {
+    if (!product || !opts.length || opts.indexOf(null) >= 0) return undefined;
+    return product.variants.filter(function (v) {
+      return v.options.length === opts.length && v.options.every(function (o, i) { return o === opts[i]; });
+    })[0];
+  }
+  function update() {
+    var s = scope(); if (!s) return;
+    var w = ensure(s); if (!w) return;
+    var v = match(options(s.outer));
+    if (v && v.available === false) {
+      w.querySelector('.klaviyo-bis-trigger').setAttribute('data-variant-id', v.id);
+      w.classList.add('is-on');
+    } else {
+      w.classList.remove('is-on');
+    }
+  }
+  function init() {
+    if (!handle()) return;
+    fetch('/products/' + handle() + '.js').then(function (r) { return r.json(); }).then(function (p) { product = p; update(); }).catch(function () {});
+    document.addEventListener('change', function (e) {
+      if (e.target && e.target.matches && e.target.matches('.product__form__outer [name^="options"]')) setTimeout(update, 0);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
   {%- render 'cm-bundle-preselect' -%}
 
 </html>
