@@ -787,30 +787,15 @@ document.addEventListener('DOMContentLoaded', function () {
     wrap = s.submit.querySelector('.cm-notify');
     if (wrap) return wrap;
     wrap = document.createElement('div');
-    wrap.className = 'cm-notify';
-    if (isSet) {
-      /* Sets: eigener Button, der unser Popup öffnet. Der versteckte Anker lenkt
-         Klaviyos automatisch eingespritzten Button in unseren Wrapper, wo CSS ihn
-         ausblendet. Ohne den Anker setzt Klaviyo sonst einen eigenen, ungestylten
-         Button an eine Standardstelle (die hässliche Box). */
-      wrap.className = 'cm-notify cm-notify--set';
-      wrap.innerHTML =
-        '<button type="button" class="cm-notify__setbtn"><span>Benachrichtige mich, wenn verfügbar</span></button>' +
-        '<a href="#" class="klaviyo-bis-trigger cm-notify__btn" tabindex="-1" aria-hidden="true"></a>';
-      wrap.querySelector('.cm-notify__setbtn').addEventListener('click', openPopup);
-    } else {
-      wrap.innerHTML =
-        '<div class="cm-notify__pick" style="display:none">' +
-          '<label class="cm-notify__hint">Für welche Variante möchtest du benachrichtigt werden?</label>' +
-          '<div class="cm-notify__selectwrap"><select class="cm-notify__select" aria-label="Ausverkaufte Variante wählen"></select></div>' +
-        '</div>' +
-        '<a href="#" class="klaviyo-bis-trigger btn btn--solid btn--primary cm-notify__btn"><span>Benachrichtige mich, wenn verfügbar</span></a>';
-      wrap.querySelector('.cm-notify__select').addEventListener('change', function () {
-        var sel = this;
-        var v = product && product.variants.filter(function (x) { return String(x.id) === sel.value; })[0];
-        if (v) selectVariant(v);
-      });
-    }
+    /* Einheitlich fuer Einzelprodukte UND Sets: ein eigener Button, der unser Popup oeffnet.
+       Der versteckte Anker lenkt Klaviyos automatisch eingespritzten Button in unseren
+       Wrapper, wo CSS ihn ausblendet. Ohne den Anker setzt Klaviyo sonst einen eigenen,
+       ungestylten Button an eine Standardstelle (die haessliche Box). */
+    wrap.className = 'cm-notify cm-notify--pop';
+    wrap.innerHTML =
+      '<button type="button" class="cm-notify__setbtn"><span>Benachrichtige mich, wenn verfügbar</span></button>' +
+      '<a href="#" class="klaviyo-bis-trigger cm-notify__btn" tabindex="-1" aria-hidden="true"></a>';
+    wrap.querySelector('.cm-notify__setbtn').addEventListener('click', openPopup);
     s.submit.appendChild(wrap);
     return wrap;
   }
@@ -829,59 +814,13 @@ document.addEventListener('DOMContentLoaded', function () {
       return v.options.length === vals.length && v.options.every(function (o, i) { return o === vals[i]; });
     })[0];
   }
-  /* Alle ausverkauften Varianten, die bei allen Dimensionen ausser der letzten (= Groesse)
-     mit der aktuellen Variante uebereinstimmen: also die ausverkauften Groessen der gewaehlten Veredelung. */
-  function siblings(cur) {
-    if (!product || !cur) return [];
-    var n = cur.options.length;
-    return product.variants.filter(function (v) {
-      if (v.available !== false) return false;
-      for (var i = 0; i < n - 1; i++) { if (v.options[i] !== cur.options[i]) return false; }
-      return true;
-    });
-  }
-  /* Waehlt die Variante tatsaechlich auf der Produktseite aus (ueber die Theme-Radios),
-     damit Preis, Status, URL und die Klaviyo-Bindung alle stimmen. */
-  function selectVariant(v) {
-    var s = scope(); if (!s) return;
-    var fsList = s.outer.querySelectorAll('.radio__fieldset');
-    v.options.forEach(function (optVal, i) {
-      var fs = fsList[i]; if (!fs) return;
-      var input = [].slice.call(fs.querySelectorAll('input')).filter(function (inp) { return inp.value === optVal; })[0];
-      if (input && !input.checked) {
-        var lab = s.outer.querySelector('label[for="' + input.id + '"]') || (input.closest && input.closest('label'));
-        if (lab) { lab.click(); }
-        else { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }
-      }
-    });
-  }
-  function fillSelect(cur) {
-    var pick = wrap.querySelector('.cm-notify__pick');
-    var sel = wrap.querySelector('.cm-notify__select');
-    if (!pick || !sel) return;
-    var sibs = siblings(cur);
-    if (sibs.length < 2) { pick.style.display = 'none'; return; }
-    var sig = sibs.map(function (v) { return v.id; }).join(',');
-    if (sel.getAttribute('data-sig') !== sig) {
-      sel.innerHTML = sibs.map(function (v) {
-        return '<option value="' + v.id + '">' + String(v.title || v.public_title || v.name || v.id).replace(/[<>&]/g, ' ') + '</option>';
-      }).join('');
-      sel.setAttribute('data-sig', sig);
-    }
-    sel.value = String(cur.id);
-    pick.style.display = '';
-  }
   function update() {
     if (!product) return;
     var s = scope(); if (!s) return;
     var w = ensure(s); if (!w) return;
     var v = match(options(s.outer));
-    if (v && v.available === false) {
-      if (!isSet) { var t = w.querySelector('.klaviyo-bis-trigger'); if (t) t.setAttribute('data-variant-id', v.id); fillSelect(v); }
-      w.classList.add('is-on');
-    } else {
-      w.classList.remove('is-on');
-    }
+    if (v && v.available === false) { w.classList.add('is-on'); }
+    else { w.classList.remove('is-on'); }
   }
 
   /* ----- Set-Popup ----- */
@@ -910,7 +849,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<div class="cm-pop__fields"></div>' +
           '<div class="cm-pop__field">' +
             '<label class="cm-pop__label" for="cm-pop-email">E-Mail-Adresse</label>' +
-            '<input id="cm-pop-email" type="email" class="cm-pop__input" autocomplete="email" placeholder="deine@email.de">' +
+            '<input id="cm-pop-email" type="email" class="cm-pop__input" autocomplete="email" placeholder="Deine E-Mail">' +
           '</div>' +
           '<label class="cm-pop__check"><input type="checkbox" class="cm-pop__checkbox" checked><span>Außerdem Angebote und News von Ciamore per E-Mail erhalten</span></label>' +
           '<button type="submit" class="cm-pop__submit">Benachrichtigung aktivieren</button>' +
@@ -939,18 +878,24 @@ document.addEventListener('DOMContentLoaded', function () {
     p.querySelector('.cm-pop__form').hidden = false;
     p.querySelector('.cm-pop__done').hidden = true;
     status('', '');
+    p.querySelector('.cm-pop__intro').textContent = isSet
+      ? 'Stell dein Set zusammen. Wir kontaktieren dich, sobald genau diese Kombination wieder verfügbar ist.'
+      : 'Wir kontaktieren dich, sobald genau diese Variante wieder verfügbar ist.';
     var s = scope();
     var cur = s ? match(options(s.outer)) : null;
     var pre = cur ? cur.options : (product.variants[0] ? product.variants[0].options : []);
+    pop._base = pre.slice();   /* Basis-Auswahl; die Dropdowns ueberschreiben einzelne Dimensionen */
     var html = '';
     for (var i = 0; i < product.options.length; i++) {
-      var opts = optValues(i).map(function (val) {
+      var vals = optValues(i);
+      if (vals.length < 2) continue;   /* Dimension ohne echte Auswahl (nur ein Wert) weglassen */
+      var opts = vals.map(function (val) {
         return '<option value="' + esc(val) + '"' + (val === pre[i] ? ' selected' : '') + '>' + esc(val) + '</option>';
       }).join('');
       html +=
         '<div class="cm-pop__field">' +
           '<label class="cm-pop__label">' + esc(optName(i)) + '</label>' +
-          '<div class="cm-pop__selectwrap"><select class="cm-pop__select">' + opts + '</select></div>' +
+          '<div class="cm-pop__selectwrap"><select class="cm-pop__select" data-oi="' + i + '">' + opts + '</select></div>' +
         '</div>';
     }
     p.querySelector('.cm-pop__fields').innerHTML = html;
@@ -980,7 +925,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function subscribeNews(email) {
     return klFetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + KL_KEY, {
       data: { type: 'subscription',
-        attributes: { custom_source: 'Back in Stock Set-Popup',
+        attributes: { custom_source: 'Back in Stock Popup',
           profile: { data: { type: 'profile', attributes: { email: email, subscriptions: { email: { marketing: { consent: 'SUBSCRIBED' } } } } } } },
         relationships: { list: { data: { type: 'list', id: KL_LIST } } } }
     });
@@ -991,10 +936,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var emailEl = pop.querySelector('.cm-pop__input');
     var email = emailEl.value.trim();
     if (!validEmail(email)) { status('Bitte gib eine gültige E-Mail-Adresse ein.', 'err'); try { emailEl.focus(); } catch (x) {} return; }
-    var vals = [].map.call(pop.querySelectorAll('.cm-pop__select'), function (s) { return s.value; });
+    var vals = (pop._base || []).slice();
+    [].forEach.call(pop.querySelectorAll('.cm-pop__select'), function (sel) { vals[+sel.getAttribute('data-oi')] = sel.value; });
     var v = variantByOpts(vals);
-    if (!v) { status('Diese Kombination gibt es leider nicht. Bitte prüfe deine Auswahl.', 'err'); return; }
-    if (v.available !== false) { status('Diese Kombination ist gerade verfügbar – du kannst sie direkt in den Warenkorb legen.', 'ok'); return; }
+    if (!v) { status('Diese Auswahl gibt es leider nicht. Bitte prüfe deine Eingabe.', 'err'); return; }
+    if (v.available !== false) { status('Diese Auswahl ist gerade verfügbar – du kannst sie direkt in den Warenkorb legen.', 'ok'); return; }
     var news = pop.querySelector('.cm-pop__checkbox').checked;
     var btn = pop.querySelector('.cm-pop__form .cm-pop__submit');
     var orig = btn.textContent;
@@ -1003,7 +949,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!(r.status === 200 || r.status === 201 || r.status === 202)) throw new Error('bis ' + r.status);
       return news ? subscribeNews(email).catch(function () {}) : null;
     }).then(function () {
-      pop.querySelector('.cm-pop__donetext').textContent = 'Super. Wir benachrichtigen dich unter ' + email + ', sobald dein Set wieder verfügbar ist.';
+      pop.querySelector('.cm-pop__donetext').textContent = 'Super. Wir benachrichtigen dich unter ' + email + ', sobald es wieder verfügbar ist.';
       pop.querySelector('.cm-pop__form').hidden = true;
       pop.querySelector('.cm-pop__done').hidden = false;
     }).catch(function () {
