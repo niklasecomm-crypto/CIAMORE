@@ -1621,6 +1621,9 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
   cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
 .cm-notify__setbtn:hover { background: #000; }
+/* Bei Sets alles im Wrapper ausser unserem Button ausblenden: versteckter Anker + Klaviyos
+   automatisch eingespritzter Button landen hier und werden unsichtbar. */
+.cm-notify--set > *:not(.cm-notify__setbtn) { display: none !important; }
 
 .cm-pop[hidden] { display: none; }
 .cm-pop { position: fixed; inset: 0; z-index: 2147483647; display: flex; align-items: center; justify-content: center; padding: 16px; }

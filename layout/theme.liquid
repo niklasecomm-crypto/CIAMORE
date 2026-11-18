@@ -789,9 +789,14 @@ document.addEventListener('DOMContentLoaded', function () {
     wrap = document.createElement('div');
     wrap.className = 'cm-notify';
     if (isSet) {
-      /* Sets: eigener Button, der unser Popup öffnet. KEIN klaviyo-bis-trigger,
-         damit Klaviyo hier keinen eigenen Button einspritzt. */
-      wrap.innerHTML = '<button type="button" class="cm-notify__setbtn"><span>Benachrichtige mich, wenn verfügbar</span></button>';
+      /* Sets: eigener Button, der unser Popup öffnet. Der versteckte Anker lenkt
+         Klaviyos automatisch eingespritzten Button in unseren Wrapper, wo CSS ihn
+         ausblendet. Ohne den Anker setzt Klaviyo sonst einen eigenen, ungestylten
+         Button an eine Standardstelle (die hässliche Box). */
+      wrap.className = 'cm-notify cm-notify--set';
+      wrap.innerHTML =
+        '<button type="button" class="cm-notify__setbtn"><span>Benachrichtige mich, wenn verfügbar</span></button>' +
+        '<a href="#" class="klaviyo-bis-trigger cm-notify__btn" tabindex="-1" aria-hidden="true"></a>';
       wrap.querySelector('.cm-notify__setbtn').addEventListener('click', openPopup);
     } else {
       wrap.innerHTML =
@@ -899,8 +904,8 @@ document.addEventListener('DOMContentLoaded', function () {
       '<div class="cm-pop__backdrop" data-close></div>' +
       '<div class="cm-pop__box" role="dialog" aria-modal="true" aria-label="Benachrichtigung bei Verfügbarkeit">' +
         '<button type="button" class="cm-pop__close" data-close aria-label="Schließen">&times;</button>' +
-        '<h2 class="cm-pop__title">Benachrichtige mich, wenn verfügbar</h2>' +
-        '<p class="cm-pop__intro">Stell dein Set zusammen. Wir schreiben dir, sobald genau diese Kombination wieder verfügbar ist.</p>' +
+        '<h2 class="cm-pop__title">Benachrichtige mich, sobald das Produkt wieder verfügbar ist</h2>' +
+        '<p class="cm-pop__intro">Stell dein Set zusammen. Wir kontaktieren dich, sobald genau diese Kombination wieder verfügbar ist.</p>' +
         '<form class="cm-pop__form" novalidate>' +
           '<div class="cm-pop__fields"></div>' +
           '<div class="cm-pop__field">' +
@@ -952,7 +957,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.appendChild(p); /* ans Ende hängen: liegt sicher über anderen Overlays (z. B. Gratis-Geschenk) */
     p.removeAttribute('hidden');
     document.documentElement.style.overflow = 'hidden';
-    var first = p.querySelector('.cm-pop__select'); if (first) { try { first.focus(); } catch (e) {} }
+    /* NICHT das erste Dropdown fokussieren – es wuerde sonst aufklappen. Fokus auf den Dialog selbst. */
+    var box = p.querySelector('.cm-pop__box'); if (box) { box.setAttribute('tabindex', '-1'); try { box.focus(); } catch (e) {} }
   }
   function closePopup() {
     if (!pop) return;
