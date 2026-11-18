@@ -1609,3 +1609,60 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
   border: 0 !important; border-radius: 10px !important; box-shadow: none !important;
   cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;
 }
+
+/* ===== Set-Benachrichtigung: eigener Button + Shop-Popup (Clover-Sets, Kombi-Sets) ===== */
+.cm-notify__setbtn {
+  box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 100%; min-height: 56px; padding: 0 20px;
+  background: #212121; color: #fff;
+  font-family: "DM Sans", sans-serif; font-size: 16px; font-weight: 600;
+  line-height: 1.2; letter-spacing: normal; text-transform: none;
+  border: 0; border-radius: 10px; box-shadow: none;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.cm-notify__setbtn:hover { background: #000; }
+
+.cm-pop[hidden] { display: none; }
+.cm-pop { position: fixed; inset: 0; z-index: 2147483000; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.cm-pop__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+.cm-pop__box {
+  position: relative; width: 100%; max-width: 420px; max-height: calc(100vh - 32px); overflow-y: auto;
+  background: #fff; border-radius: 14px; padding: 28px 24px 24px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.28);
+  font-family: "DM Sans", sans-serif; color: #1e1e1e;
+}
+.cm-pop__close { position: absolute; top: 10px; right: 10px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: none; border: 0; font-size: 26px; line-height: 1; color: #8a8a8a; cursor: pointer; border-radius: 8px; }
+.cm-pop__close:hover { background: #f3f3f3; color: #212121; }
+.cm-pop__title { margin: 0 32px 8px 0; font-family: "DM Sans", sans-serif; font-size: 19px; font-weight: 600; color: #212121; line-height: 1.25; }
+.cm-pop__intro { margin: 0 0 18px; font-size: 14px; font-weight: 400; color: #595959; line-height: 1.45; }
+.cm-pop__field { margin-bottom: 14px; }
+.cm-pop__label { display: block; margin: 0 0 6px; font-family: "DM Sans", sans-serif; font-size: 13px; font-weight: 500; color: #212121; }
+.cm-pop__selectwrap { position: relative; }
+.cm-pop__selectwrap::after { content: ""; position: absolute; right: 16px; top: 50%; width: 9px; height: 9px; border-right: 2px solid #212121; border-bottom: 2px solid #212121; transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+.cm-pop__select, .cm-pop__input {
+  -webkit-appearance: none; -moz-appearance: none; appearance: none; box-sizing: border-box;
+  width: 100%; min-height: 52px; padding: 0 16px;
+  background: #fff; color: #1e1e1e;
+  font-family: "DM Sans", sans-serif; font-size: 15px; font-weight: 500;
+  border: 1px solid #E0E0E0; border-radius: 10px; -webkit-tap-highlight-color: transparent;
+}
+.cm-pop__select { padding-right: 40px; cursor: pointer; }
+.cm-pop__select:focus, .cm-pop__input:focus { outline: none; border-color: #212121; }
+.cm-pop__input::placeholder { color: #b0b0b0; font-weight: 400; }
+.cm-pop__check { display: flex; align-items: flex-start; gap: 9px; margin: 2px 0 20px; font-size: 13px; font-weight: 400; color: #595959; line-height: 1.4; cursor: pointer; }
+.cm-pop__check input { margin: 2px 0 0; width: 16px; height: 16px; flex: 0 0 auto; accent-color: #212121; cursor: pointer; }
+.cm-pop__submit {
+  box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 56px; padding: 0 20px;
+  background: #212121; color: #fff;
+  font-family: "DM Sans", sans-serif; font-size: 16px; font-weight: 600; line-height: 1.2;
+  border: 0; border-radius: 10px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.cm-pop__submit:hover { background: #000; }
+.cm-pop__submit:disabled { opacity: .6; cursor: default; }
+.cm-pop__status { margin: 12px 0 0; font-size: 13.5px; font-weight: 500; line-height: 1.4; }
+.cm-pop__status.is-err { color: #c0392b; }
+.cm-pop__status.is-ok { color: #1e7a44; }
+.cm-pop__done { text-align: center; padding: 8px 0 4px; }
+.cm-pop__doneicon { width: 52px; height: 52px; margin: 4px auto 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #fff; background: #1e7a44; border-radius: 50%; }
+.cm-pop__donetext { margin: 0 0 20px; font-size: 15px; font-weight: 500; color: #212121; line-height: 1.45; }
