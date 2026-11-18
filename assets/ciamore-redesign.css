@@ -1623,7 +1623,7 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 .cm-notify__setbtn:hover { background: #000; }
 
 .cm-pop[hidden] { display: none; }
-.cm-pop { position: fixed; inset: 0; z-index: 2147483000; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.cm-pop { position: fixed; inset: 0; z-index: 2147483647; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .cm-pop__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
 .cm-pop__box {
   position: relative; width: 100%; max-width: 420px; max-height: calc(100vh - 32px); overflow-y: auto;

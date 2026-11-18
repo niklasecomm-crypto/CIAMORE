@@ -949,6 +949,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '</div>';
     }
     p.querySelector('.cm-pop__fields').innerHTML = html;
+    document.body.appendChild(p); /* ans Ende hängen: liegt sicher über anderen Overlays (z. B. Gratis-Geschenk) */
     p.removeAttribute('hidden');
     document.documentElement.style.overflow = 'hidden';
     var first = p.querySelector('.cm-pop__select'); if (first) { try { first.focus(); } catch (e) {} }
