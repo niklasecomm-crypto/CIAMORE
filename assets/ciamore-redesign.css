@@ -1593,6 +1593,7 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 .cm-notify > div { width: 100% !important; margin: 0 !important; }
 .cm-notify > div > div { display: block !important; width: 100% !important; max-width: 100% !important; }
 .cm-notify > div button {
+  box-sizing: border-box !important;
   display: flex !important; align-items: center !important; justify-content: center !important;
   width: 100% !important; max-width: 100% !important; min-height: 56px !important; padding: 0 20px !important;
   background: #212121 !important; color: #fff !important;
