@@ -763,7 +763,7 @@ document.addEventListener('DOMContentLoaded', function () {
    Sanftes Ein-/Ausblenden per CSS (.is-on). */
 (function () {
   if (!document.querySelector('.template-product')) return;
-  var product = null, wrap = null;
+  var product = null, wrap = null, isSet = false;
   function handle() { var m = /\/products\/([^\/?#]+)/.exec(location.pathname); return m ? m[1] : ''; }
   function scope() {
     var outer = document.querySelector('.product__form__outer');
@@ -833,6 +833,9 @@ document.addEventListener('DOMContentLoaded', function () {
   function fillSelect(cur) {
     var pick = wrap.querySelector('.cm-notify__pick');
     var sel = wrap.querySelector('.cm-notify__select');
+    /* Sets/Bundles (Clover-Sets, Kombi-Sets): kein Varianten-Dropdown, nur der Button.
+       Der Kunde waehlt seine Wunsch-Kombi ueber die eigenen Set-Optionen auf der Seite. */
+    if (isSet) { pick.style.display = 'none'; return; }
     var sibs = siblings(cur);
     if (sibs.length < 2) { pick.style.display = 'none'; return; }
     var sig = sibs.map(function (v) { return v.id; }).join(',');
@@ -859,7 +862,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   function init() {
     if (!handle()) return;
-    fetch('/products/' + handle() + '.js').then(function (r) { return r.json(); }).then(function (p) { product = p; update(); }).catch(function () {});
+    fetch('/products/' + handle() + '.js').then(function (r) { return r.json(); }).then(function (p) {
+      product = p;
+      isSet = (p.options || []).some(function (o) { var n = (typeof o === 'string') ? o : (o && o.name) || ''; return String(n).indexOf('(') >= 0; });
+      update();
+    }).catch(function () {});
     document.addEventListener('change', function (e) {
       if (e.target && e.target.matches && e.target.matches('.product__form__outer [name^="options"]')) setTimeout(update, 0);
     });
