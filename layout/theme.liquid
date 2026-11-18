@@ -778,8 +778,18 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!wrap) {
       wrap = document.createElement('div');
       wrap.className = 'cm-notify';
-      wrap.innerHTML = '<a href="#" class="klaviyo-bis-trigger btn btn--solid btn--primary cm-notify__btn"><span>Benachrichtige mich, wenn verfügbar</span></a>';
+      wrap.innerHTML =
+        '<div class="cm-notify__pick" style="display:none">' +
+          '<label class="cm-notify__hint">Für welche Variante möchtest du benachrichtigt werden?</label>' +
+          '<div class="cm-notify__selectwrap"><select class="cm-notify__select" aria-label="Ausverkaufte Variante wählen"></select></div>' +
+        '</div>' +
+        '<a href="#" class="klaviyo-bis-trigger btn btn--solid btn--primary cm-notify__btn"><span>Benachrichtige mich, wenn verfügbar</span></a>';
       s.submit.appendChild(wrap);
+      wrap.querySelector('.cm-notify__select').addEventListener('change', function () {
+        var sel = this;
+        var v = product && product.variants.filter(function (x) { return String(x.id) === sel.value; })[0];
+        if (v) selectVariant(v);
+      });
     }
     return wrap;
   }
@@ -794,12 +804,54 @@ document.addEventListener('DOMContentLoaded', function () {
       return v.options.length === opts.length && v.options.every(function (o, i) { return o === opts[i]; });
     })[0];
   }
+  /* Alle ausverkauften Varianten, die bei allen Dimensionen ausser der letzten (= Groesse)
+     mit der aktuellen Variante uebereinstimmen: also die ausverkauften Groessen der gewaehlten Veredelung. */
+  function siblings(cur) {
+    if (!product || !cur) return [];
+    var n = cur.options.length;
+    return product.variants.filter(function (v) {
+      if (v.available !== false) return false;
+      for (var i = 0; i < n - 1; i++) { if (v.options[i] !== cur.options[i]) return false; }
+      return true;
+    });
+  }
+  /* Waehlt die Variante tatsaechlich auf der Produktseite aus (ueber die Theme-Radios),
+     damit Preis, Status, URL und die Klaviyo-Bindung alle stimmen. */
+  function selectVariant(v) {
+    var s = scope(); if (!s) return;
+    var fsList = s.outer.querySelectorAll('.radio__fieldset');
+    v.options.forEach(function (optVal, i) {
+      var fs = fsList[i]; if (!fs) return;
+      var input = [].slice.call(fs.querySelectorAll('input')).filter(function (inp) { return inp.value === optVal; })[0];
+      if (input && !input.checked) {
+        var lab = s.outer.querySelector('label[for="' + input.id + '"]') || (input.closest && input.closest('label'));
+        if (lab) { lab.click(); }
+        else { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }
+      }
+    });
+  }
+  function fillSelect(cur) {
+    var pick = wrap.querySelector('.cm-notify__pick');
+    var sel = wrap.querySelector('.cm-notify__select');
+    var sibs = siblings(cur);
+    if (sibs.length < 2) { pick.style.display = 'none'; return; }
+    var sig = sibs.map(function (v) { return v.id; }).join(',');
+    if (sel.getAttribute('data-sig') !== sig) {
+      sel.innerHTML = sibs.map(function (v) {
+        return '<option value="' + v.id + '">' + String(v.title || v.public_title || v.name || v.id).replace(/[<>&]/g, ' ') + '</option>';
+      }).join('');
+      sel.setAttribute('data-sig', sig);
+    }
+    sel.value = String(cur.id);
+    pick.style.display = '';
+  }
   function update() {
     var s = scope(); if (!s) return;
     var w = ensure(s); if (!w) return;
     var v = match(options(s.outer));
     if (v && v.available === false) {
       w.querySelector('.klaviyo-bis-trigger').setAttribute('data-variant-id', v.id);
+      fillSelect(v);
       w.classList.add('is-on');
     } else {
       w.classList.remove('is-on');
