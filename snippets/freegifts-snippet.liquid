@@ -246,7 +246,7 @@
    dicken weißen Streifen. Jetzt genau die Safe-Area (so viel wie der Home-
    Indicator braucht), auf Geräten ohne Safe-Area nur 6px. */
 .bogos-product-detail-modal .bogos-product-information-container {
-  padding-bottom: env(safe-area-inset-bottom, 6px) !important;
+  padding-bottom: max(6px, env(safe-area-inset-bottom, 6px)) !important;
 }
 /* BIS HIER HIN */
 
