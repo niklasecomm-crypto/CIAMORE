@@ -127,6 +127,56 @@
 /* BIS HIER HIN */
 
 
+/* RABATT-BADGE + PREISANZEIGE auf BOGOS-Karten (alle Bundles) */
+
+/* Badge oben links auf dem Produktbild */
+.bogos-bp-product-card .bogos-bp-product-img-container {
+  position: relative !important;
+}
+
+.ciamore-sale-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #111;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 3px;
+  line-height: 1.2;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Originalen BOGOS-Preis ausblenden wenn unser Preis da ist */
+.bogos-bp-product-card.ciamore-price-enhanced .bogos-bp-product-price {
+  display: none !important;
+}
+
+/* Neuer Preis-Container */
+.ciamore-price-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.ciamore-price-row .new-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.ciamore-price-row .old-price {
+  font-size: 14px;
+  color: #9d9d9d;
+  text-decoration: line-through;
+}
+/* BIS HIER HIN */
+
+
 /*HINTERGRUND BEI ZAHL IM WARENKORB / WAR DAVOR BLAU*/
 .bogos-bp-widget-count {
   background-color: #000000 !important;
@@ -269,23 +319,20 @@
 </script>
 
 <script>
-  /* BLACK WEEK DISCOUNT FILTER CHIPS — Filtert Produkte nach Rabattstufe */
+  /* RABATT-BADGES + PREISANZEIGE + DISCOUNT-FILTER — Alle Bundles */
   (function(){
-    if (!document.body.classList.contains('bundle-blackweek')) return;
+    var productCache = {};
+    var enhanced = false;
 
-    var priceCache = {};
-    var initialized = false;
-
-    function parsePrice(str) {
-      /* "24,90 €" → 24.90 */
-      return parseFloat(str.replace(/[^\d,]/g, '').replace(',', '.'));
+    function formatPrice(cents) {
+      return '€' + (cents / 100).toFixed(2).replace('.', ',');
     }
 
-    function initFilters() {
-      if (initialized) return;
+    function enhanceCards() {
+      if (enhanced) return;
       var cards = document.querySelectorAll('.bogos-bp-product-card');
       if (!cards.length) return;
-      initialized = true;
+      enhanced = true;
 
       /* Einzigartige Handles sammeln */
       var handles = [];
@@ -294,42 +341,73 @@
         if (h && handles.indexOf(h) === -1) handles.push(h);
       });
 
-      /* Produkt-JSON laden für compare_at_price */
+      /* Produkt-JSON laden */
       var fetches = handles.map(function(h) {
-        if (priceCache[h]) return Promise.resolve();
+        if (productCache[h]) return Promise.resolve();
         return fetch('/products/' + h + '.js')
           .then(function(r) { return r.json(); })
-          .then(function(data) {
-            /* Höchsten Rabatt über alle Varianten nehmen */
-            var maxDiscount = 0;
-            (data.variants || []).forEach(function(v) {
-              var cap = v.compare_at_price; /* in Cents */
-              var price = v.price;           /* in Cents */
-              if (cap && cap > price) {
-                var d = Math.round((cap - price) / cap * 100);
-                if (d > maxDiscount) maxDiscount = d;
-              }
-            });
-            priceCache[h] = maxDiscount;
-          })
-          .catch(function() { priceCache[h] = 0; });
+          .then(function(data) { productCache[h] = data; })
+          .catch(function() { productCache[h] = null; });
       });
 
       Promise.all(fetches).then(function() {
-        /* Rabatt als data-Attribut auf jede Karte schreiben */
         cards.forEach(function(card) {
-          var h = card.getAttribute('data-product-handle');
-          card.setAttribute('data-discount', priceCache[h] || 0);
+          if (card.classList.contains('ciamore-price-enhanced')) return;
+
+          var handle = card.getAttribute('data-product-handle');
+          var data = productCache[handle];
+          if (!data) return;
+
+          /* Beste Variante (höchster Rabatt) finden */
+          var bestVariant = null;
+          var maxDiscount = 0;
+          var firstVariant = data.variants && data.variants[0];
+
+          (data.variants || []).forEach(function(v) {
+            if (v.compare_at_price && v.compare_at_price > v.price) {
+              var d = Math.round((v.compare_at_price - v.price) / v.compare_at_price * 100);
+              if (d > maxDiscount) {
+                maxDiscount = d;
+                bestVariant = v;
+              }
+            }
+          });
+
+          /* data-discount für Filter-Chips setzen */
+          card.setAttribute('data-discount', maxDiscount);
+
+          /* Nur wenn es einen echten Rabatt gibt: Badge + Preisanzeige */
+          if (bestVariant && maxDiscount > 0) {
+            /* Sale-Badge oben links auf dem Bild */
+            var imgContainer = card.querySelector('.bogos-bp-product-img-container');
+            if (imgContainer && !imgContainer.querySelector('.ciamore-sale-badge')) {
+              var badge = document.createElement('span');
+              badge.className = 'ciamore-sale-badge';
+              badge.textContent = '-' + maxDiscount + '%';
+              imgContainer.appendChild(badge);
+            }
+
+            /* Preis ersetzen: neuer Preis + durchgestrichener alter Preis */
+            var priceEl = card.querySelector('.bogos-bp-product-price');
+            if (priceEl && !card.querySelector('.ciamore-price-row')) {
+              var priceRow = document.createElement('div');
+              priceRow.className = 'ciamore-price-row';
+              priceRow.innerHTML =
+                '<span class="new-price">' + formatPrice(bestVariant.price) + '</span>' +
+                '<span class="old-price">' + formatPrice(bestVariant.compare_at_price) + '</span>';
+              priceEl.insertAdjacentElement('afterend', priceRow);
+              card.classList.add('ciamore-price-enhanced');
+            }
+          }
         });
       });
     }
 
-    /* Chip-Klick-Handler */
+    /* Chip-Klick-Handler (nur auf Blackweek aktiv, aber Handler ist global harmlos) */
     document.addEventListener('click', function(e) {
       var chip = e.target.closest('.ciamore-discount-chip');
       if (!chip) return;
 
-      /* Aktiven Chip wechseln */
       document.querySelectorAll('.ciamore-discount-chip').forEach(function(c) {
         c.classList.remove('active');
       });
@@ -355,11 +433,33 @@
     var checkInterval = setInterval(function() {
       if (document.querySelectorAll('.bogos-bp-product-card').length > 0) {
         clearInterval(checkInterval);
-        initFilters();
+        enhanceCards();
       }
     }, 500);
-    /* Fallback: nach 10s aufhören */
     setTimeout(function() { clearInterval(checkInterval); }, 10000);
+
+    /* MutationObserver für "Mehr Produkte laden" */
+    var obsInterval = setInterval(function() {
+      var container = document.querySelector('.bogos-bp-products-info');
+      if (container) {
+        clearInterval(obsInterval);
+        new MutationObserver(function(mutations) {
+          var hasNew = false;
+          mutations.forEach(function(m) {
+            m.addedNodes.forEach(function(n) {
+              if (n.nodeType === 1 && (n.classList && n.classList.contains('bogos-bp-product-card') || n.querySelector && n.querySelector('.bogos-bp-product-card'))) {
+                hasNew = true;
+              }
+            });
+          });
+          if (hasNew) {
+            enhanced = false;
+            enhanceCards();
+          }
+        }).observe(container, { childList: true, subtree: true });
+      }
+    }, 500);
+    setTimeout(function() { clearInterval(obsInterval); }, 10000);
   })();
 </script>
 
