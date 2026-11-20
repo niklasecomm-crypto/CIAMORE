@@ -50,20 +50,31 @@
 
     /**
      * Close the drawer without the slideOutRight animation.
-     * The slide-down was already done by our pull gesture.
+     * We replicate what closeCartDrawer() does internally,
+     * but skip the is-closing class that triggers slideOutRight.
      */
     function closeWithoutSlideRight() {
-      // Prevent the slideOutRight animation by overriding inline
-      inner.style.animation = 'none';
+      // Remove is-open (this would normally trigger slideOutRight via is-closing)
+      drawer.classList.remove('is-open');
+      drawer.cartDrawerIsOpen = false;
 
-      // Call the theme's close method (handles classes, events, scroll unlock, a11y)
-      drawer.closeCartDrawer();
+      // Dispatch the same events the theme expects
+      document.dispatchEvent(new CustomEvent('theme:cart-drawer:close', { bubbles: true }));
+      document.dispatchEvent(new CustomEvent('theme:scroll:unlock', { bubbles: true }));
 
-      // Clean up after a frame
-      requestAnimationFrame(function () {
-        resetInner();
-        inner.style.animation = '';
-      });
+      // A11y cleanup
+      if (drawer.a11y) {
+        try { drawer.a11y.removeTrapFocus(); } catch (_) {}
+        try { drawer.a11y.autoFocusLastElement(); } catch (_) {}
+      }
+
+      // Remove body click listener (same as theme does)
+      if (drawer.onBodyClickEvent) {
+        document.body.removeEventListener('click', drawer.onBodyClickEvent);
+      }
+
+      // Reset our inline styles
+      resetInner();
     }
 
     /* ---- Shared touch logic ---- */
