@@ -211,6 +211,20 @@
 /* BIS HIER HIN */
 
 
+/* KEIN HOVER-ZOOM AUF TOUCH-GERÄTEN
+   Beim Wischen am Handy berührt der Finger die Produktbilder und löst sonst
+   den Hover-Zoom (scale 1.2) aus — das Bild hebt sich hervor. Auf Touch-Geräten
+   abschalten; Desktop (Maus) behält den Zoom. */
+@media (hover: none) {
+  .bogos-bp-product-card .bogos-bp-product-img,
+  .bogos-bp-product-card:hover .bogos-bp-product-img,
+  .bogos-bp-product-card .bogos-bp-product-img:hover {
+    transform: none !important;
+  }
+}
+/* BIS HIER HIN */
+
+
 /*HINTERGRUND BEI ZAHL IM WARENKORB / WAR DAVOR BLAU*/
 .bogos-bp-widget-count {
   background-color: #000000 !important;

@@ -13,18 +13,26 @@
   }
 
   function injectDesktop() {
-    var links = document.querySelectorAll('a.navlink--toplevel[href*="/collections/besteller"]');
+    var links = document.querySelectorAll('.header__menu a.navlink--toplevel[href*="/collections/besteller"]');
     links.forEach(function (best) {
-      if (best.getAttribute('data-cm-bw') === '1') return;
-      var next = best.nextElementSibling;
-      if (next && next.classList && next.classList.contains('cm-bw-navlink')) { best.setAttribute('data-cm-bw', '1'); return; }
-      var clone = best.cloneNode(true);
-      clone.setAttribute('href', BW_URL);
-      clone.classList.add('cm-bw-navlink');
+      /* Jedes Top-Level-Item sitzt in einem eigenen .menu__item — den klonen,
+         damit Black Week ein eigenständiger Menüpunkt wird (nicht ein zweiter
+         Link im selben Item, der falsch rendert). */
+      var item = best.closest('.menu__item');
+      var anchor = item || best;
+      if (anchor.getAttribute('data-cm-bw') === '1') return;
+      var next = anchor.nextElementSibling;
+      if (next && next.classList && next.classList.contains('cm-bw-navitem')) { anchor.setAttribute('data-cm-bw', '1'); return; }
+      var clone = anchor.cloneNode(true);
+      clone.classList.add('cm-bw-navitem');
       clone.removeAttribute('data-cm-bw');
-      setLabel(clone, BW_TEXT);
-      best.insertAdjacentElement('afterend', clone);
-      best.setAttribute('data-cm-bw', '1');
+      clone.querySelectorAll('[data-cm-bw]').forEach(function (x) { x.removeAttribute('data-cm-bw'); });
+      var ca = clone.querySelector('a.navlink--toplevel') || clone;
+      ca.setAttribute('href', BW_URL);
+      ca.classList.add('cm-bw-navlink');
+      setLabel(ca, BW_TEXT);
+      anchor.insertAdjacentElement('afterend', clone);
+      anchor.setAttribute('data-cm-bw', '1');
     });
   }
 
