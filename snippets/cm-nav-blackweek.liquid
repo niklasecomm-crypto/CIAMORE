@@ -1,0 +1,58 @@
+<script>
+/* Black Week Bundle in die Navigation einfügen — direkt nach "Bestseller",
+   also zwischen Bestseller und Mix Your Set (Desktop-Leiste + Handymenü).
+   Klont den vorhandenen Bestseller-Eintrag, damit alle Klassen, Attribute
+   und Styles erhalten bleiben. Idempotent — fügt nie doppelt ein. */
+(function () {
+  var BW_URL = '/apps/secomapp_freegifts_get_order/bundle/35605';
+  var BW_TEXT = 'Black Week';
+
+  function setLabel(a, txt) {
+    var span = a.querySelector('span');
+    if (span) { span.textContent = txt; } else { a.textContent = txt; }
+  }
+
+  function injectDesktop() {
+    var links = document.querySelectorAll('a.navlink--toplevel[href*="/collections/besteller"]');
+    links.forEach(function (best) {
+      if (best.getAttribute('data-cm-bw') === '1') return;
+      var next = best.nextElementSibling;
+      if (next && next.classList && next.classList.contains('cm-bw-navlink')) { best.setAttribute('data-cm-bw', '1'); return; }
+      var clone = best.cloneNode(true);
+      clone.setAttribute('href', BW_URL);
+      clone.classList.add('cm-bw-navlink');
+      clone.removeAttribute('data-cm-bw');
+      setLabel(clone, BW_TEXT);
+      best.insertAdjacentElement('afterend', clone);
+      best.setAttribute('data-cm-bw', '1');
+    });
+  }
+
+  function injectMobile() {
+    var rows = document.querySelectorAll('.sliderow[data-animation="drawer-items-fade"]');
+    rows.forEach(function (row) {
+      var a = row.querySelector('a.sliderow__title[href*="/collections/besteller"]');
+      if (!a) return;
+      if (row.getAttribute('data-cm-bw') === '1') return;
+      var next = row.nextElementSibling;
+      if (next && next.classList && next.classList.contains('cm-bw-sliderow')) { row.setAttribute('data-cm-bw', '1'); return; }
+      var clone = row.cloneNode(true);
+      clone.classList.add('cm-bw-sliderow');
+      clone.removeAttribute('data-cm-bw');
+      var ca = clone.querySelector('a.sliderow__title');
+      if (ca) { ca.setAttribute('href', BW_URL); setLabel(ca, BW_TEXT); }
+      row.insertAdjacentElement('afterend', clone);
+      row.setAttribute('data-cm-bw', '1');
+    });
+  }
+
+  function run() {
+    try { injectDesktop(); injectMobile(); } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  /* Nachzügler abfangen (Drawer wird teils später gebaut) */
+  var tries = 0;
+  var iv = setInterval(function () { run(); if (++tries > 20) clearInterval(iv); }, 300);
+})();
+</script>
