@@ -73,6 +73,60 @@
   /* BIS HIER HIN */
 
 
+/* BLACK WEEK DISCOUNT FILTER CHIPS */
+.ciamore-discount-filters {
+  display: none;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding: 0 16px;
+}
+
+.bundle-blackweek .ciamore-discount-filters {
+  display: flex;
+}
+
+.ciamore-discount-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1.5px solid #333;
+  background: transparent;
+  color: #333;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ciamore-discount-chip:hover {
+  border-color: #111;
+  background: #f5f5f5;
+}
+
+.ciamore-discount-chip.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.ciamore-discount-chip .chip-pct {
+  font-weight: 800;
+}
+
+/* Produkte die rausgefiltert werden */
+.bogos-bp-product-card.ciamore-filtered-out {
+  display: none !important;
+}
+/* BIS HIER HIN */
+
+
 /*HINTERGRUND BEI ZAHL IM WARENKORB / WAR DAVOR BLAU*/
 .bogos-bp-widget-count {
   background-color: #000000 !important;
@@ -117,6 +171,15 @@
   margin-top: 4px;
   text-align: left;
 }
+
+.bundle-blackweek .bogos-bp-widget-header::after {
+  content: 'Wähle mindestens 6 Pieces und spare 70% auf jedes!';
+  display: block;
+  font-size: 13px;
+  color: #000000ff;
+  margin-top: 4px;
+  text-align: left;
+}
 /* BIS HIER HIN */
 
 
@@ -133,6 +196,8 @@
     document.body.classList.add('bundle-5for79');
   } else if (path.includes('28353')) {
     document.body.classList.add('bundle-3for69');
+  } else if (path.includes('35605')) {
+    document.body.classList.add('bundle-blackweek');
   }
 </script>
 
@@ -155,6 +220,14 @@
         </div>
         <div class="bogos-bp-header-subtitle">
           {{ bogos_bundle_page_subtitle }}
+        </div>
+
+        <!-- Black Week Discount Filter Chips -->
+        <div class="ciamore-discount-filters">
+          <button class="ciamore-discount-chip active" data-filter="all">Alle</button>
+          <button class="ciamore-discount-chip" data-filter="30">ab <span class="chip-pct">30%</span></button>
+          <button class="ciamore-discount-chip" data-filter="50">ab <span class="chip-pct">50%</span></button>
+          <button class="ciamore-discount-chip" data-filter="70">ab <span class="chip-pct">70%</span></button>
         </div>
 
         <!-- Ciamore Feature Badges -->
@@ -193,6 +266,101 @@
 
     </div>
   {% endraw %}
+</script>
+
+<script>
+  /* BLACK WEEK DISCOUNT FILTER CHIPS — Filtert Produkte nach Rabattstufe */
+  (function(){
+    if (!document.body.classList.contains('bundle-blackweek')) return;
+
+    var priceCache = {};
+    var initialized = false;
+
+    function parsePrice(str) {
+      /* "24,90 €" → 24.90 */
+      return parseFloat(str.replace(/[^\d,]/g, '').replace(',', '.'));
+    }
+
+    function initFilters() {
+      if (initialized) return;
+      var cards = document.querySelectorAll('.bogos-bp-product-card');
+      if (!cards.length) return;
+      initialized = true;
+
+      /* Einzigartige Handles sammeln */
+      var handles = [];
+      cards.forEach(function(card) {
+        var h = card.getAttribute('data-product-handle');
+        if (h && handles.indexOf(h) === -1) handles.push(h);
+      });
+
+      /* Produkt-JSON laden für compare_at_price */
+      var fetches = handles.map(function(h) {
+        if (priceCache[h]) return Promise.resolve();
+        return fetch('/products/' + h + '.js')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            /* Höchsten Rabatt über alle Varianten nehmen */
+            var maxDiscount = 0;
+            (data.variants || []).forEach(function(v) {
+              var cap = v.compare_at_price; /* in Cents */
+              var price = v.price;           /* in Cents */
+              if (cap && cap > price) {
+                var d = Math.round((cap - price) / cap * 100);
+                if (d > maxDiscount) maxDiscount = d;
+              }
+            });
+            priceCache[h] = maxDiscount;
+          })
+          .catch(function() { priceCache[h] = 0; });
+      });
+
+      Promise.all(fetches).then(function() {
+        /* Rabatt als data-Attribut auf jede Karte schreiben */
+        cards.forEach(function(card) {
+          var h = card.getAttribute('data-product-handle');
+          card.setAttribute('data-discount', priceCache[h] || 0);
+        });
+      });
+    }
+
+    /* Chip-Klick-Handler */
+    document.addEventListener('click', function(e) {
+      var chip = e.target.closest('.ciamore-discount-chip');
+      if (!chip) return;
+
+      /* Aktiven Chip wechseln */
+      document.querySelectorAll('.ciamore-discount-chip').forEach(function(c) {
+        c.classList.remove('active');
+      });
+      chip.classList.add('active');
+
+      var filter = chip.getAttribute('data-filter');
+      var cards = document.querySelectorAll('.bogos-bp-product-card');
+      cards.forEach(function(card) {
+        if (filter === 'all') {
+          card.classList.remove('ciamore-filtered-out');
+        } else {
+          var discount = parseInt(card.getAttribute('data-discount') || '0', 10);
+          if (discount >= parseInt(filter, 10)) {
+            card.classList.remove('ciamore-filtered-out');
+          } else {
+            card.classList.add('ciamore-filtered-out');
+          }
+        }
+      });
+    });
+
+    /* Warten bis BOGOS die Produkte gerendert hat */
+    var checkInterval = setInterval(function() {
+      if (document.querySelectorAll('.bogos-bp-product-card').length > 0) {
+        clearInterval(checkInterval);
+        initFilters();
+      }
+    }, 500);
+    /* Fallback: nach 10s aufhören */
+    setTimeout(function() { clearInterval(checkInterval); }, 10000);
+  })();
 </script>
 
 <script>
