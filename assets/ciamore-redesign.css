@@ -904,6 +904,16 @@ body.bundle-blackweek .bogos-bundle-page-header {
   filter: invert(1) !important;
 }
 
+/* Black-Week-Chip in der Header-Leiste: glänzende Gold-Folie wie der Banner-Titel,
+   inklusive Stern. -webkit-text-fill-color vererbt sich, darum bekommen Label UND
+   ::before (der Stern) jeweils ihren eigenen Gradient, sonst wäre der Stern unsichtbar. */
+.cm-chips .cm-bw-chip .cm-chip__label,
+.cm-chips .cm-bw-chip .cm-chip__label::before {
+  background: linear-gradient(92deg, #b07f32 0%, #f6d98f 28%, #c9a45c 52%, #fcefbf 72%, #a9792c 100%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  -webkit-text-fill-color: transparent !important; color: transparent !important;
+}
+
 /* Ausverkauft-Badge unten links (nur wenn alle Varianten ausverkauft), Form wie das Prozent-Badge */
 .product-item .cm-soldout {
   position: absolute; z-index: 3; left: 10px; bottom: 10px; pointer-events: none;
