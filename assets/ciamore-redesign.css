@@ -547,9 +547,10 @@ mobile-menu .header__logo__link--drawer figure,
   text-align: center !important;
 }
 .cm-vip .bogos-bundle-page-header::before {
-  content: "★ TOP-DEAL"; display: inline-block; margin: 0 auto 10px; padding: 5px 12px; border-radius: 999px; color: var(--cm-gold); border: 1px solid var(--cm-gold);
+  content: "★ TOP-DEAL"; display: inline-block; margin: 0 auto 4px; padding: 4px 12px; border-radius: 999px; color: var(--cm-gold); border: 1px solid var(--cm-gold);
   font-size: 10.5px; font-weight: 700; letter-spacing: .14em; opacity: 1 !important;
 }
+.cm-vip .bogos-bundle-page-header { padding-top: 20px !important; }
 .cm-vip .bogos-bp-header-title { color: #fff !important; }
 .cm-vip .bogos-bp-header-subtitle { color: var(--cm-gold) !important; }
 .cm-vip .bogos-bundle-page-header .ciamore-feature-badge span { color: #fff !important; }
