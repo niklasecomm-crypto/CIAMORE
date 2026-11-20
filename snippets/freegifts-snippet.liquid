@@ -194,3 +194,32 @@
     </div>
   {% endraw %}
 </script>
+
+<script>
+  /* Geschenk-Popup darf nicht geschlossen werden — Overlay-Klick blockieren */
+  (function(){
+    var container = document.getElementById('freegifts-main-popup-container');
+    if (!container) return;
+
+    function blockOverlayClick(e) {
+      /* Klick direkt auf den Container (= Overlay), nicht aufs Modal */
+      if (e.target === container || e.target.classList.contains('bogos-gift-slider-overlay')) {
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      }
+    }
+
+    container.addEventListener('click', blockOverlayClick, true);
+
+    /* Falls BOGOS den Container erst später ins DOM injiziert */
+    var obs = new MutationObserver(function(){
+      var c = document.getElementById('freegifts-main-popup-container');
+      if (c && !c.__cmOverlayBlocked) {
+        c.__cmOverlayBlocked = true;
+        c.addEventListener('click', blockOverlayClick, true);
+      }
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>
