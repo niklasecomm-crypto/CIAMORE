@@ -241,16 +241,12 @@
 /* BIS HIER HIN */
 
 
-/* QUICK-VIEW-POPUP: weißer Rand unten auf neueren iPhones (z.B. 17 Pro).
-   Das Modal nutzt 100vh / volle Layout-Höhe — auf neuem Safari mit dynamischer
-   Adressleiste ist das höher als der sichtbare Bereich, deshalb bleibt unten ein
-   weißer Streifen. 100dvh trifft genau den sichtbaren Bereich. */
-.bogos-product-detail-modal {
-  height: 100dvh !important;
-  max-height: 100dvh !important;
-}
+/* QUICK-VIEW-POPUP: kleines Padding unten (der "Balken" unten in Safari ist
+   Safaris eigene Adressleiste, keine Seiten-CSS — daher hier nichts erzwingen,
+   kein 100dvh (verursacht Flackern beim Scrollen, weil Safari die Leiste
+   dynamisch ein-/ausblendet)). */
 .bogos-product-detail-modal .bogos-product-information-container {
-  padding-bottom: max(6px, env(safe-area-inset-bottom, 6px)) !important;
+  padding-bottom: 8px !important;
 }
 /* BIS HIER HIN */
 
