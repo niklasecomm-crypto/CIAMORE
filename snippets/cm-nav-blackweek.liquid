@@ -50,8 +50,29 @@
     });
   }
 
+  function injectChips() {
+    var chips = document.querySelectorAll('.cm-chips__track a.cm-chip[href*="/collections/besteller"]');
+    chips.forEach(function (best) {
+      if (best.getAttribute('data-cm-bw') === '1') return;
+      var next = best.nextElementSibling;
+      if (next && next.classList && next.classList.contains('cm-bw-chip')) { best.setAttribute('data-cm-bw', '1'); return; }
+      var clone = best.cloneNode(true);
+      clone.setAttribute('href', BW_URL);
+      clone.classList.add('cm-bw-chip', 'cm-chip--vip');
+      clone.classList.remove('cm-chip--outline', 'cm-chip--soft', 'cm-chip--sale', 'cm-chip--bundle', 'cm-chip--dark', 'is-current');
+      clone.removeAttribute('aria-current');
+      clone.removeAttribute('data-cm-bw');
+      var media = clone.querySelector('.cm-chip__media');
+      if (media) media.innerHTML = '';
+      var label = clone.querySelector('.cm-chip__label');
+      if (label) { label.textContent = BW_TEXT; } else { setLabel(clone, BW_TEXT); }
+      best.insertAdjacentElement('afterend', clone);
+      best.setAttribute('data-cm-bw', '1');
+    });
+  }
+
   function run() {
-    try { injectDesktop(); injectMobile(); } catch (e) {}
+    try { injectDesktop(); injectMobile(); injectChips(); } catch (e) {}
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();

@@ -880,8 +880,8 @@ body.bundle-blackweek .bogos-bundle-page-header {
   color: #fff !important;
 }
 .bundle-blackweek .bogos-bundle-page-header::before {
-  content: "BLACK WEEK" !important;
-  color: rgba(255,255,255,.5) !important;
+  content: "★ DEAL DES JAHRES" !important;
+  color: #c9a45c !important;
   opacity: 1 !important;
 }
 .bundle-blackweek .bogos-bp-header-title {
