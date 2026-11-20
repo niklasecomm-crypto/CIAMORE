@@ -50,6 +50,7 @@
       data-animation-delay="{{ animation_delay }}"
       {%- assign animation_delay = animation_delay | plus: animation_delay_increment -%}
     >
+      {%- unless line_item.product.handle contains '_clone_freegift' -%}
       <!-- Entfernen-X oben rechts -->
       <a class="cart__item__remove-icon"
         href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0"
@@ -59,6 +60,7 @@
         aria-label="{{ 'cart.general.remove' | t }}">
         &times;
       </a>
+      {%- endunless -%}
 
       <div class="cart__item__image{% unless line_item.image %} image--empty{% endunless %}">
         <a href="{{ line_item.url }}" aria-label="{{ line_item.title | escape }}">
@@ -209,6 +211,7 @@
           endif
         -%}
 
+        {%- unless line_item.product.handle contains '_clone_freegift' -%}
         <quantity-counter class="cart__quantity-wrapper">
           <div class="cart__quantity-counter">
             <div class="cart__quantity">
@@ -241,6 +244,7 @@
             </div>
           </div>
         </quantity-counter>
+        {%- endunless -%}
       </div>
 
       {%- if line_item.original_price > line_item.final_price -%}
