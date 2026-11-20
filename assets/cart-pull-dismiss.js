@@ -46,6 +46,7 @@
     function resetInner() {
       inner.style.transform  = '';
       inner.style.transition = '';
+      inner.style.animation  = '';
     }
 
     /**
@@ -98,7 +99,10 @@
 
       if (dy <= 0) {
         if (pulling) {
-          resetInner();
+          // Restore animation so drawer stays in open position
+          inner.style.animation  = '';
+          inner.style.transform  = '';
+          inner.style.transition = '';
           handle.classList.remove('is-pulling');
           pulling = false;
         }
@@ -110,6 +114,8 @@
 
       if (!pulling) {
         pulling = true;
+        // Kill the slideInRight CSS animation so our inline transform wins
+        inner.style.animation  = 'none';
         inner.style.transition = 'none';
         handle.classList.add('is-pulling');
       }
