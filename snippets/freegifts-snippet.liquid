@@ -336,17 +336,34 @@
   /* RABATT-BADGES + PREISANZEIGE + DISCOUNT-FILTER — Alle Bundles */
   (function(){
     var productCache = {};
-    var enhanced = false;
+    var activeFilter = 'all';
+    var enhancing = false;
 
     function formatPrice(cents) {
       return '€' + (cents / 100).toFixed(2).replace('.', ',');
     }
 
-    function enhanceCards() {
-      if (enhanced) return;
+    function applyFilter() {
       var cards = document.querySelectorAll('.bogos-bp-product-card');
+      cards.forEach(function(card) {
+        if (activeFilter === 'all') {
+          card.classList.remove('ciamore-filtered-out');
+        } else {
+          var discount = parseInt(card.getAttribute('data-discount') || '0', 10);
+          if (discount >= parseInt(activeFilter, 10)) {
+            card.classList.remove('ciamore-filtered-out');
+          } else {
+            card.classList.add('ciamore-filtered-out');
+          }
+        }
+      });
+    }
+
+    function enhanceCards() {
+      if (enhancing) return;
+      var cards = document.querySelectorAll('.bogos-bp-product-card:not(.ciamore-price-enhanced)');
       if (!cards.length) return;
-      enhanced = true;
+      enhancing = true;
 
       /* Einzigartige Handles sammeln */
       var handles = [];
@@ -414,10 +431,14 @@
             }
           }
         });
+
+        enhancing = false;
+        /* Aktiven Filter nach dem Laden der Daten nochmal anwenden */
+        applyFilter();
       });
     }
 
-    /* Chip-Klick-Handler (nur auf Blackweek aktiv, aber Handler ist global harmlos) */
+    /* Chip-Klick-Handler — speichert aktiven Filter und wendet ihn an */
     document.addEventListener('click', function(e) {
       var chip = e.target.closest('.ciamore-discount-chip');
       if (!chip) return;
@@ -427,20 +448,8 @@
       });
       chip.classList.add('active');
 
-      var filter = chip.getAttribute('data-filter');
-      var cards = document.querySelectorAll('.bogos-bp-product-card');
-      cards.forEach(function(card) {
-        if (filter === 'all') {
-          card.classList.remove('ciamore-filtered-out');
-        } else {
-          var discount = parseInt(card.getAttribute('data-discount') || '0', 10);
-          if (discount >= parseInt(filter, 10)) {
-            card.classList.remove('ciamore-filtered-out');
-          } else {
-            card.classList.add('ciamore-filtered-out');
-          }
-        }
-      });
+      activeFilter = chip.getAttribute('data-filter');
+      applyFilter();
     });
 
     /* Warten bis BOGOS die Produkte gerendert hat */
@@ -467,7 +476,7 @@
             });
           });
           if (hasNew) {
-            enhanced = false;
+            enhancing = false;
             enhanceCards();
           }
         }).observe(container, { childList: true, subtree: true });
