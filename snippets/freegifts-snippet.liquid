@@ -344,15 +344,20 @@
     }
 
     function applyFilter() {
+      var filterVal = parseInt(activeFilter, 10);
       var cards = document.querySelectorAll('.bogos-bp-product-card');
       cards.forEach(function(card) {
         if (activeFilter === 'all') {
           card.classList.remove('ciamore-filtered-out');
         } else {
-          /* Karte ohne data-discount = Daten noch nicht geladen → nicht anfassen */
-          if (!card.hasAttribute('data-discount')) return;
+          /* Karte ohne data-discount = Daten noch nicht geladen → verstecken
+             bis enhanceCards() die Daten hat und applyFilter() nochmal läuft */
+          if (!card.hasAttribute('data-discount')) {
+            card.classList.add('ciamore-filtered-out');
+            return;
+          }
           var discount = parseInt(card.getAttribute('data-discount'), 10);
-          if (discount >= parseInt(activeFilter, 10)) {
+          if (discount >= filterVal) {
             card.classList.remove('ciamore-filtered-out');
           } else {
             card.classList.add('ciamore-filtered-out');
