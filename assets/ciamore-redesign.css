@@ -866,7 +866,7 @@ body:not(.cm-vip) .bogos-bundle-page-header {
 /* =====================================================================
    BLACK WEEK BANNER — Gold-Folie (schwarzer Grund, Titel in Gold-Verlauf)
    ===================================================================== */
-.bundle-blackweek .bogos-bundle-page-header {
+body.bundle-blackweek .bogos-bundle-page-header {
   background: #0a0a0a !important;
   color: #fff !important;
 }
