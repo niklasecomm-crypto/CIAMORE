@@ -11,8 +11,8 @@
 (function () {
   'use strict';
 
-  var THRESHOLD = 0.25;
-  var VELOCITY_THRESHOLD = 0.4; // px/ms — fast swipe bypasses distance check
+  var THRESHOLD = 0.3;           // 30 % of drawer height to dismiss
+  var VELOCITY_THRESHOLD = 1.5;  // px/ms — only a real fast flick skips the distance check
   var SNAP_MS = 200;
 
   function init() {
@@ -117,10 +117,13 @@
       e.preventDefault();
       lastY = t.clientY;
 
-      var resistance = Math.min(dy * 0.55, window.innerHeight * 0.75);
+      // Near-1:1 follow with slight rubber-band dampening past 60 % of screen
+      var raw = dy * 0.85;
+      var maxPull = window.innerHeight * 0.8;
+      var pull = raw < maxPull ? raw : maxPull + (raw - maxPull) * 0.3;
       inner.style.transform = baseTransform
-        ? baseTransform + ' translateY(' + resistance + 'px)'
-        : 'translateY(' + resistance + 'px)';
+        ? baseTransform + ' translateY(' + pull + 'px)'
+        : 'translateY(' + pull + 'px)';
     }
 
     function onEnd() {
@@ -130,10 +133,12 @@
       var dy = lastY - startY;
       var dt = Date.now() - startT;
       var velocity = dy / Math.max(dt, 1);
-      var resistance = Math.min(dy * 0.55, window.innerHeight * 0.75);
+      var raw = dy * 0.85;
+      var maxPull = window.innerHeight * 0.8;
+      var pull = raw < maxPull ? raw : maxPull + (raw - maxPull) * 0.3;
       var height = inner.offsetHeight || window.innerHeight;
 
-      var dismiss = resistance > height * THRESHOLD || velocity > VELOCITY_THRESHOLD;
+      var dismiss = pull > height * THRESHOLD || velocity > VELOCITY_THRESHOLD;
 
       if (dismiss) {
         // Slide down and close
