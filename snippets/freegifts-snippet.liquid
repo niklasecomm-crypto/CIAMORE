@@ -349,7 +349,9 @@
         if (activeFilter === 'all') {
           card.classList.remove('ciamore-filtered-out');
         } else {
-          var discount = parseInt(card.getAttribute('data-discount') || '0', 10);
+          /* Karte ohne data-discount = Daten noch nicht geladen → nicht anfassen */
+          if (!card.hasAttribute('data-discount')) return;
+          var discount = parseInt(card.getAttribute('data-discount'), 10);
           if (discount >= parseInt(activeFilter, 10)) {
             card.classList.remove('ciamore-filtered-out');
           } else {
