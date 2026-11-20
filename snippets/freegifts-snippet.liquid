@@ -147,7 +147,6 @@
   margin: 8px 0 0 0 !important;
   background: none !important;
   border: none !important;
-  border-bottom: none !important;
   cursor: pointer !important;
   line-height: 1.3 !important;
   display: block !important;
@@ -156,23 +155,6 @@
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-tap-highlight-color: transparent !important;
-  -webkit-appearance: none !important;
-  appearance: none !important;
-}
-
-.bogos-bp-product-card .bogos-bp-product-title:focus,
-.bogos-bp-product-card .bogos-bp-product-title:active,
-.bogos-bp-product-card .bogos-bp-product-title:hover {
-  text-decoration: none !important;
-  border: none !important;
-  border-bottom: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  background: none !important;
-  color: #111 !important;
 }
 
 /* Material-Text */
@@ -230,39 +212,35 @@
   color: #111;
 }
 
-/* Swatches — exakt wie im Shop-Grid (17×17px Kreise mit echten Swatch-Bildern) */
+/* Swatches */
 .ciamore-card-swatches {
   display: flex;
   gap: 6px;
-  margin-top: 8px;
+  margin-top: 6px;
   align-items: center;
 }
 
 .ciamore-card-swatch {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   cursor: pointer;
-  border: none;
-  transition: box-shadow 0.15s ease;
+  border: 1.5px solid transparent;
+  transition: border-color 0.15s ease;
   box-sizing: border-box;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .ciamore-card-swatch:hover,
 .ciamore-card-swatch.active {
-  box-shadow: 0 0 0 1.5px #111;
+  border-color: #111;
 }
 
 .ciamore-card-swatch--gold {
-  background-image: url('https://www.ciamore.de/cdn/shop/files/Gold-png_small.png?v=105291471085975853');
+  background: linear-gradient(135deg, #d4a853, #f0d48a, #c5953a);
 }
 
 .ciamore-card-swatch--platin {
-  background-image: url('https://www.ciamore.de/cdn/shop/files/Platin-png_small.png?v=12921813858870518881');
+  background: linear-gradient(135deg, #c0c0c0, #e8e8e8, #a8a8a8);
 }
 /* BIS HIER HIN */
 
