@@ -398,8 +398,15 @@ mobile-menu .header__logo__link--drawer figure,
 .drawer--cart .drawer__inner { background: #fff; }
 @media (min-width: 750px) { .drawer--cart .drawer__inner { overflow: hidden; } }
 @media (max-width: 749px) {
-  .drawer--cart .drawer__inner { top: 48px !important; height: calc(100% - 48px) !important; overflow: hidden; }
-  .drawer--cart .drawer__body::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 4px; margin: 8px auto 0; }
+  .drawer--cart .drawer__inner { top: 48px !important; height: calc(100% - 48px) !important; overflow: hidden; display: flex; flex-direction: column; }
+  .drawer--cart .drawer__body { flex: 1; min-height: 0; }
+}
+/* Pull handle — sits outside the scroll container */
+.cm-pull-handle { display: none; }
+@media (max-width: 749px) {
+  .cm-pull-handle { display: flex; align-items: center; justify-content: center; height: 28px; flex-shrink: 0; touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none; }
+  .cm-pull-handle__bar { width: 40px; height: 4px; border-radius: 4px; background: rgba(0,0,0,.15); pointer-events: none; }
+  .cm-pull-handle.is-pulling .cm-pull-handle__bar { background: rgba(0,0,0,.35); }
 }
 .drawer--cart .drawer__head { display: flex; justify-content: space-between; border: 0 !important; }
 .drawer--cart .cart__title {
