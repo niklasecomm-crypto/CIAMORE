@@ -34,7 +34,6 @@
 -%}
 
 <script src="{{ 'quantity-counter.js' | asset_url }}" defer="defer"></script>
-<script src="{{ 'cart-pull-dismiss.js' | asset_url }}" defer="defer"></script>
 
 {%- capture cart_title -%}
   <h3 class="cart__title caps">
@@ -169,9 +168,6 @@
       tabindex="0"
     >
       <collapsible-elements class="drawer__inner" single="true" data-cart-drawer-inner data-scroll-lock-scrollable>
-        <div class="cm-pull-handle" data-cart-pull-handle aria-hidden="true">
-          <span class="cm-pull-handle__bar"></span>
-        </div>
         <div class="drawer__body" data-cart-drawer-body data-scroll-lock-scrollable>
 
 {%- comment -%} Redesign: 10-Minuten-Countdown entfernt (künstliche Verknappung, siehe Audit).
