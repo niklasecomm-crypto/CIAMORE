@@ -399,7 +399,7 @@ mobile-menu .header__logo__link--drawer figure,
 @media (min-width: 750px) { .drawer--cart .drawer__inner { overflow: hidden; } }
 @media (max-width: 749px) {
   .drawer--cart .drawer__inner { top: 48px !important; height: calc(100% - 48px) !important; overflow: hidden; }
-  .drawer--cart .drawer__body::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 4px; margin: 8px auto 0; background: rgba(0,0,0,.15); }
+  .drawer--cart .drawer__body::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 4px; margin: 8px auto 0; }
 }
 .drawer--cart .drawer__head { display: flex; justify-content: space-between; border: 0 !important; }
 .drawer--cart .cart__title {
