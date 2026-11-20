@@ -134,19 +134,26 @@
   position: relative !important;
 }
 
+/* Standard: silbrig/beige wie in der Kollektion */
 .ciamore-sale-badge {
   position: absolute;
   top: 8px;
   left: 8px;
-  background: #111;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 7px;
-  border-radius: 3px;
+  background: rgb(245, 243, 239);
+  color: rgb(51, 51, 51);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 5px 8px;
+  border-radius: 8px;
   line-height: 1.2;
   z-index: 2;
   pointer-events: none;
+}
+
+/* Black Week: schwarzes Badge */
+.bundle-blackweek .ciamore-sale-badge {
+  background: #111;
+  color: #fff;
 }
 
 /* Originalen BOGOS-Preis ausblenden wenn unser Preis da ist */
@@ -164,14 +171,15 @@
 }
 
 .ciamore-price-row .new-price {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgb(216, 35, 35);
 }
 
 .ciamore-price-row .old-price {
-  font-size: 14px;
-  color: #9d9d9d;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgb(77, 77, 77);
   text-decoration: line-through;
 }
 /* BIS HIER HIN */
