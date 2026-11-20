@@ -241,12 +241,23 @@
 /* BIS HIER HIN */
 
 
-/* QUICK-VIEW-POPUP: weißer Rand unten reduzieren.
-   Das feste 15px-Padding plus die iPhone Home-Indicator-Zone ergaben einen
-   dicken weißen Streifen. Jetzt genau die Safe-Area (so viel wie der Home-
-   Indicator braucht), auf Geräten ohne Safe-Area nur 6px. */
+/* QUICK-VIEW-POPUP: "In den Warenkorb" als fixierter Footer, damit der Button
+   nicht abgeschnitten wird und kein weißer Rand drunter bleibt. Der Button wird
+   per JS aus dem Scrollbereich raus ans Modal-Ende gehängt (.cm-atc-pinned). */
+.bogos-product-detail-modal.cm-atc-pinned .bogos-product-modal-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.bogos-product-detail-modal.cm-atc-pinned > .bogos-product-action-add-container {
+  flex: 0 0 auto;
+  background: #fff;
+  padding: 10px 16px max(10px, env(safe-area-inset-bottom, 10px));
+  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.06);
+  z-index: 5;
+}
+/* kleines Rest-Padding am Scroll-Ende (Footer übernimmt die Safe-Area) */
 .bogos-product-detail-modal .bogos-product-information-container {
-  padding-bottom: max(6px, env(safe-area-inset-bottom, 6px)) !important;
+  padding-bottom: 8px !important;
 }
 /* BIS HIER HIN */
 
@@ -598,10 +609,25 @@
       }
     }
 
+    /* "In den Warenkorb" unten im Modal fixieren, damit der Button beim
+       Öffnen nicht abgeschnitten wird und kein weißer Rand darunter bleibt.
+       Der Button-Container wird aus dem Scrollbereich raus direkt ans Modal
+       gehängt (Footer); das Modal ist schon flex-column. */
+    function pinAddButton(){
+      var modal = document.querySelector('.bogos-product-detail-modal');
+      if (!modal || modal.offsetParent === null) return;
+      var scroll = modal.querySelector('.bogos-product-modal-scroll');
+      var container = scroll && scroll.querySelector('.bogos-product-action-add-container');
+      if (!scroll || !container) return;
+      if (container.parentElement === modal) return; /* schon verschoben */
+      modal.appendChild(container);
+      modal.classList.add('cm-atc-pinned');
+    }
+
     /* Modal taucht erst beim Klick auf und der Preis ändert sich bei
        Variantenwechsel — daher den ganzen Body beobachten. Der Guard oben
        macht das billig (früher Ausstieg wenn kein Modal / schon umgebaut). */
-    new MutationObserver(function(){ enhanceModalPrice(); })
+    new MutationObserver(function(){ enhanceModalPrice(); pinAddButton(); })
       .observe(document.body, { childList: true, subtree: true });
   })();
 </script>
