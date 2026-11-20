@@ -241,6 +241,16 @@
 /* BIS HIER HIN */
 
 
+/* QUICK-VIEW-POPUP: weißer Rand unten reduzieren.
+   Das feste 15px-Padding plus die iPhone Home-Indicator-Zone ergaben einen
+   dicken weißen Streifen. Jetzt genau die Safe-Area (so viel wie der Home-
+   Indicator braucht), auf Geräten ohne Safe-Area nur 6px. */
+.bogos-product-detail-modal .bogos-product-information-container {
+  padding-bottom: env(safe-area-inset-bottom, 6px) !important;
+}
+/* BIS HIER HIN */
+
+
 /*HINTERGRUND BEI ZAHL IM WARENKORB / WAR DAVOR BLAU*/
 .bogos-bp-widget-count {
   background-color: #000000 !important;
