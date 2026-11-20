@@ -225,6 +225,22 @@
 /* BIS HIER HIN */
 
 
+/* PREIS IM QUICK-VIEW-POPUP wie auf der Produktseite: roter Preis +
+   durchgestrichener Vergleichspreis daneben. */
+.bogos-product-price .cm-bogos-new {
+  color: rgb(216, 35, 35);
+  font-weight: 700;
+}
+.bogos-product-price .cm-bogos-old {
+  color: rgb(77, 77, 77);
+  text-decoration: line-through;
+  font-size: 16px;
+  font-weight: 400;
+  margin-left: 8px;
+}
+/* BIS HIER HIN */
+
+
 /*HINTERGRUND BEI ZAHL IM WARENKORB / WAR DAVOR BLAU*/
 .bogos-bp-widget-count {
   background-color: #000000 !important;
@@ -537,6 +553,46 @@
       }
     }, 500);
     setTimeout(function() { clearInterval(obsInterval); }, 10000);
+  })();
+</script>
+
+<script>
+  /* QUICK-VIEW-POPUP PREIS: wie auf der Produktseite — roter Preis +
+     durchgestrichener Vergleichspreis. Der Vergleichspreis steht in den
+     Varianten-Optionen des Modals (data-variant-compare-at-price). */
+  (function(){
+    function fmt(v){ return '€' + Number(v).toFixed(2).replace('.', ','); }
+
+    function enhanceModalPrice(){
+      var modal = document.querySelector('.bogos-product-detail-modal');
+      if (!modal || modal.offsetParent === null) return;
+      var priceEl = modal.querySelector('.bogos-product-price');
+      if (!priceEl) return;
+      /* Schon umgebaut? (verhindert Endlosschleife durch eigenen DOM-Change) */
+      if (priceEl.querySelector('.cm-bogos-new')) return;
+
+      var shown = parseFloat((priceEl.textContent || '').replace(/[^0-9,]/g, '').replace(',', '.'));
+      if (!shown) return;
+
+      /* Variante mit passendem Preis finden → deren Vergleichspreis lesen */
+      var opts = Array.prototype.slice.call(modal.querySelectorAll('[data-variant-price]'));
+      var match = opts.filter(function(o){
+        return Math.abs(parseFloat(o.getAttribute('data-variant-price')) - shown) < 0.01;
+      })[0] || opts[0];
+      if (!match) return;
+
+      var compare = parseFloat(match.getAttribute('data-variant-compare-at-price'));
+      if (compare && compare > shown) {
+        priceEl.innerHTML = '<span class="cm-bogos-new">' + fmt(shown) + '</span>' +
+                            '<span class="cm-bogos-old">' + fmt(compare) + '</span>';
+      }
+    }
+
+    /* Modal taucht erst beim Klick auf und der Preis ändert sich bei
+       Variantenwechsel — daher den ganzen Body beobachten. Der Guard oben
+       macht das billig (früher Ausstieg wenn kein Modal / schon umgebaut). */
+    new MutationObserver(function(){ enhanceModalPrice(); })
+      .observe(document.body, { childList: true, subtree: true });
   })();
 </script>
 
