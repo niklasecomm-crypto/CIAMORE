@@ -73,14 +73,13 @@
   /* BIS HIER HIN */
 
 
-/* BLACK WEEK DISCOUNT FILTER CHIPS */
+/* BLACK WEEK DISCOUNT FILTER CHIPS — Underline-Tabs, unter dem Banner */
 .ciamore-discount-filters {
   display: none;
-  gap: 8px;
+  gap: 24px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 16px;
-  margin-bottom: 8px;
+  margin: 18px 0 6px;
   padding: 0 16px;
 }
 
@@ -92,28 +91,37 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 8px 18px;
-  border-radius: 100px;
-  font-size: 13px;
+  padding: 6px 2px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1.5px solid #333;
-  background: transparent;
-  color: #333;
+  color: #8a8a8a;
   white-space: nowrap;
+  position: relative;
+  transition: color 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 .ciamore-discount-chip:hover {
-  border-color: #111;
-  background: #f5f5f5;
+  color: #111;
 }
 
 .ciamore-discount-chip.active {
-  background: #111;
-  color: #fff;
-  border-color: #111;
+  color: #111;
+}
+
+.ciamore-discount-chip.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  background: #c9a45c;
+  border-radius: 2px;
 }
 
 .ciamore-discount-chip .chip-pct {
@@ -481,6 +489,17 @@
       }
     }, 500);
     setTimeout(function() { clearInterval(checkInterval); }, 10000);
+
+    /* Black Week: Chips aus dem Header raus, zwischen Banner und Produktfeed setzen */
+    var moveChipsInterval = setInterval(function() {
+      var filters = document.querySelector('.ciamore-discount-filters');
+      var header = document.querySelector('.bogos-bundle-page-header');
+      if (filters && header && filters.parentElement === header) {
+        header.insertAdjacentElement('afterend', filters);
+        clearInterval(moveChipsInterval);
+      }
+    }, 300);
+    setTimeout(function() { clearInterval(moveChipsInterval); }, 10000);
 
     /* MutationObserver für "Mehr Produkte laden" */
     var obsInterval = setInterval(function() {
