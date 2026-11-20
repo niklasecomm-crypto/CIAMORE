@@ -156,12 +156,137 @@
         "text_2": "Made to make you glow"
       },
       "disabled": true
+    },
+    "cm_chips": {
+      "type": "ciamore-chips",
+      "blocks": {
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "label": "Bestseller",
+            "link": "/collections/besteller",
+            "style": "outline"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "label": "Mix your Set",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28202",
+            "style": "outline"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "label": "5 für 79€",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28201",
+            "style": "vip"
+          }
+        },
+        "chip_4": {
+          "type": "chip",
+          "settings": {
+            "label": "3 für 69€",
+            "link": "https://www.ciamore.de/apps/secomapp_freegifts_get_order/bundle/28353",
+            "style": "outline"
+          }
+        },
+        "chip_5": {
+          "type": "chip",
+          "settings": {
+            "label": "Ringe",
+            "link": "/collections/ringe",
+            "style": "outline"
+          }
+        },
+        "chip_6": {
+          "type": "chip",
+          "settings": {
+            "label": "Halsketten",
+            "link": "/collections/ketten",
+            "style": "outline"
+          }
+        },
+        "chip_7": {
+          "type": "chip",
+          "settings": {
+            "label": "Armbänder",
+            "link": "/collections/armbander",
+            "style": "outline"
+          }
+        },
+        "chip_8": {
+          "type": "chip",
+          "settings": {
+            "label": "Ohrringe",
+            "link": "/collections/ohrringe",
+            "style": "outline"
+          }
+        },
+        "chip_9": {
+          "type": "chip",
+          "settings": {
+            "label": "Kombi-Sets",
+            "link": "/collections/kombi-sets",
+            "style": "outline"
+          }
+        },
+        "chip_10": {
+          "type": "chip",
+          "settings": {
+            "label": "Sale",
+            "link": "/collections/sale",
+            "style": "sale"
+          }
+        },
+        "chip_11": {
+          "type": "chip",
+          "settings": {
+            "label": "New In",
+            "link": "/collections/new-in",
+            "style": "outline"
+          }
+        },
+        "chip_12": {
+          "type": "chip",
+          "settings": {
+            "label": "Clover Kollektion",
+            "link": "/collections/clover-kollektion",
+            "style": "outline"
+          }
+        }
+      },
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "chip_4",
+        "chip_5",
+        "chip_6",
+        "chip_7",
+        "chip_8",
+        "chip_9",
+        "chip_10",
+        "chip_11",
+        "chip_12"
+      ],
+      "settings": {
+        "aria": "Kategorien",
+        "variant": "text",
+        "center_desktop": true,
+        "pt": 20,
+        "pb": 22,
+        "pt_mobile": 16,
+        "pb_mobile": 20
+      }
     }
   },
   "order": [
     "announcement",
     "section_custom_code_mpdU4N",
     "header",
+    "cm_chips",
     "cm_strip",
     "mobile-menu"
   ]
