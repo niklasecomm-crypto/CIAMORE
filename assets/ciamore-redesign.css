@@ -193,6 +193,15 @@ mobile-menu .header__logo__link--drawer { order: 1; }
 mobile-menu .mobile-menu__block--menu { padding: 4px 16px 0 !important; }
 mobile-menu .drawer__main-menu { display: flex; flex-direction: column; }
 mobile-menu .drawer__main-menu .sliderow { min-height: 0 !important; opacity: 1 !important; }
+
+/* Flackern beim Öffnen weg: gestaffelte Item-Einblendung (drawer-items-fade)
+   abschalten. Die Items starten sonst auf opacity:0 und faden gestaffelt rein,
+   was auf dem Handy wie ein kurzer Reload aussieht. */
+mobile-menu [data-animation="drawer-items-fade"] {
+  opacity: 1 !important;
+  animation: none !important;
+  transform: none !important;
+}
 mobile-menu .drawer__main-menu .sliderow__title { text-transform: none !important; color: var(--cm-ink);
 }
 mobile-menu .drawer__main-menu .sliderow__title--highlight { color: #d82323; }
