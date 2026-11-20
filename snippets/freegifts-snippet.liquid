@@ -121,12 +121,20 @@
 }
 
 /* Wenn ein Filter aktiv ist: ALLE Cards per CSS verstecken, nur gematchte zeigen.
-   So blitzen neue Cards von BOGOS nicht kurz auf bevor JS sie filtern kann. */
+   BOGOS grid-enter Animation und Load-More bei aktivem Filter unterdrücken,
+   damit nichts zuckt oder kurz aufblitzt. */
 .ciamore-filter-active .bogos-bp-product-card {
   display: none !important;
+  animation: none !important;
 }
 .ciamore-filter-active .bogos-bp-product-card.ciamore-filter-match {
   display: flex !important;
+}
+.ciamore-filter-active .bogos-bp-product-load-more-container {
+  display: none !important;
+}
+.ciamore-filter-active .bogos-bp-not-found-products {
+  display: none !important;
 }
 /* BIS HIER HIN */
 
