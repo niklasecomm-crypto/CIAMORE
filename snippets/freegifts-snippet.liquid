@@ -129,8 +129,11 @@
 
 /* BOGOS PRODUKTKARTEN REDESIGN — Shop-Grid-Stil für alle Bundles */
 
-/* Originale BOGOS-Preis und Varianten ausblenden */
-.bogos-bp-product-card .bogos-bp-product-price {
+/* Originale BOGOS-Elemente ausblenden */
+.bogos-bp-product-card .bogos-bp-product-price,
+.bogos-bp-product-card .bogos-bp-product-variants-container,
+.bogos-bp-product-card .bogos-bp-add-product-container,
+.bogos-bp-product-card .bogos-bp-product-quick-view {
   display: none !important;
 }
 
@@ -551,7 +554,7 @@
       });
     }
 
-    /* Swatch-Klick: Bild wechseln */
+    /* Swatch-Klick: Bild wechseln + Variante im versteckten Dropdown auswählen */
     document.addEventListener('click', function(e) {
       var swatch = e.target.closest('.ciamore-card-swatch');
       if (!swatch) return;
@@ -570,6 +573,19 @@
       if (imgSrc) {
         var img = card.querySelector('.bogos-bp-product-img');
         if (img) img.src = imgSrc;
+      }
+
+      /* Passende Variante im versteckten BOGOS-Dropdown klicken */
+      var color = (swatch.title || '').toLowerCase();
+      if (color) {
+        var options = card.querySelectorAll('.bogos-bp-product-variant-option-item');
+        for (var i = 0; i < options.length; i++) {
+          var optText = (options[i].textContent || '').toLowerCase().trim();
+          if (optText.indexOf(color) === 0) {
+            options[i].click();
+            break;
+          }
+        }
       }
     });
 
