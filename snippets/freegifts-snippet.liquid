@@ -120,9 +120,13 @@
   font-weight: 800;
 }
 
-/* Produkte die rausgefiltert werden */
-.bogos-bp-product-card.ciamore-filtered-out {
+/* Wenn ein Filter aktiv ist: ALLE Cards per CSS verstecken, nur gematchte zeigen.
+   So blitzen neue Cards von BOGOS nicht kurz auf bevor JS sie filtern kann. */
+.ciamore-filter-active .bogos-bp-product-card {
   display: none !important;
+}
+.ciamore-filter-active .bogos-bp-product-card.ciamore-filter-match {
+  display: flex !important;
 }
 /* BIS HIER HIN */
 
@@ -344,26 +348,28 @@
     }
 
     function applyFilter() {
-      var filterVal = parseInt(activeFilter, 10);
-      var cards = document.querySelectorAll('.bogos-bp-product-card');
-      cards.forEach(function(card) {
-        if (activeFilter === 'all') {
-          card.classList.remove('ciamore-filtered-out');
-        } else {
-          /* Karte ohne data-discount = Daten noch nicht geladen → verstecken
-             bis enhanceCards() die Daten hat und applyFilter() nochmal läuft */
-          if (!card.hasAttribute('data-discount')) {
-            card.classList.add('ciamore-filtered-out');
-            return;
-          }
-          var discount = parseInt(card.getAttribute('data-discount'), 10);
-          if (discount >= filterVal) {
-            card.classList.remove('ciamore-filtered-out');
+      var container = document.querySelector('.bogos-bp-products-info');
+      if (!container) return;
+
+      if (activeFilter === 'all') {
+        /* Kein Filter → Container-Klasse weg, alle sichtbar */
+        container.classList.remove('ciamore-filter-active');
+        document.querySelectorAll('.bogos-bp-product-card.ciamore-filter-match').forEach(function(c) {
+          c.classList.remove('ciamore-filter-match');
+        });
+      } else {
+        /* Filter aktiv → Container-Klasse setzt CSS das ALLES versteckt,
+           nur Cards mit .ciamore-filter-match werden sichtbar */
+        container.classList.add('ciamore-filter-active');
+        var filterVal = parseInt(activeFilter, 10);
+        document.querySelectorAll('.bogos-bp-product-card').forEach(function(card) {
+          if (card.hasAttribute('data-discount') && parseInt(card.getAttribute('data-discount'), 10) >= filterVal) {
+            card.classList.add('ciamore-filter-match');
           } else {
-            card.classList.add('ciamore-filtered-out');
+            card.classList.remove('ciamore-filter-match');
           }
-        }
-      });
+        });
+      }
     }
 
     function enhanceCards() {
