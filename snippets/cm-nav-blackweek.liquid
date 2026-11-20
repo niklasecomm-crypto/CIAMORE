@@ -29,20 +29,24 @@
   }
 
   function injectMobile() {
-    var rows = document.querySelectorAll('.sliderow[data-animation="drawer-items-fade"]');
-    rows.forEach(function (row) {
-      var a = row.querySelector('a.sliderow__title[href*="/collections/besteller"]');
-      if (!a) return;
-      if (row.getAttribute('data-cm-bw') === '1') return;
-      var next = row.nextElementSibling;
-      if (next && next.classList && next.classList.contains('cm-bw-sliderow')) { row.setAttribute('data-cm-bw', '1'); return; }
-      var clone = row.cloneNode(true);
+    var links = document.querySelectorAll('a.sliderow__title[href*="/collections/besteller"]');
+    links.forEach(function (a) {
+      var row = a.closest('.sliderow');
+      if (!row) return;
+      /* Jedes Top-Level-Item sitzt in einem eigenen .sliderule__wrapper —
+         den klonen, damit Black Week ein eigenständiger Eintrag wird. */
+      var anchor = row.closest('.sliderule__wrapper') || row;
+      if (anchor.getAttribute('data-cm-bw') === '1') return;
+      var next = anchor.nextElementSibling;
+      if (next && next.classList && next.classList.contains('cm-bw-sliderow')) { anchor.setAttribute('data-cm-bw', '1'); return; }
+      var clone = anchor.cloneNode(true);
       clone.classList.add('cm-bw-sliderow');
       clone.removeAttribute('data-cm-bw');
+      clone.querySelectorAll('[data-cm-bw]').forEach(function (x) { x.removeAttribute('data-cm-bw'); });
       var ca = clone.querySelector('a.sliderow__title');
       if (ca) { ca.setAttribute('href', BW_URL); setLabel(ca, BW_TEXT); }
-      row.insertAdjacentElement('afterend', clone);
-      row.setAttribute('data-cm-bw', '1');
+      anchor.insertAdjacentElement('afterend', clone);
+      anchor.setAttribute('data-cm-bw', '1');
     });
   }
 
