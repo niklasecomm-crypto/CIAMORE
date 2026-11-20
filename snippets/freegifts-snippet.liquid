@@ -127,121 +127,6 @@
 /* BIS HIER HIN */
 
 
-/* BOGOS PRODUKTKARTEN REDESIGN — Shop-Grid-Stil für alle Bundles */
-
-/* Originale BOGOS-Preis und Varianten ausblenden */
-.bogos-bp-product-card .bogos-bp-product-price {
-  display: none !important;
-}
-
-/* Titel-Button als normalen Text stylen */
-.bogos-bp-product-card .bogos-bp-product-title {
-  font-size: 13px !important;
-  font-weight: 400 !important;
-  color: #111 !important;
-  text-align: left !important;
-  padding: 0 !important;
-  margin: 8px 0 0 0 !important;
-  background: none !important;
-  border: none !important;
-  cursor: pointer !important;
-  line-height: 1.3 !important;
-  display: block !important;
-  width: 100% !important;
-  text-decoration: none !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-}
-
-/* Material-Text */
-.ciamore-card-material {
-  color: #9d9d9d;
-  font-size: 12px;
-  padding-top: 5px;
-  margin-bottom: 4px;
-  margin-top: 0;
-  line-height: 1;
-}
-
-/* Preis-Container */
-.ciamore-card-price-holder {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 4px;
-}
-
-/* Sale Badge */
-.ciamore-card-sale-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #111;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 3px;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-/* Neuer Preis (Sale) */
-.ciamore-card-new-price {
-  font-size: 13px;
-  font-weight: 600;
-  color: #111;
-}
-
-/* Alter Preis (durchgestrichen) */
-.ciamore-card-old-price {
-  font-size: 13px;
-  color: #9d9d9d;
-  text-decoration: line-through;
-}
-
-/* Nur aktueller Preis (kein Rabatt) */
-.ciamore-card-regular-price {
-  font-size: 13px;
-  font-weight: 600;
-  color: #111;
-}
-
-/* Swatches */
-.ciamore-card-swatches {
-  display: flex;
-  gap: 6px;
-  margin-top: 6px;
-  align-items: center;
-}
-
-.ciamore-card-swatch {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 1.5px solid transparent;
-  transition: border-color 0.15s ease;
-  box-sizing: border-box;
-}
-
-.ciamore-card-swatch:hover,
-.ciamore-card-swatch.active {
-  border-color: #111;
-}
-
-.ciamore-card-swatch--gold {
-  background: linear-gradient(135deg, #d4a853, #f0d48a, #c5953a);
-}
-
-.ciamore-card-swatch--platin {
-  background: linear-gradient(135deg, #c0c0c0, #e8e8e8, #a8a8a8);
-}
-/* BIS HIER HIN */
-
-
 /*HINTERGRUND BEI ZAHL IM WARENKORB / WAR DAVOR BLAU*/
 .bogos-bp-widget-count {
   background-color: #000000 !important;
@@ -385,10 +270,61 @@
 
 <script>
   /* BLACK WEEK DISCOUNT FILTER CHIPS — Filtert Produkte nach Rabattstufe */
-  /* data-discount wird jetzt vom Card-Redesign-Script gesetzt, hier nur noch Chip-Klick-Handler */
   (function(){
     if (!document.body.classList.contains('bundle-blackweek')) return;
 
+    var priceCache = {};
+    var initialized = false;
+
+    function parsePrice(str) {
+      /* "24,90 €" → 24.90 */
+      return parseFloat(str.replace(/[^\d,]/g, '').replace(',', '.'));
+    }
+
+    function initFilters() {
+      if (initialized) return;
+      var cards = document.querySelectorAll('.bogos-bp-product-card');
+      if (!cards.length) return;
+      initialized = true;
+
+      /* Einzigartige Handles sammeln */
+      var handles = [];
+      cards.forEach(function(card) {
+        var h = card.getAttribute('data-product-handle');
+        if (h && handles.indexOf(h) === -1) handles.push(h);
+      });
+
+      /* Produkt-JSON laden für compare_at_price */
+      var fetches = handles.map(function(h) {
+        if (priceCache[h]) return Promise.resolve();
+        return fetch('/products/' + h + '.js')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            /* Höchsten Rabatt über alle Varianten nehmen */
+            var maxDiscount = 0;
+            (data.variants || []).forEach(function(v) {
+              var cap = v.compare_at_price; /* in Cents */
+              var price = v.price;           /* in Cents */
+              if (cap && cap > price) {
+                var d = Math.round((cap - price) / cap * 100);
+                if (d > maxDiscount) maxDiscount = d;
+              }
+            });
+            priceCache[h] = maxDiscount;
+          })
+          .catch(function() { priceCache[h] = 0; });
+      });
+
+      Promise.all(fetches).then(function() {
+        /* Rabatt als data-Attribut auf jede Karte schreiben */
+        cards.forEach(function(card) {
+          var h = card.getAttribute('data-product-handle');
+          card.setAttribute('data-discount', priceCache[h] || 0);
+        });
+      });
+    }
+
+    /* Chip-Klick-Handler */
     document.addEventListener('click', function(e) {
       var chip = e.target.closest('.ciamore-discount-chip');
       if (!chip) return;
@@ -414,199 +350,16 @@
         }
       });
     });
-  })();
-</script>
-
-<script>
-  /* BOGOS PRODUKTKARTEN REDESIGN — Erweitert alle Bundle-Karten mit Material, Preis, Swatches */
-  (function(){
-    var productDataCache = {};
-    var cardsEnhanced = false;
-
-    function formatPrice(cents) {
-      /* 2990 → "€29,90" */
-      var euros = (cents / 100).toFixed(2).replace('.', ',');
-      return '€' + euros;
-    }
-
-    function enhanceCards() {
-      if (cardsEnhanced) return;
-      var cards = document.querySelectorAll('.bogos-bp-product-card');
-      if (!cards.length) return;
-      cardsEnhanced = true;
-
-      /* Einzigartige Handles sammeln */
-      var handles = [];
-      cards.forEach(function(card) {
-        var h = card.getAttribute('data-product-handle');
-        if (h && handles.indexOf(h) === -1) handles.push(h);
-      });
-
-      /* Produkt-JSON laden */
-      var fetches = handles.map(function(h) {
-        if (productDataCache[h]) return Promise.resolve();
-        return fetch('/products/' + h + '.js')
-          .then(function(r) { return r.json(); })
-          .then(function(data) { productDataCache[h] = data; })
-          .catch(function() { productDataCache[h] = null; });
-      });
-
-      Promise.all(fetches).then(function() {
-        cards.forEach(function(card) {
-          var handle = card.getAttribute('data-product-handle');
-          var data = productDataCache[handle];
-          if (!data) return;
-
-          /* Bereits enhanced? Skip */
-          if (card.querySelector('.ciamore-card-material')) return;
-
-          var titleEl = card.querySelector('.bogos-bp-product-title');
-          if (!titleEl) return;
-
-          /* --- Material Text --- */
-          var materialEl = document.createElement('p');
-          materialEl.className = 'ciamore-card-material';
-          materialEl.textContent = '316L Edelstahl';
-          titleEl.insertAdjacentElement('afterend', materialEl);
-
-          /* --- Preis mit Vergleichspreis --- */
-          /* Erste Variante oder die mit dem höchsten Rabatt nehmen */
-          var bestVariant = null;
-          var maxDiscount = 0;
-          (data.variants || []).forEach(function(v) {
-            if (v.compare_at_price && v.compare_at_price > v.price) {
-              var d = Math.round((v.compare_at_price - v.price) / v.compare_at_price * 100);
-              if (d > maxDiscount) {
-                maxDiscount = d;
-                bestVariant = v;
-              }
-            }
-          });
-
-          var firstVariant = data.variants && data.variants[0];
-          var priceHolder = document.createElement('div');
-          priceHolder.className = 'ciamore-card-price-holder';
-
-          if (bestVariant && maxDiscount > 0) {
-            priceHolder.innerHTML =
-              '<span class="ciamore-card-sale-badge">-' + maxDiscount + '%</span>' +
-              '<span class="ciamore-card-new-price">' + formatPrice(bestVariant.price) + '</span>' +
-              '<span class="ciamore-card-old-price">' + formatPrice(bestVariant.compare_at_price) + '</span>';
-          } else if (firstVariant) {
-            priceHolder.innerHTML =
-              '<span class="ciamore-card-regular-price">' + formatPrice(firstVariant.price) + '</span>';
-          }
-
-          materialEl.insertAdjacentElement('afterend', priceHolder);
-
-          /* --- Rabatt-Attribut für Discount-Filter setzen (Blackweek) --- */
-          card.setAttribute('data-discount', maxDiscount);
-
-          /* --- Gold / Platin Swatches --- */
-          /* Prüfen ob es Gold und Platin Varianten gibt */
-          var hasGold = false;
-          var hasPlatin = false;
-          var goldVariant = null;
-          var platinVariant = null;
-
-          (data.variants || []).forEach(function(v) {
-            var title = (v.title || '').toLowerCase();
-            if (title.indexOf('gold') !== -1 && !hasGold) {
-              hasGold = true;
-              goldVariant = v;
-            }
-            if ((title.indexOf('platin') !== -1 || title.indexOf('silber') !== -1 || title.indexOf('silver') !== -1) && !hasPlatin) {
-              hasPlatin = true;
-              platinVariant = v;
-            }
-          });
-
-          if (hasGold || hasPlatin) {
-            var swatchContainer = document.createElement('div');
-            swatchContainer.className = 'ciamore-card-swatches';
-
-            if (hasGold) {
-              var goldSwatch = document.createElement('span');
-              goldSwatch.className = 'ciamore-card-swatch ciamore-card-swatch--gold active';
-              goldSwatch.title = 'Gold';
-              if (goldVariant && goldVariant.featured_image) {
-                goldSwatch.setAttribute('data-img', goldVariant.featured_image.src);
-              }
-              swatchContainer.appendChild(goldSwatch);
-            }
-
-            if (hasPlatin) {
-              var platinSwatch = document.createElement('span');
-              platinSwatch.className = 'ciamore-card-swatch ciamore-card-swatch--platin';
-              platinSwatch.title = 'Platin';
-              if (platinVariant && platinVariant.featured_image) {
-                platinSwatch.setAttribute('data-img', platinVariant.featured_image.src);
-              }
-              swatchContainer.appendChild(platinSwatch);
-            }
-
-            priceHolder.insertAdjacentElement('afterend', swatchContainer);
-          }
-        });
-      });
-    }
-
-    /* Swatch-Klick: Bild wechseln */
-    document.addEventListener('click', function(e) {
-      var swatch = e.target.closest('.ciamore-card-swatch');
-      if (!swatch) return;
-
-      var card = swatch.closest('.bogos-bp-product-card');
-      if (!card) return;
-
-      /* Aktiven Swatch wechseln */
-      card.querySelectorAll('.ciamore-card-swatch').forEach(function(s) {
-        s.classList.remove('active');
-      });
-      swatch.classList.add('active');
-
-      /* Bild wechseln */
-      var imgSrc = swatch.getAttribute('data-img');
-      if (imgSrc) {
-        var img = card.querySelector('.bogos-bp-product-img');
-        if (img) img.src = imgSrc;
-      }
-    });
 
     /* Warten bis BOGOS die Produkte gerendert hat */
     var checkInterval = setInterval(function() {
       if (document.querySelectorAll('.bogos-bp-product-card').length > 0) {
         clearInterval(checkInterval);
-        enhanceCards();
+        initFilters();
       }
     }, 500);
+    /* Fallback: nach 10s aufhören */
     setTimeout(function() { clearInterval(checkInterval); }, 10000);
-
-    /* Auch bei "Mehr Produkte laden" erneut enhancen */
-    var observer = new MutationObserver(function(mutations) {
-      var hasNewCards = false;
-      mutations.forEach(function(m) {
-        m.addedNodes.forEach(function(n) {
-          if (n.nodeType === 1 && (n.classList.contains('bogos-bp-product-card') || n.querySelector && n.querySelector('.bogos-bp-product-card'))) {
-            hasNewCards = true;
-          }
-        });
-      });
-      if (hasNewCards) {
-        cardsEnhanced = false;
-        enhanceCards();
-      }
-    });
-
-    /* Observer starten sobald der Container da ist */
-    var obsInterval = setInterval(function() {
-      var container = document.querySelector('.bogos-bp-products-info');
-      if (container) {
-        clearInterval(obsInterval);
-        observer.observe(container, { childList: true, subtree: true });
-      }
-    }, 500);
-    setTimeout(function() { clearInterval(obsInterval); }, 10000);
   })();
 </script>
 
