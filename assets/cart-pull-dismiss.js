@@ -1,17 +1,19 @@
 /**
  * Cart Drawer – Pull to Dismiss (Mobile)
+ * Swipe down on the header handle to close the cart drawer.
  *
- * Uses document-level touch event capturing (the most reliable
- * cross-browser approach) so the gesture is intercepted before
- * the browser's native scroll handler can steal it.
- *
- * Visual feedback: the handle bar turns darker while pulling.
+ * Uses Pointer Events + setPointerCapture for maximum mobile reliability.
+ * The header area (.drawer__head) is always draggable.
+ * When the body (.drawer__body) is scrolled to top, pulling down there also works.
+ * Pull past 30 % of drawer height → close (slide down).
+ * Pull less → snap back.
  */
 (function () {
   'use strict';
 
   var THRESHOLD = 0.3;
-  var SNAP_MS   = 250;
+  var SNAP_MS = 250;
+  var BASE = 'translateX(-100%)';
 
   function init() {
     var drawer = document.querySelector('cart-drawer');
@@ -22,150 +24,124 @@
     var head  = drawer.querySelector('.drawer__head');
     if (!inner || !body) return;
 
-    // The handle bar pseudo-element can't be styled via JS,
-    // so we find or create a real element for visual feedback
-    var handleBar = body.querySelector('.cm-pull-handle');
-    if (!handleBar) {
-      // The ::before pseudo creates the bar; we don't touch it
-    }
+    var active    = false;   // gesture recognised
+    var pointerId = -1;
+    var startY    = 0;
+    var lastY     = 0;
+    var onHead    = false;
 
-    var startY  = 0;
-    var lastY   = 0;
-    var pulling = false;
-    var onHead  = false;
-    var baseTransform = '';
-
+    /* ---- helpers ---- */
     function isMobile() { return window.innerWidth < 750; }
-
-    function getBaseTransform() {
-      // Read the current computed transform (set by CSS animation fill-forward)
-      var m = getComputedStyle(inner).transform;
-      // identity or none → empty
-      if (!m || m === 'none' || m === 'matrix(1, 0, 0, 1, 0, 0)') return '';
-      // Extract translateX from matrix(a,b,c,d,tx,ty)
-      var parts = m.match(/matrix\(([^)]+)\)/);
-      if (parts) {
-        var vals = parts[1].split(',').map(Number);
-        var tx = vals[4];
-        if (tx !== 0) return 'translateX(' + tx + 'px)';
-      }
-      return '';
-    }
+    function isOpen()   { return drawer.classList.contains('is-open'); }
 
     function resetInner() {
       inner.style.transform  = '';
       inner.style.transition = '';
       body.style.overflowY   = '';
-      pulling = false;
     }
 
-    // ---- Document-level capturing handlers ----
-    // Registered on document in the CAPTURING phase so they fire
-    // before the browser's scroll compositor can commit the gesture.
+    /* ---- pointer handlers (registered on inner) ---- */
+    function onDown(e) {
+      if (!isMobile() || !isOpen()) return;
+      // Only primary pointer (finger / left mouse)
+      if (!e.isPrimary) return;
 
-    function onTouchStart(e) {
-      if (!isMobile()) return;
-      if (!drawer.classList.contains('is-open')) return;
-
-      var t = e.touches[0];
-      // Check if touch is inside the drawer
-      var rect = inner.getBoundingClientRect();
-      if (t.clientX < rect.left || t.clientX > rect.right ||
-          t.clientY < rect.top  || t.clientY > rect.bottom) return;
-
-      startY  = t.clientY;
-      lastY   = startY;
-      pulling = false;
-      onHead  = !!(head && head.contains(e.target));
-
-      // Capture the base transform (from CSS animation) before we override it
-      baseTransform = getBaseTransform();
+      startY    = e.clientY;
+      lastY     = startY;
+      active    = false;
+      onHead    = !!(head && head.contains(e.target));
+      pointerId = e.pointerId;
     }
 
-    function onTouchMove(e) {
-      if (!isMobile()) return;
-      if (!drawer.classList.contains('is-open')) return;
-      if (!startY) return;
+    function onMove(e) {
+      if (e.pointerId !== pointerId) return;
+      if (!isMobile() || !isOpen()) return;
 
-      var t  = e.touches[0];
-      var dy = t.clientY - startY;
+      var dy = e.clientY - startY;
 
-      // Upward → cancel any active pull
+      // Only downward
       if (dy <= 0) {
-        if (pulling) resetInner();
+        if (active) { resetInner(); active = false; }
         return;
       }
 
-      // Can pull? Header always; body only at scroll-top
+      // May pull if on head OR body is at scroll-top
       var canPull = onHead || (body.scrollTop <= 0);
       if (!canPull) return;
 
-      // Dead-zone: 10 px before committing
-      if (!pulling && dy < 10) return;
+      // Dead zone (10 px) before committing — avoids accidental pulls
+      if (!active && dy < 10) return;
 
-      // ---- Commit to pull gesture ----
-      if (!pulling) {
-        pulling = true;
+      // Commit to gesture
+      if (!active) {
+        active = true;
+        // Capture all future pointer events to THIS element
+        try { inner.setPointerCapture(pointerId); } catch (_) {}
         inner.style.transition = 'none';
         body.style.overflowY = 'hidden';
       }
 
-      // MUST preventDefault to stop browser scroll / pull-to-refresh
-      e.preventDefault();
-
-      lastY = t.clientY;
+      lastY = e.clientY;
       var raw = lastY - startY;
       var resistance = Math.min(raw * 0.55, window.innerHeight * 0.8);
-
-      var tf = baseTransform
-        ? baseTransform + ' translateY(' + resistance + 'px)'
-        : 'translateY(' + resistance + 'px)';
-      inner.style.transform = tf;
+      inner.style.transform = BASE + ' translateY(' + resistance + 'px)';
     }
 
-    function onTouchEnd(e) {
-      if (!pulling) { startY = 0; return; }
+    function onUp(e) {
+      if (e.pointerId !== pointerId) return;
+      try { inner.releasePointerCapture(pointerId); } catch (_) {}
+      body.style.overflowY = '';
 
-      var dy = lastY - startY;
-      var resistance = Math.min(dy * 0.55, window.innerHeight * 0.8);
+      if (!active) { pointerId = -1; return; }
+      active = false;
+      pointerId = -1;
+
+      var raw = lastY - startY;
+      var resistance = Math.min(raw * 0.55, window.innerHeight * 0.8);
       var height = inner.offsetHeight || window.innerHeight;
 
       if (resistance > height * THRESHOLD) {
-        // ---- Dismiss: slide down ----
+        // ---- close: slide down ----
         inner.style.transition = 'transform 0.3s ease-out';
-        var tf = baseTransform
-          ? baseTransform + ' translateY(100vh)'
-          : 'translateY(100vh)';
-        inner.style.transform = tf;
-
+        inner.style.transform  = BASE + ' translateY(100vh)';
         setTimeout(function () {
           resetInner();
           drawer.closeCartDrawer();
         }, 320);
       } else {
-        // ---- Snap back ----
+        // ---- snap back ----
         inner.style.transition = 'transform ' + SNAP_MS + 'ms ease-out';
-        inner.style.transform = baseTransform || '';
-
+        inner.style.transform  = BASE;
         setTimeout(function () {
           inner.style.transition = '';
-          inner.style.transform  = '';
+          inner.style.transform  = '';   // let CSS animation fill-forward take over
         }, SNAP_MS);
       }
-
-      startY  = 0;
-      pulling = false;
     }
 
-    // Register in CAPTURING phase on document — fires before element-level handlers
-    document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
-    document.addEventListener('touchmove',  onTouchMove,  { capture: true, passive: false });
-    document.addEventListener('touchend',   onTouchEnd,   { capture: true, passive: true });
+    function onCancel(e) {
+      if (e.pointerId !== pointerId) return;
+      try { inner.releasePointerCapture(pointerId); } catch (_) {}
+      resetInner();
+      active = false;
+      pointerId = -1;
+    }
 
-    // Clean up on normal close
+    /* ---- register ---- */
+    inner.addEventListener('pointerdown',   onDown,   { passive: true });
+    inner.addEventListener('pointermove',   onMove,   { passive: true });
+    inner.addEventListener('pointerup',     onUp,     { passive: true });
+    inner.addEventListener('pointercancel', onCancel, { passive: true });
+
+    // CSS does the heavy lifting: touch-action:none on .drawer__head
+    // prevents browser from stealing vertical swipes on the header.
+    // For the body area we rely on scroll-top check + pointerCapture.
+
+    /* ---- safety: clean up on normal close ---- */
     document.addEventListener('theme:cart-drawer:close', function () {
       resetInner();
-      startY = 0;
+      active = false;
+      pointerId = -1;
     });
   }
 
