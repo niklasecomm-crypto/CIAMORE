@@ -10,7 +10,10 @@
      Davor und danach wird nichts eingefügt, alles unsichtbar. Zum Ändern
      einfach die zwei Daten anpassen (oder auf '' setzen, um die Grenze
      abzuschalten). ---------------------------------------------------------- */
-  var BW_START = '2026-11-23T00:01:00+01:00';
+  /* HINWEIS: Start steht vorübergehend auf heute (21.11.), damit wir die Leiste
+     mit laufendem Countdown live sehen können. VOR dem Launch zurück auf
+     2026-11-23T00:01. */
+  var BW_START = '2026-11-21T00:00:00+01:00';
   var BW_END   = '2026-11-30T23:59:59+01:00';
   var now = Date.now();
   if (BW_START && now < new Date(BW_START).getTime()) return;
@@ -91,8 +94,57 @@
     });
   }
 
+  /* ---- Announcement-Marquee mit Live-Countdown --------------------------
+     Durchlaufende Zeile, die während der Black Week die obere Leiste
+     übernimmt (die bestehende wird ausgeblendet). Versand + Wasserfest sind
+     mit reingefaltet, damit nichts verloren geht. ------------------------- */
+  var BW_END_MS = BW_END ? new Date(BW_END).getTime() : 0;
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function fmtCd() {
+    var d = BW_END_MS - Date.now();
+    if (d < 0) d = 0;
+    var days = Math.floor(d / 86400000);
+    var h = Math.floor((d % 86400000) / 3600000);
+    var m = Math.floor((d % 3600000) / 60000);
+    var s = Math.floor((d % 60000) / 1000);
+    return (days > 0 ? days + 'T ' : '') + pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+  function segHtml() {
+    return '<span class="cm-bw-seg">' +
+      '<span class="cm-bw-gold">★ Black Week</span>' +
+      '<span class="cm-bw-sep">•</span>Bis zu 70% auf dein Set' +
+      '<span class="cm-bw-sep">•</span>Endet in <span class="cm-bw-cd">' + fmtCd() + '</span>' +
+      '<span class="cm-bw-sep">•</span>Kostenloser Versand ab 39€' +
+      '<span class="cm-bw-sep">•</span>100% Wasserfest' +
+      '<span class="cm-bw-sep">★</span></span>';
+  }
+  function injectBar() {
+    if (document.getElementById('cm-bw-bar')) return;
+    var ann = document.querySelector('.page-announcement');
+    var bar = document.createElement('div');
+    bar.id = 'cm-bw-bar';
+    bar.className = 'cm-bw-bar';
+    bar.setAttribute('aria-label', 'Black Week');
+    var track = document.createElement('div');
+    track.className = 'cm-bw-track';
+    track.innerHTML = segHtml() + segHtml(); /* zwei Kopien = nahtlose Schleife */
+    bar.appendChild(track);
+    if (ann && ann.parentNode) {
+      ann.parentNode.insertBefore(bar, ann);
+      ann.style.display = 'none';
+      ann.setAttribute('data-cm-bw-hidden', '1');
+    } else {
+      document.body.insertBefore(bar, document.body.firstChild);
+    }
+  }
+  setInterval(function () {
+    var txt = fmtCd();
+    var els = document.querySelectorAll('.cm-bw-cd');
+    for (var i = 0; i < els.length; i++) els[i].textContent = txt;
+  }, 1000);
+
   function run() {
-    try { injectDesktop(); injectMobile(); injectChips(); } catch (e) {}
+    try { injectDesktop(); injectMobile(); injectChips(); injectBar(); } catch (e) {}
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
