@@ -1740,3 +1740,72 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 .cm-pop__done { text-align: center; padding: 8px 0 4px; }
 .cm-pop__doneicon { width: 52px; height: 52px; margin: 4px auto 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #fff; background: #1e7a44; border-radius: 50%; }
 .cm-pop__donetext { margin: 0 0 20px; font-size: 15px; font-weight: 500; color: #212121; line-height: 1.45; }
+
+/* =====================================================================
+   HANDY-MENÜ · Quiet Luxury (Variante B)  [neu]
+   Ruhige weiße Liste, dünne Schrift, Haarlinien, goldene Chevrons.
+   Unterkategorien klein in gesperrten Großbuchstaben. Ersetzt den
+   alten Kachel-Look (cm-nav-thumb) optisch komplett. Steht bewusst
+   am Dateiende, damit es die alten Menü-Overrides sticht.
+   ===================================================================== */
+
+/* -- Hauptzeilen (Shop-Ebene) -- */
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper {
+  border-bottom: 1px solid #ece9e4 !important;
+}
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > .sliderow,
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule > button.sliderow {
+  display: flex !important; align-items: center !important; justify-content: space-between !important;
+  width: 100% !important; padding: 16px 2px !important; min-height: 0 !important; height: auto !important;
+}
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > .sliderow > .sliderow__title,
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule > button.sliderow > .sliderow__title {
+  flex: 1 1 auto !important; display: flex !important; align-items: center !important;
+  font-family: var(--cm-body) !important; font-weight: 300 !important; font-size: 18px !important;
+  letter-spacing: .005em !important; color: var(--cm-ink) !important;
+  padding: 0 !important; min-height: 0 !important; height: auto !important;
+}
+/* goldener Chevron rechts an jeder Hauptzeile */
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > .sliderow::after {
+  content: "\203A"; color: #c9a45c; font-size: 19px; line-height: 1; opacity: .85;
+  margin-left: 12px; flex: 0 0 auto; font-weight: 400;
+}
+/* Produkte/Geschenke: Unterkategorien stehen direkt darunter -> Minus statt Chevron */
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule > button.sliderow::after {
+  content: "\2212"; color: #c9a45c; font-size: 17px; line-height: 1; opacity: .65;
+  margin-left: 12px; flex: 0 0 auto; font-weight: 400;
+}
+
+/* -- Unterkategorien: eine Spalte, kein Bild, klein & gesperrt -- */
+html body mobile-menu .drawer__main-menu .cm-nav-thumb { display: none !important; }
+html body mobile-menu .drawer__main-menu .sliderule__panel { padding: 0 0 10px !important; }
+html body mobile-menu .drawer__main-menu .sliderule__panel .sliderow__links {
+  display: block !important; grid-template-columns: none !important; gap: 0 !important;
+}
+html body mobile-menu .drawer__main-menu .sliderule__panel .sliderule__wrapper {
+  border-top: 1px solid #efece7 !important; border-bottom: 0 !important;
+}
+html body mobile-menu .drawer__main-menu .sliderule__panel .sliderow {
+  display: flex !important; align-items: center !important; justify-content: space-between !important;
+  padding: 0 !important; min-height: 0 !important; height: auto !important;
+}
+html body mobile-menu .drawer__main-menu .sliderule__panel a.sliderow__title {
+  flex: 1 1 auto !important; display: flex !important; align-items: center !important;
+  justify-content: space-between !important;
+  font-family: var(--cm-body) !important; font-weight: 400 !important; font-size: 12.5px !important;
+  letter-spacing: .16em !important; text-transform: uppercase !important; color: #6a6a6a !important;
+  padding: 13px 2px 13px 18px !important; min-height: 0 !important; height: auto !important;
+}
+html body mobile-menu .drawer__main-menu .sliderule__panel a.sliderow__title::after {
+  content: "\203A"; color: #c9a45c; font-size: 15px; line-height: 1; opacity: .8;
+  letter-spacing: 0; margin-left: 12px; flex: 0 0 auto; text-transform: none;
+}
+html body mobile-menu .drawer__main-menu .sliderule__panel a.sliderow__title > span:not(.cm-nav-thumb) {
+  flex: 1 1 auto !important; text-align: left !important; line-height: 1.3 !important;
+}
+
+/* -- Service-Block: Schrift an die ruhige Liste angeglichen -- */
+html body .cm-menu-foot__rows a { font-weight: 400 !important; font-size: 14.5px !important; color: #555 !important; }
+html body .cm-menu-foot__rows svg { color: #9a948c !important; }
+html body .cm-menu-foot__rows .cm-chev { color: #c9a45c !important; opacity: .8; }
+html body .cm-menu-foot__label { font-weight: 600 !important; letter-spacing: .2em !important; font-size: 10px !important; color: #b3a99b !important; }
