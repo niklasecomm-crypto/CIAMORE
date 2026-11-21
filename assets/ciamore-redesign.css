@@ -905,47 +905,33 @@ body.bundle-blackweek .bogos-bundle-page-header {
 }
 
 /* ===================== BLACK WEEK ===================== */
-/* Header-Chip als schwarzes Pill (Variante 3): Gold-Folie-Text + Stern auf Schwarz,
-   dünner Gold-Rand, kein Unterstrich. Label UND ::before (Stern) bekommen den Verlauf,
-   weil -webkit-text-fill-color sich sonst auf den Stern vererbt. */
-.cm-chips[data-v="text"] .cm-bw-chip.cm-chip--vip {
-  background: #141414 !important;
-  padding: 7px 14px !important;
-  border-radius: 999px !important;
-  align-self: center !important;
-  height: auto !important;
-  box-shadow: inset 0 0 0 1px rgba(201,164,92,.5), 0 4px 14px -7px rgba(0,0,0,.55) !important;
-}
-.cm-chips[data-v="text"] .cm-bw-chip.cm-chip--vip::after { display: none !important; }
+/* Variante B: normaler Unterstrich-Tab wie die anderen (gleiche Höhe, Unterstrich),
+   aber Text und Stern in sattem, tiefem Gold plus glänzender Gold-Unterstrich.
+   Kein Pill mehr. Label UND ::before (Stern) bekommen den Verlauf, weil sich
+   -webkit-text-fill-color sonst auf den Stern vererbt. */
 .cm-chips .cm-bw-chip .cm-chip__label,
 .cm-chips .cm-bw-chip .cm-chip__label::before {
-  background: linear-gradient(92deg, #b07f32 0%, #f6d98f 28%, #c9a45c 52%, #fcefbf 72%, #a9792c 100%) !important;
+  background: linear-gradient(92deg, #8a6220 0%, #d8b45e 30%, #a9792c 55%, #e9cf8a 75%, #7c561d 100%) !important;
   -webkit-background-clip: text !important; background-clip: text !important;
   -webkit-text-fill-color: transparent !important; color: transparent !important;
+}
+/* Glänzender Gold-Unterstrich, höhere Spezifität als die VIP-Default-Regel. */
+.cm-chips[data-v="text"] .cm-bw-chip.cm-chip--vip::after {
+  height: 2.5px !important;
+  background: linear-gradient(90deg, #a8853f, #e6cf93, #a8853f) !important;
+  box-shadow: 0 1px 6px -1px rgba(201,164,92,.5) !important;
 }
 
-/* Handy-Menü: Black-Week-Zeile als dunkles Highlight mit Gold-Folie-Text + Stern,
-   gleiche Identität wie das Pill, aber als volle Menü-Zeile. */
-.cm-bw-sliderow { border: 0 !important; }
-.cm-bw-sliderow .sliderow {
-  background: #141414 !important;
-  border-radius: 12px !important;
-  box-shadow: inset 0 0 0 1px rgba(201,164,92,.45) !important;
-  margin: 6px 14px !important;
-  width: auto !important;
-}
-.cm-bw-sliderow .sliderow__title > span {
-  background: linear-gradient(92deg, #b07f32 0%, #f6d98f 28%, #c9a45c 52%, #fcefbf 72%, #a9792c 100%) !important;
+/* Handy-Menü: Black-Week-Zeile als normale Zeile, nur Text und Stern in sattem Gold
+   (kein dunkles Band mehr), damit es sich wie der Header-Tab einfügt. */
+.cm-bw-sliderow .sliderow__title > span,
+.cm-bw-sliderow .sliderow__title > span::before {
+  background: linear-gradient(92deg, #8a6220 0%, #d8b45e 30%, #a9792c 55%, #e9cf8a 75%, #7c561d 100%) !important;
   -webkit-background-clip: text !important; background-clip: text !important;
   -webkit-text-fill-color: transparent !important; color: transparent !important;
-  font-weight: 700 !important;
 }
-.cm-bw-sliderow .sliderow__title > span::before {
-  content: "★  ";
-  background: linear-gradient(92deg, #b07f32 0%, #f6d98f 28%, #c9a45c 52%, #fcefbf 72%, #a9792c 100%);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-}
+.cm-bw-sliderow .sliderow__title > span { font-weight: 700 !important; }
+.cm-bw-sliderow .sliderow__title > span::before { content: "★  "; }
 
 /* Ausverkauft-Badge unten links (nur wenn alle Varianten ausverkauft), Form wie das Prozent-Badge */
 .product-item .cm-soldout {
