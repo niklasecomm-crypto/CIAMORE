@@ -4,6 +4,15 @@
    Klont den vorhandenen Bestseller-Eintrag, damit alle Klassen, Attribute
    und Styles erhalten bleiben. Idempotent — fügt nie doppelt ein. */
 (function () {
+  /* ---- AUTO-AUS ----------------------------------------------------------
+     Nach diesem Zeitpunkt wird KEIN Black-Week-Element mehr eingefügt (Pill,
+     Nav-Eintrag, Handy-Menü verschwinden automatisch). Den Banner auf der
+     Bundle-Seite muss man nicht anfassen, der ist weg sobald der BOGOS-Bundle
+     gelöscht ist. Zum Verlängern/Verkürzen einfach dieses eine Datum ändern,
+     oder auf '' setzen, damit es dauerhaft anbleibt. ----------------------- */
+  var BW_END = '2026-12-02T23:59:59+01:00';
+  if (BW_END && Date.now() > new Date(BW_END).getTime()) return;
+
   var BW_URL = '/apps/secomapp_freegifts_get_order/bundle/35605';
   var BW_TEXT = 'Black Week';
 
