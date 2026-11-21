@@ -1809,3 +1809,15 @@ html body .cm-menu-foot__rows a { font-weight: 400 !important; font-size: 14.5px
 html body .cm-menu-foot__rows svg { color: #9a948c !important; }
 html body .cm-menu-foot__rows .cm-chev { color: #c9a45c !important; opacity: .8; }
 html body .cm-menu-foot__label { font-weight: 600 !important; letter-spacing: .2em !important; font-size: 10px !important; color: #b3a99b !important; }
+
+/* -- Quiet-Luxury-Nachzug: Fixes -- */
+/* 1) Dünne Schrift (300) greift auch auf den inneren span der Hauptzeilen */
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > .sliderow > .sliderow__title,
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > .sliderow > .sliderow__title > span,
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule > button.sliderow > .sliderow__title,
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule > button.sliderow > .sliderow__title > span {
+  font-weight: 300 !important;
+}
+/* 2) Panel-"Zurück"-Zeile (zentriertes Dubletten-Produkte) bleibt aus.
+   Meine .sliderule__panel .sliderow Regel hatte sie versehentlich wieder eingeblendet. */
+html body mobile-menu .drawer__main-menu .sliderule__panel .sliderow--back { display: none !important; }
