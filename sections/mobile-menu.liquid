@@ -437,6 +437,35 @@
     e.preventDefault(); e.stopImmediatePropagation();
     sr.classList.toggle('cm-acc-open');
   }, true);
+
+  /* Beim OEffnen des Handymenues klappt Produkte automatisch mit der
+     Staffel-Animation auf; beim Schliessen kollabiert alles. Laeuft bei
+     jedem Oeffnen neu, ohne Reload. Signal: aria-expanded am Hamburger. */
+  function autoOpen(){
+    var sr = document.querySelector(SR);
+    if(!sr) return;
+    sr.classList.remove('cm-acc-open');   /* zuruecksetzen, damit die Animation neu startet */
+    void sr.offsetWidth;                  /* Reflow erzwingen */
+    sr.classList.add('cm-acc-open');
+  }
+  function collapseAll(){
+    var list = document.querySelectorAll(SR + '.cm-acc-open');
+    for(var i=0;i<list.length;i++) list[i].classList.remove('cm-acc-open');
+  }
+  var hb = document.querySelector('.header__mobile__hamburger');
+  if(hb && 'MutationObserver' in window){
+    var t;
+    var obs = new MutationObserver(function(){
+      clearTimeout(t);
+      if(hb.getAttribute('aria-expanded') === 'true'){
+        t = setTimeout(autoOpen, 180);   /* kurz warten, bis der Drawer offen ist */
+      } else {
+        collapseAll();
+      }
+    });
+    obs.observe(hb, { attributes: true, attributeFilter: ['aria-expanded'] });
+    if(hb.getAttribute('aria-expanded') === 'true') t = setTimeout(autoOpen, 180);
+  }
 })();
 </script>
 
