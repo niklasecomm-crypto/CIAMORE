@@ -141,7 +141,7 @@
         "menu"
       ],
       "custom_css": [
-        ".sliderow__title,.sliderow__title span {font-weight: 500 !important; /* 500 entspricht \"bold\" */}"
+        ".sliderow__title,.sliderow__title span {font-weight: 300 !important;} .sliderule__panel .sliderow__title,.sliderule__panel .sliderow__title span {font-weight: 400 !important;}"
       ],
       "settings": {
         "logo": "shopify://shop_images/Ciamore-Logo.png",
