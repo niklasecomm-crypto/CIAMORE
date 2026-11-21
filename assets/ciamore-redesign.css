@@ -1846,7 +1846,13 @@ html body mobile-menu .drawer__main-menu mobile-sliderule > .sliderule__panel {
 html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel {
   display: block !important;
 }
-html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel .sliderow__links {
-  animation: cmAccIn .26s ease both;
+/* auf: die vier Unterpunkte reihen sich nacheinander von oben nach unten ein
+   (gestaffelt, letzter ist nach ~0.85s da) */
+html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel .sliderow__links > .sliderule__wrapper {
+  animation: cmAccRow .44s cubic-bezier(.33,1,.68,1) both;
 }
-@keyframes cmAccIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel .sliderow__links > .sliderule__wrapper:nth-child(1) { animation-delay: 0s; }
+html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel .sliderow__links > .sliderule__wrapper:nth-child(2) { animation-delay: .13s; }
+html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel .sliderow__links > .sliderule__wrapper:nth-child(3) { animation-delay: .26s; }
+html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel .sliderow__links > .sliderule__wrapper:nth-child(4) { animation-delay: .39s; }
+@keyframes cmAccRow { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
