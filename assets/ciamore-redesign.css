@@ -932,6 +932,7 @@ body.bundle-blackweek .bogos-bundle-page-header {
   border-radius: 12px !important;
   box-shadow: inset 0 0 0 1px rgba(201,164,92,.45) !important;
   margin: 6px 14px !important;
+  width: auto !important;
 }
 .cm-bw-sliderow .sliderow__title > span {
   background: linear-gradient(92deg, #b07f32 0%, #f6d98f 28%, #c9a45c 52%, #fcefbf 72%, #a9792c 100%) !important;
