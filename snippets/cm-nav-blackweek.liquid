@@ -120,7 +120,13 @@
   }
   function injectBar() {
     if (document.getElementById('cm-bw-bar')) return;
-    var ann = document.querySelector('.page-announcement');
+    /* Es gibt ZWEI obere Leisten: die native (.page-announcement) und eine
+       Custom-Code-Leiste (.announcement-bar-custom-full, zeigt "100% Wasserfest").
+       Beide während der Black Week ausblenden, Marquee ganz oben davor hängen. */
+    var native = document.querySelector('.page-announcement');
+    var custom = document.querySelector('.announcement-bar-custom-full');
+    var customSec = custom ? (custom.closest('.shopify-section') || custom) : null;
+    var anchor = native || customSec;
     var bar = document.createElement('div');
     bar.id = 'cm-bw-bar';
     bar.className = 'cm-bw-bar';
@@ -129,13 +135,10 @@
     track.className = 'cm-bw-track';
     track.innerHTML = segHtml() + segHtml(); /* zwei Kopien = nahtlose Schleife */
     bar.appendChild(track);
-    if (ann && ann.parentNode) {
-      ann.parentNode.insertBefore(bar, ann);
-      ann.style.display = 'none';
-      ann.setAttribute('data-cm-bw-hidden', '1');
-    } else {
-      document.body.insertBefore(bar, document.body.firstChild);
-    }
+    if (anchor && anchor.parentNode) { anchor.parentNode.insertBefore(bar, anchor); }
+    else { document.body.insertBefore(bar, document.body.firstChild); }
+    if (native) { native.style.display = 'none'; native.setAttribute('data-cm-bw-hidden', '1'); }
+    if (customSec) { customSec.style.display = 'none'; customSec.setAttribute('data-cm-bw-hidden', '1'); }
   }
   setInterval(function () {
     var txt = fmtCd();
