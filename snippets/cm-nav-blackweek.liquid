@@ -10,7 +10,9 @@
      Davor und danach wird nichts eingefügt, alles unsichtbar. Zum Ändern
      einfach die zwei Daten anpassen (oder auf '' setzen, um die Grenze
      abzuschalten). ---------------------------------------------------------- */
-  var BW_START = '2026-11-23T00:01:00+01:00';
+  /* HINWEIS: Start steht vorübergehend auf heute (21.11.), damit wir alles live
+     sehen und schmücken können. VOR dem echten Launch zurück auf 2026-11-23T00:01. */
+  var BW_START = '2026-11-21T00:00:00+01:00';
   var BW_END   = '2026-11-30T23:59:59+01:00';
   var now = Date.now();
   if (BW_START && now < new Date(BW_START).getTime()) return;
