@@ -429,24 +429,26 @@
 
   function panel(sr){ return sr.querySelector(':scope > .sliderule__panel'); }
 
+  function setMax(p, v){ p.style.setProperty('max-height', v, 'important'); }
+
   function openIt(sr){
     var p = panel(sr); if(!p) return;
     sr.classList.add('cm-acc-open');
-    p.style.maxHeight = p.scrollHeight + 'px';
+    setMax(p, p.scrollHeight + 'px');
     var done = function(e){
       if(e.target !== p || e.propertyName !== 'max-height') return;
       p.removeEventListener('transitionend', done);
-      if(sr.classList.contains('cm-acc-open')) p.style.maxHeight = 'none';
+      if(sr.classList.contains('cm-acc-open')) setMax(p, 'none'); /* danach frei, falls Inhalt umbricht */
     };
     p.addEventListener('transitionend', done);
   }
 
   function closeIt(sr){
     var p = panel(sr); if(!p) return;
-    p.style.maxHeight = p.scrollHeight + 'px';   /* von aktueller Hoehe */
-    p.offsetHeight;                               /* Reflow erzwingen */
+    setMax(p, p.scrollHeight + 'px');   /* von aktueller Hoehe */
+    p.offsetHeight;                      /* Reflow erzwingen */
     sr.classList.remove('cm-acc-open');
-    requestAnimationFrame(function(){ p.style.maxHeight = '0px'; });
+    requestAnimationFrame(function(){ setMax(p, '0px'); });
   }
 
   /* Klick auf den Produkte-Button abfangen, bevor das native Slide-in feuert */

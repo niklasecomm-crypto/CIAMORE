@@ -1839,7 +1839,7 @@ html body mobile-menu .drawer__main-menu mobile-sliderule > button.sliderow {
 html body mobile-menu .drawer__main-menu mobile-sliderule > .sliderule__panel {
   box-sizing: border-box !important;
   overflow: hidden !important;
-  max-height: 0;
+  max-height: 0 !important;   /* JS setzt beim Aufklappen eine Inline-Hoehe mit !important */
   padding: 0 !important;   /* sonst bleibt zugeklappt die 10px padding-bottom als Streifen stehen */
   transition: max-height .34s cubic-bezier(.4,0,.2,1) !important;
   will-change: max-height;
