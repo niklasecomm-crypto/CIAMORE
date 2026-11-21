@@ -1770,10 +1770,15 @@ html body mobile-menu .drawer__main-menu > .sliderule__wrapper > .sliderow::afte
   content: "\203A"; color: #c9a45c; font-size: 19px; line-height: 1; opacity: .85;
   margin-left: 12px; flex: 0 0 auto; font-weight: 400;
 }
-/* Produkte/Geschenke: Unterkategorien stehen direkt darunter -> Minus statt Chevron */
+/* Produkte/Geschenke: klappbares Akkordeon. Pfeil nach rechts (zu),
+   dreht sanft nach unten (auf). Sieht zu wie die anderen Kategorien aus. */
 html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule > button.sliderow::after {
-  content: "\2212"; color: #c9a45c; font-size: 17px; line-height: 1; opacity: .65;
+  content: "\203A"; color: #c9a45c; font-size: 19px; line-height: 1; opacity: .85;
   margin-left: 12px; flex: 0 0 auto; font-weight: 400;
+  transform: rotate(0deg); transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule.cm-acc-open > button.sliderow::after {
+  transform: rotate(90deg);
 }
 
 /* -- Unterkategorien: eine Spalte, kein Bild, klein & gesperrt -- */
@@ -1821,3 +1826,20 @@ html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderul
 /* 2) Panel-"Zurück"-Zeile (zentriertes Dubletten-Produkte) bleibt aus.
    Meine .sliderule__panel .sliderow Regel hatte sie versehentlich wieder eingeblendet. */
 html body mobile-menu .drawer__main-menu .sliderule__panel .sliderow--back { display: none !important; }
+
+/* =====================================================================
+   HANDY-MENÜ · Produkte als echtes Akkordeon (auf/zu)  [neu]
+   Panel ist standardmäßig zu und fährt beim Antippen sanft aus.
+   Die alten "immer offen"-Regeln werden hier gestochen. JS (in
+   sections/mobile-menu.liquid) steuert max-height + die Klasse cm-acc-open.
+   ===================================================================== */
+html body mobile-menu .drawer__main-menu mobile-sliderule > button.sliderow {
+  pointer-events: auto !important; cursor: pointer !important;
+}
+html body mobile-menu .drawer__main-menu mobile-sliderule > .sliderule__panel {
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  max-height: 0;
+  transition: max-height .34s cubic-bezier(.4,0,.2,1) !important;
+  will-change: max-height;
+}

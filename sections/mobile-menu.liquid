@@ -421,6 +421,46 @@
   </header-drawer>
 </mobile-menu>
 
+{%- comment -%} CIAMORE: Produkte als echtes Akkordeon (auf/zu). Blockt das native Slide-in. {%- endcomment -%}
+<script>
+(function(){
+  if (window.__cmMenuAcc) return; window.__cmMenuAcc = true;
+  var SR = 'mobile-menu .drawer__main-menu mobile-sliderule';
+
+  function panel(sr){ return sr.querySelector(':scope > .sliderule__panel'); }
+
+  function openIt(sr){
+    var p = panel(sr); if(!p) return;
+    sr.classList.add('cm-acc-open');
+    p.style.maxHeight = p.scrollHeight + 'px';
+    var done = function(e){
+      if(e.target !== p || e.propertyName !== 'max-height') return;
+      p.removeEventListener('transitionend', done);
+      if(sr.classList.contains('cm-acc-open')) p.style.maxHeight = 'none';
+    };
+    p.addEventListener('transitionend', done);
+  }
+
+  function closeIt(sr){
+    var p = panel(sr); if(!p) return;
+    p.style.maxHeight = p.scrollHeight + 'px';   /* von aktueller Hoehe */
+    p.offsetHeight;                               /* Reflow erzwingen */
+    sr.classList.remove('cm-acc-open');
+    requestAnimationFrame(function(){ p.style.maxHeight = '0px'; });
+  }
+
+  /* Klick auf den Produkte-Button abfangen, bevor das native Slide-in feuert */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest(SR + ' > button.sliderow');
+    if(!btn) return;
+    var sr = btn.closest('mobile-sliderule');
+    if(!sr) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if(sr.classList.contains('cm-acc-open')) closeIt(sr); else openIt(sr);
+  }, true);
+})();
+</script>
+
 {% schema %}
 {
   "name": "Mobile menu",
