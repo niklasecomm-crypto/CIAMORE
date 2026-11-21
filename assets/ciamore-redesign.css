@@ -917,8 +917,10 @@ body.bundle-blackweek .bogos-bundle-page-header {
   -webkit-background-clip: text !important; background-clip: text !important;
   -webkit-text-fill-color: transparent !important; color: transparent !important;
 }
-.cm-chips .cm-bw-chip::after {
-  background: #111 !important;
+/* Unterstrich schwarz statt Gold — gleiche dunkle Behandlung wie die normalen Chips.
+   Höhere Spezifität als die VIP-Gold-Regel (.cm-chips[data-v] .cm-chip--vip::after). */
+.cm-chips[data-v="text"] .cm-bw-chip.cm-chip--vip::after {
+  background: linear-gradient(var(--cm-ink), var(--cm-ink)) no-repeat left center / 0% 100%, rgba(33,33,33,.28) !important;
 }
 
 /* Ausverkauft-Badge unten links (nur wenn alle Varianten ausverkauft), Form wie das Prozent-Badge */
