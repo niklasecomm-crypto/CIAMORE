@@ -933,43 +933,6 @@ body.bundle-blackweek .bogos-bundle-page-header {
 .cm-bw-sliderow .sliderow__title > span { font-weight: 700 !important; }
 .cm-bw-sliderow .sliderow__title > span::before { content: "★  "; }
 
-/* Black-Week-Marquee: durchlaufende obere Leiste mit Live-Countdown. Zwei
-   identische Hälften im Track, Animation 0 → -50% ergibt eine nahtlose Schleife. */
-.cm-bw-bar {
-  background: #0a0a0a;
-  overflow: hidden;
-  position: relative;
-}
-.cm-bw-bar .cm-bw-track {
-  display: inline-block;
-  white-space: nowrap;
-  will-change: transform;
-  animation: cm-bw-marq 26s linear infinite;
-}
-.cm-bw-bar:hover .cm-bw-track { animation-play-state: paused; }
-.cm-bw-bar .cm-bw-seg {
-  display: inline-block;
-  white-space: nowrap;
-  color: #fff;
-  font-family: var(--cm-body, 'Figtree'), sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  padding: 11px 0;
-  vertical-align: middle;
-}
-.cm-bw-bar .cm-bw-gold {
-  background: linear-gradient(92deg, #b07f32, #f6d98f 28%, #c9a45c 52%, #fcefbf 72%, #a9792c);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  font-weight: 700;
-}
-.cm-bw-bar .cm-bw-sep { color: #c9a45c; margin: 0 16px; }
-.cm-bw-bar .cm-bw-cd { font-variant-numeric: tabular-nums; }
-@keyframes cm-bw-marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) { .cm-bw-bar .cm-bw-track { animation: none; } }
-
 /* Ausverkauft-Badge unten links (nur wenn alle Varianten ausverkauft), Form wie das Prozent-Badge */
 .product-item .cm-soldout {
   position: absolute; z-index: 3; left: 10px; bottom: 10px; pointer-events: none;
