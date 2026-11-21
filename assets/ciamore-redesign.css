@@ -1829,18 +1829,24 @@ html body mobile-menu .drawer__main-menu .sliderule__panel .sliderow--back { dis
 
 /* =====================================================================
    HANDY-MENÜ · Produkte als echtes Akkordeon (auf/zu)  [neu]
-   Panel ist standardmäßig zu und fährt beim Antippen sanft aus.
-   Die alten "immer offen"-Regeln werden hier gestochen. JS (in
-   sections/mobile-menu.liquid) steuert max-height + die Klasse cm-acc-open.
+   Panel ist standardmäßig zu (display:none) und erscheint beim Antippen.
+   Robust per Klasse statt Hoehenmessung, weil das Theme die Panel-Hoehe
+   sonst gegen uns zurueckstellt. JS (in sections/mobile-menu.liquid)
+   schaltet nur die Klasse cm-acc-open. Sanftes Einblenden per Keyframe.
    ===================================================================== */
 html body mobile-menu .drawer__main-menu mobile-sliderule > button.sliderow {
   pointer-events: auto !important; cursor: pointer !important;
 }
+/* zu */
 html body mobile-menu .drawer__main-menu mobile-sliderule > .sliderule__panel {
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  max-height: 0 !important;   /* JS setzt beim Aufklappen eine Inline-Hoehe mit !important */
-  padding: 0 !important;   /* sonst bleibt zugeklappt die 10px padding-bottom als Streifen stehen */
-  transition: max-height .34s cubic-bezier(.4,0,.2,1) !important;
-  will-change: max-height;
+  display: none !important;
+  padding: 0 !important;
 }
+/* auf */
+html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel {
+  display: block !important;
+}
+html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .sliderule__panel .sliderow__links {
+  animation: cmAccIn .26s ease both;
+}
+@keyframes cmAccIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }

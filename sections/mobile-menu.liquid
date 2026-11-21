@@ -427,38 +427,15 @@
   if (window.__cmMenuAcc) return; window.__cmMenuAcc = true;
   var SR = 'mobile-menu .drawer__main-menu mobile-sliderule';
 
-  function panel(sr){ return sr.querySelector(':scope > .sliderule__panel'); }
-
-  function setMax(p, v){ p.style.setProperty('max-height', v, 'important'); }
-
-  function openIt(sr){
-    var p = panel(sr); if(!p) return;
-    sr.classList.add('cm-acc-open');
-    setMax(p, p.scrollHeight + 'px');
-    var done = function(e){
-      if(e.target !== p || e.propertyName !== 'max-height') return;
-      p.removeEventListener('transitionend', done);
-      if(sr.classList.contains('cm-acc-open')) setMax(p, 'none'); /* danach frei, falls Inhalt umbricht */
-    };
-    p.addEventListener('transitionend', done);
-  }
-
-  function closeIt(sr){
-    var p = panel(sr); if(!p) return;
-    setMax(p, p.scrollHeight + 'px');   /* von aktueller Hoehe */
-    p.offsetHeight;                      /* Reflow erzwingen */
-    sr.classList.remove('cm-acc-open');
-    requestAnimationFrame(function(){ setMax(p, '0px'); });
-  }
-
-  /* Klick auf den Produkte-Button abfangen, bevor das native Slide-in feuert */
+  /* Klick auf den Produkte-Button abfangen, bevor das native Slide-in feuert.
+     Nur die Klasse umschalten, Auf/Zu macht das CSS (display + Keyframe). */
   document.addEventListener('click', function(e){
     var btn = e.target.closest(SR + ' > button.sliderow');
     if(!btn) return;
     var sr = btn.closest('mobile-sliderule');
     if(!sr) return;
     e.preventDefault(); e.stopImmediatePropagation();
-    if(sr.classList.contains('cm-acc-open')) closeIt(sr); else openIt(sr);
+    sr.classList.toggle('cm-acc-open');
   }, true);
 })();
 </script>
