@@ -1867,13 +1867,17 @@ html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .slideru
    Dunkelgrau fuer Titel/Button/Checkbox; hier nur die Deltas.
    ===================================================================== */
 html[data-fbt="beige"] body.template-product .bogos-fbt-upsell-container {
-  background: linear-gradient(135deg, #fdfcf9 0%, #efe8dd 55%, #f7f3ec 100%) !important;
+  /* Basis = exakt die Header-Farbe #f8f6f3; der Verlauf geht nur leicht
+     TIEFER (nie heller), damit nichts heller wirkt als der Header. */
+  background: linear-gradient(150deg, #f8f6f3 0%, #ece5d7 55%, #f4f0e8 100%) !important;
   border: 1px solid #ece7df !important;
 }
 html[data-fbt="beige"] body.template-product .bogos-fbt-upsell-container::after {
-  content: ""; position: absolute; z-index: -1; top: -40%; left: -18%;
-  width: 46%; height: 180%;
-  background: linear-gradient(90deg, rgba(255,253,248,0), rgba(255,255,255,.7), rgba(255,253,248,0));
+  /* Glanz-Streifen warm statt weiss, dezenter und aus der linken oberen
+     Ecke in die Mitte verschoben, damit die Ecke die Header-Farbe bleibt. */
+  content: ""; position: absolute; z-index: -1; top: -35%; left: 10%;
+  width: 42%; height: 170%;
+  background: linear-gradient(90deg, rgba(250,247,241,0), rgba(253,251,246,.5), rgba(250,247,241,0));
   transform: rotate(18deg); pointer-events: none;
 }
 /* Gold-Akzente: Unterzeile, kurze Linie unter dem Titel, Badge als Umriss */
