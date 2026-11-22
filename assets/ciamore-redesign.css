@@ -1867,29 +1867,13 @@ html body mobile-menu .drawer__main-menu mobile-sliderule.cm-acc-open > .slideru
    Dunkelgrau fuer Titel/Button/Checkbox; hier nur die Deltas.
    ===================================================================== */
 html[data-fbt="beige"] body.template-product .bogos-fbt-upsell-container {
-  /* Basis = exakt die Header-Farbe #f8f6f3; der Verlauf geht nur leicht
-     TIEFER (nie heller), damit nichts heller wirkt als der Header. */
-  background: linear-gradient(150deg, #f8f6f3 0%, #ece5d7 55%, #f4f0e8 100%) !important;
+  /* flaches Beige, exakt die Header-Farbe #f8f6f3 (kein Verlauf, kein Glanz) */
+  background: #f8f6f3 !important;
   border: 1px solid #ece7df !important;
 }
-html[data-fbt="beige"] body.template-product .bogos-fbt-upsell-container::after {
-  /* Glanz-Streifen warm statt weiss, dezenter und aus der linken oberen
-     Ecke in die Mitte verschoben, damit die Ecke die Header-Farbe bleibt. */
-  content: ""; position: absolute; z-index: -1; top: -35%; left: 10%;
-  width: 42%; height: 170%;
-  background: linear-gradient(90deg, rgba(250,247,241,0), rgba(253,251,246,.5), rgba(250,247,241,0));
-  transform: rotate(18deg); pointer-events: none;
-}
-/* Gold-Akzente: Unterzeile, kurze Linie unter dem Titel, Badge als Umriss */
-html[data-fbt="beige"] body.template-product .bogos-fbt-header-description { color: #b8975a !important; }
-html[data-fbt="beige"] body.template-product .bogos-fbt-header-title { position: relative; padding-bottom: 10px !important; }
-html[data-fbt="beige"] body.template-product .bogos-fbt-header-title::after {
-  content: ""; position: absolute; left: 0; bottom: 0; width: 42px; height: 2.5px;
-  border-radius: 2px; background: linear-gradient(90deg, #c9a45c, #e7cf9e);
-}
-html[data-fbt="beige"] body.template-product .bogos-fbt-this-item {
-  background: transparent !important; color: #a8853f !important; border: 1px solid #d8c08a !important;
-}
+/* Keine Gold-Akzente: Unterzeile im Marken-Grau, keine Linie unter dem Titel.
+   "Dieser Artikel"-Badge bleibt im Dunkelgrau (Basis-Schicht). */
+html[data-fbt="beige"] body.template-product .bogos-fbt-header-description { color: #4d4d4d !important; }
 /* Preise im Dunkelgrau (wie im Entwurf), Durchgestrichenes in Grau */
 html[data-fbt="beige"] body.template-product .bogos-fbt-footer-discounted-price,
 html[data-fbt="beige"] body.template-product .bogos-fbt-upsell-product-discounted-price { color: #1e1e1e !important; }
