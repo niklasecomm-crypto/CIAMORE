@@ -73,78 +73,9 @@
   /* BIS HIER HIN */
 
 
-/* BLACK WEEK DISCOUNT FILTER CHIPS — Underline-Tabs, unter dem Banner */
-.ciamore-discount-filters {
-  display: none;
-  gap: 24px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 18px 0 6px;
-  padding: 0 16px;
-}
-
-.bundle-blackweek .ciamore-discount-filters {
-  display: flex;
-}
-
-.ciamore-discount-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 2px;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  color: #8a8a8a;
-  white-space: nowrap;
-  position: relative;
-  transition: color 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.ciamore-discount-chip:hover {
-  color: #111;
-}
-
-.ciamore-discount-chip.active {
-  color: #111;
-}
-
-.ciamore-discount-chip.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -3px;
-  height: 2px;
-  background: #c9a45c;
-  border-radius: 2px;
-}
-
-.ciamore-discount-chip .chip-pct {
-  font-weight: 800;
-}
-
-/* Wenn ein Filter aktiv ist: ALLE Cards per CSS verstecken, nur gematchte zeigen.
-   BOGOS grid-enter Animation und Load-More bei aktivem Filter unterdrücken,
-   damit nichts zuckt oder kurz aufblitzt. */
-.ciamore-filter-active .bogos-bp-product-card {
-  display: none !important;
-  animation: none !important;
-}
-.ciamore-filter-active .bogos-bp-product-card.ciamore-filter-match {
-  display: flex !important;
-}
-.ciamore-filter-active .bogos-bp-product-load-more-container {
-  display: none !important;
-}
-.ciamore-filter-active .bogos-bp-not-found-products {
-  display: none !important;
-}
-/* BIS HIER HIN */
+/* (Die Rabatt-Filter-Chips "Alle / ab 30% / ab 50% / ab 70%" sind raus —
+   im Black Week Bundle gilt auf alles derselbe Rabatt, da gibt es nichts
+   zu filtern.) */
 
 
 /* RABATT-BADGE + PREISANZEIGE auf BOGOS-Karten (alle Bundles) */
@@ -344,14 +275,6 @@
         </div>
         <div class="bogos-bp-header-subtitle">
           {{ bogos_bundle_page_subtitle }}
-        </div>
-
-        <!-- Black Week Discount Filter Chips -->
-        <div class="ciamore-discount-filters">
-          <button class="ciamore-discount-chip active" data-filter="all">Alle</button>
-          <button class="ciamore-discount-chip" data-filter="30">ab <span class="chip-pct">30%</span></button>
-          <button class="ciamore-discount-chip" data-filter="50">ab <span class="chip-pct">50%</span></button>
-          <button class="ciamore-discount-chip" data-filter="70">ab <span class="chip-pct">70%</span></button>
         </div>
 
         <!-- Ciamore Feature Badges -->
