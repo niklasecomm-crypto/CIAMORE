@@ -73,78 +73,9 @@
   /* BIS HIER HIN */
 
 
-/* BLACK WEEK DISCOUNT FILTER CHIPS — Underline-Tabs, unter dem Banner */
-.ciamore-discount-filters {
-  display: none;
-  gap: 24px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 18px 0 6px;
-  padding: 0 16px;
-}
-
-.bundle-blackweek .ciamore-discount-filters {
-  display: flex;
-}
-
-.ciamore-discount-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 2px;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  color: #8a8a8a;
-  white-space: nowrap;
-  position: relative;
-  transition: color 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.ciamore-discount-chip:hover {
-  color: #111;
-}
-
-.ciamore-discount-chip.active {
-  color: #111;
-}
-
-.ciamore-discount-chip.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -3px;
-  height: 2px;
-  background: #c9a45c;
-  border-radius: 2px;
-}
-
-.ciamore-discount-chip .chip-pct {
-  font-weight: 800;
-}
-
-/* Wenn ein Filter aktiv ist: ALLE Cards per CSS verstecken, nur gematchte zeigen.
-   BOGOS grid-enter Animation und Load-More bei aktivem Filter unterdrücken,
-   damit nichts zuckt oder kurz aufblitzt. */
-.ciamore-filter-active .bogos-bp-product-card {
-  display: none !important;
-  animation: none !important;
-}
-.ciamore-filter-active .bogos-bp-product-card.ciamore-filter-match {
-  display: flex !important;
-}
-.ciamore-filter-active .bogos-bp-product-load-more-container {
-  display: none !important;
-}
-.ciamore-filter-active .bogos-bp-not-found-products {
-  display: none !important;
-}
-/* BIS HIER HIN */
+/* Die Rabatt-Filter-Chips ("Alle / ab 30% / ab 50% / ab 70%") sind raus.
+   In jedem Bundle gilt auf alle Produkte derselbe Rabatt, da gibt es nichts
+   zu filtern. */
 
 
 /* RABATT-BADGE + PREISANZEIGE auf BOGOS-Karten (alle Bundles) */
@@ -346,14 +277,6 @@
           {{ bogos_bundle_page_subtitle }}
         </div>
 
-        <!-- Black Week Discount Filter Chips -->
-        <div class="ciamore-discount-filters">
-          <button class="ciamore-discount-chip active" data-filter="all">Alle</button>
-          <button class="ciamore-discount-chip" data-filter="30">ab <span class="chip-pct">30%</span></button>
-          <button class="ciamore-discount-chip" data-filter="50">ab <span class="chip-pct">50%</span></button>
-          <button class="ciamore-discount-chip" data-filter="70">ab <span class="chip-pct">70%</span></button>
-        </div>
-
         <!-- Ciamore Feature Badges -->
         <div class="ciamore-feature-badges">
           <div class="ciamore-feature-badges-row">
@@ -393,216 +316,129 @@
 </script>
 
 <script>
-  /* RABATT-BADGES + PREISANZEIGE + DISCOUNT-FILTER — Alle Bundles */
+  /* RABATT-BADGE + PREISANZEIGE auf den Bundle-Karten — alle Bundles.
+
+     Seit 23.11.2026 haben die Produkte im Shop keine durchgestrichenen
+     Preise mehr. Der Rabatt entsteht erst im Bundle. Die Karte rechnet den
+     Bundle-Preis deshalb selbst aus: sie liest den Prozentsatz, der im
+     BOGOS-Bundle hinterlegt ist, und zeigt "neuer Preis / alter Preis" plus
+     das Badge oben links. Änderst du den Prozentsatz in BOGOS, ändert sich
+     die Anzeige automatisch mit — hier ist nichts fest eingetragen.
+
+     Bundles mit Festpreis-Staffel (5 für 79, 3 für 69) haben keinen
+     Prozentsatz. Dort bleibt die normale Preisanzeige von BOGOS stehen. */
   (function(){
-    var productCache = {};
-    var activeFilter = 'all';
-    var enhancing = false;
+    var info = null, infoDone = false;
 
-    function formatPrice(cents) {
-      return '€' + (cents / 100).toFixed(2).replace('.', ',');
+    function bundleInfo() {
+      if (infoDone) return info;
+      var m = window.location.pathname.match(/bundle\/(\d+)/);
+      var list = (window.fgData && window.fgData.bundles) || null;
+      if (!m || !list) return null;          /* fgData noch nicht geladen */
+      infoDone = true;
+      for (var i = 0; i < list.length; i++) {
+        if (String(list[i].id) !== m[1]) continue;
+        var tiers = list[i].discount || [];
+        if (!tiers.length || !tiers[0].discount) break;
+        if (tiers[0].discount.type !== 'percentage') break;
+        var pct = parseFloat(tiers[0].discount.value);
+        if (!(pct > 0 && pct < 100)) break;
+        info = { pct: Math.round(pct), factor: (100 - pct) / 100 };
+        break;
+      }
+      return info;
     }
 
-    function applyFilter() {
-      var container = document.querySelector('.bogos-bp-products-info');
-      if (!container) return;
-
-      if (activeFilter === 'all') {
-        /* Kein Filter → Container-Klasse weg, alle sichtbar */
-        container.classList.remove('ciamore-filter-active');
-        document.querySelectorAll('.bogos-bp-product-card.ciamore-filter-match').forEach(function(c) {
-          c.classList.remove('ciamore-filter-match');
-        });
-      } else {
-        /* Filter aktiv → Container-Klasse setzt CSS das ALLES versteckt,
-           nur Cards mit .ciamore-filter-match werden sichtbar */
-        container.classList.add('ciamore-filter-active');
-        var filterVal = parseInt(activeFilter, 10);
-        document.querySelectorAll('.bogos-bp-product-card').forEach(function(card) {
-          if (card.hasAttribute('data-discount') && parseInt(card.getAttribute('data-discount'), 10) >= filterVal) {
-            card.classList.add('ciamore-filter-match');
-          } else {
-            card.classList.remove('ciamore-filter-match');
-          }
-        });
-      }
+    /* "1.234,56 €" -> 1234.56 */
+    function parsePrice(txt) {
+      var t = String(txt == null ? '' : txt).replace(/[^0-9.,]/g, '');
+      if (!t) return 0;
+      t = t.replace(/\./g, '').replace(',', '.');
+      var n = parseFloat(t);
+      return isFinite(n) ? n : 0;
     }
 
-    function enhanceCards() {
-      if (enhancing) return;
-      var cards = document.querySelectorAll('.bogos-bp-product-card:not(.ciamore-price-enhanced)');
-      if (!cards.length) return;
-      enhancing = true;
+    function fmt(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
 
-      /* Einzigartige Handles sammeln */
-      var handles = [];
-      cards.forEach(function(card) {
-        var h = card.getAttribute('data-product-handle');
-        if (h && handles.indexOf(h) === -1) handles.push(h);
-      });
+    function discounted(base, bi) { return Math.round(base * bi.factor * 100) / 100; }
 
-      /* Produkt-JSON laden */
-      var fetches = handles.map(function(h) {
-        if (productCache[h]) return Promise.resolve();
-        return fetch('/products/' + h + '.js')
-          .then(function(r) { return r.json(); })
-          .then(function(data) { productCache[h] = data; })
-          .catch(function() { productCache[h] = null; });
-      });
+    /* Nur schreiben, wenn sich etwas ändert — sonst löst der eigene
+       DOM-Eingriff den MutationObserver endlos neu aus. */
+    function setText(el, txt) { if (el && el.textContent !== txt) el.textContent = txt; }
 
-      Promise.all(fetches).then(function() {
-        cards.forEach(function(card) {
-          if (card.classList.contains('ciamore-price-enhanced')) return;
+    function updateCard(card) {
+      var bi = bundleInfo();
+      if (!bi) return;
+      var priceEl = card.querySelector('.bogos-bp-product-price');
+      if (!priceEl) return;
+      var base = parsePrice(priceEl.textContent);
+      if (!base) return;
 
-          var handle = card.getAttribute('data-product-handle');
-          var data = productCache[handle];
-          if (!data) return;
+      var imgBox = card.querySelector('.bogos-bp-product-img-container');
+      if (imgBox) {
+        var badge = imgBox.querySelector('.ciamore-sale-badge');
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'ciamore-sale-badge';
+          imgBox.appendChild(badge);
+        }
+        setText(badge, '-' + bi.pct + '%');
+      }
 
-          /* Beste Variante (höchster Rabatt) finden */
-          var bestVariant = null;
-          var maxDiscount = 0;
-          var firstVariant = data.variants && data.variants[0];
-
-          (data.variants || []).forEach(function(v) {
-            if (v.compare_at_price && v.compare_at_price > v.price) {
-              var d = Math.round((v.compare_at_price - v.price) / v.compare_at_price * 100);
-              if (d > maxDiscount) {
-                maxDiscount = d;
-                bestVariant = v;
-              }
-            }
-          });
-
-          /* data-discount für Filter-Chips setzen */
-          card.setAttribute('data-discount', maxDiscount);
-
-          /* Nur wenn es einen echten Rabatt gibt: Badge + Preisanzeige */
-          if (bestVariant && maxDiscount > 0) {
-            /* Sale-Badge oben links auf dem Bild */
-            var imgContainer = card.querySelector('.bogos-bp-product-img-container');
-            if (imgContainer && !imgContainer.querySelector('.ciamore-sale-badge')) {
-              var badge = document.createElement('span');
-              badge.className = 'ciamore-sale-badge';
-              badge.textContent = '-' + maxDiscount + '%';
-              imgContainer.appendChild(badge);
-            }
-
-            /* Preis ersetzen: neuer Preis + durchgestrichener alter Preis */
-            var priceEl = card.querySelector('.bogos-bp-product-price');
-            if (priceEl && !card.querySelector('.ciamore-price-row')) {
-              var priceRow = document.createElement('div');
-              priceRow.className = 'ciamore-price-row';
-              priceRow.innerHTML =
-                '<span class="new-price">' + formatPrice(bestVariant.price) + '</span>' +
-                '<span class="old-price">' + formatPrice(bestVariant.compare_at_price) + '</span>';
-              priceEl.insertAdjacentElement('afterend', priceRow);
-              card.classList.add('ciamore-price-enhanced');
-            }
-          }
-        });
-
-        enhancing = false;
-        /* Aktiven Filter nach dem Laden der Daten nochmal anwenden */
-        applyFilter();
-      });
+      var row = card.querySelector('.ciamore-price-row');
+      if (!row) {
+        row = document.createElement('div');
+        row.className = 'ciamore-price-row';
+        row.innerHTML = '<span class="new-price"></span><span class="old-price"></span>';
+        priceEl.insertAdjacentElement('afterend', row);
+      }
+      setText(row.querySelector('.new-price'), fmt(discounted(base, bi)));
+      setText(row.querySelector('.old-price'), fmt(base));
+      if (!card.classList.contains('ciamore-price-enhanced')) card.classList.add('ciamore-price-enhanced');
     }
 
-    /* Chip-Klick-Handler — speichert aktiven Filter und wendet ihn an */
-    document.addEventListener('click', function(e) {
-      var chip = e.target.closest('.ciamore-discount-chip');
-      if (!chip) return;
-
-      document.querySelectorAll('.ciamore-discount-chip').forEach(function(c) {
-        c.classList.remove('active');
-      });
-      chip.classList.add('active');
-
-      activeFilter = chip.getAttribute('data-filter');
-      applyFilter();
-    });
-
-    /* Warten bis BOGOS die Produkte gerendert hat */
-    var checkInterval = setInterval(function() {
-      if (document.querySelectorAll('.bogos-bp-product-card').length > 0) {
-        clearInterval(checkInterval);
-        enhanceCards();
-      }
-    }, 500);
-    setTimeout(function() { clearInterval(checkInterval); }, 10000);
-
-    /* Black Week: Chips aus dem Header raus, zwischen Banner und Produktfeed setzen */
-    var moveChipsInterval = setInterval(function() {
-      var filters = document.querySelector('.ciamore-discount-filters');
-      var header = document.querySelector('.bogos-bundle-page-header');
-      if (filters && header && filters.parentElement === header) {
-        header.insertAdjacentElement('afterend', filters);
-        clearInterval(moveChipsInterval);
-      }
-    }, 300);
-    setTimeout(function() { clearInterval(moveChipsInterval); }, 10000);
-
-    /* MutationObserver für "Mehr Produkte laden" */
-    var obsInterval = setInterval(function() {
-      var container = document.querySelector('.bogos-bp-products-info');
-      if (container) {
-        clearInterval(obsInterval);
-        new MutationObserver(function(mutations) {
-          var hasNew = false;
-          mutations.forEach(function(m) {
-            m.addedNodes.forEach(function(n) {
-              if (n.nodeType === 1 && (n.classList && n.classList.contains('bogos-bp-product-card') || n.querySelector && n.querySelector('.bogos-bp-product-card'))) {
-                hasNew = true;
-              }
-            });
-          });
-          if (hasNew) {
-            enhancing = false;
-            enhanceCards();
-          }
-        }).observe(container, { childList: true, subtree: true });
-      }
-    }, 500);
-    setTimeout(function() { clearInterval(obsInterval); }, 10000);
-  })();
-</script>
-
-<script>
-  /* QUICK-VIEW-POPUP PREIS: wie auf der Produktseite — roter Preis +
-     durchgestrichener Vergleichspreis. Der Vergleichspreis steht in den
-     Varianten-Optionen des Modals (data-variant-compare-at-price). */
-  (function(){
-    function fmt(v){ return '€' + Number(v).toFixed(2).replace('.', ','); }
-
-    function enhanceModalPrice(){
+    /* Quick-View-Popup: gleicher Preis wie auf der Karte. Der Grundpreis
+       kommt aus der aktiven Variante, nicht aus dem Text — sonst würde beim
+       zweiten Durchlauf der schon rabattierte Preis nochmal rabattiert. */
+    function updateModal() {
+      var bi = bundleInfo();
+      if (!bi) return;
       var modal = document.querySelector('.bogos-product-detail-modal');
       if (!modal || modal.offsetParent === null) return;
       var priceEl = modal.querySelector('.bogos-product-price');
       if (!priceEl) return;
-      /* Schon umgebaut? (verhindert Endlosschleife durch eigenen DOM-Change) */
-      if (priceEl.querySelector('.cm-bogos-new')) return;
-
-      var shown = parseFloat((priceEl.textContent || '').replace(/[^0-9,]/g, '').replace(',', '.'));
-      if (!shown) return;
-
-      /* Variante mit passendem Preis finden → deren Vergleichspreis lesen */
-      var opts = Array.prototype.slice.call(modal.querySelectorAll('[data-variant-price]'));
-      var match = opts.filter(function(o){
-        return Math.abs(parseFloat(o.getAttribute('data-variant-price')) - shown) < 0.01;
-      })[0] || opts[0];
-      if (!match) return;
-
-      var compare = parseFloat(match.getAttribute('data-variant-compare-at-price'));
-      if (compare && compare > shown) {
-        priceEl.innerHTML = '<span class="cm-bogos-new">' + fmt(shown) + '</span>' +
-                            '<span class="cm-bogos-old">' + fmt(compare) + '</span>';
-      }
+      var act = modal.querySelector('[data-variant-price].active') || modal.querySelector('[data-variant-price]');
+      var base = act ? parseFloat(act.getAttribute('data-variant-price')) : 0;
+      if (!base || !isFinite(base)) return;
+      var html = '<span class="cm-bogos-new">' + fmt(discounted(base, bi)) + '</span>' +
+                 '<span class="cm-bogos-old">' + fmt(base) + '</span>';
+      if (priceEl.innerHTML !== html) priceEl.innerHTML = html;
     }
 
-    /* Modal taucht erst beim Klick auf und der Preis ändert sich bei
-       Variantenwechsel — daher den ganzen Body beobachten. Der Guard oben
-       macht das billig (früher Ausstieg wenn kein Modal / schon umgebaut). */
-    new MutationObserver(function(){ enhanceModalPrice(); })
-      .observe(document.body, { childList: true, subtree: true });
+    function updateAll() {
+      try {
+        document.querySelectorAll('.bogos-bp-product-card').forEach(updateCard);
+        updateModal();
+      } catch (e) {}
+    }
+
+    /* BOGOS rendert verzögert, lädt per "Mehr Produkte ansehen" nach und
+       tauscht Preise beim Variantenwechsel. Deshalb ein entprellter
+       Observer auf dem ganzen Body plus ein Startintervall. */
+    var t = 0;
+    new MutationObserver(function () {
+      clearTimeout(t);
+      t = setTimeout(updateAll, 80);
+    }).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+
+    var tries = 0;
+    var iv = setInterval(function () {
+      updateAll();
+      if (++tries > 40) clearInterval(iv);
+    }, 400);
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateAll);
+    else updateAll();
   })();
 </script>
 
