@@ -1630,6 +1630,9 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 #freegifts-main-popup-container .bogos-slider-offers-container { display: block !important; padding: 0 !important; background: none !important; overflow: visible auto !important; }
 #freegifts-main-popup-container .bogos-slider-offer.cm-gift-on { display: block !important; padding: 0 !important; margin: 0 !important; background: none !important; border: 0 !important; }
 #freegifts-main-popup-container .bogos-slider-offer.cm-gift-on + .bogos-slider-offer.cm-gift-on { margin-top: 18px !important; padding-top: 18px !important; border-top: 1px solid #eceae6 !important; }
+/* Mehrere Geschenke gleichzeitig frei: BOGOS legt sie in einen Block, wir
+   bauen pro Geschenk einen eigenen Kasten. Trennlinie dazwischen. */
+#freegifts-main-popup-container .cm-gift + .cm-gift { margin-top: 18px; padding-top: 18px; border-top: 1px solid #eceae6; }
 /* Original-Karussell ausblenden, aber klickbar per Skript lassen */
 #freegifts-main-popup-container .cm-gift-on > .glider-contain,
 #freegifts-main-popup-container .cm-gift-on > .dots,

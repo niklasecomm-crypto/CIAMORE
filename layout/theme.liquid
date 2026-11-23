@@ -697,12 +697,44 @@ document.addEventListener('DOMContentLoaded', function () {
       return { name: t(c, '.bogos-gift-product-title'), color: color, size: parts.join(' / '), img: img ? img.currentSrc || img.src : '', old: t(c, '.bogos-gift-item-compare-price'), btn: c.querySelector('.bogos-gift-item-add-container button') };
     }).filter(function (i) { return i.btn; });
   }
+  /* Wie viele Geschenke darf der Kunde mitnehmen? BOGOS schreibt das in
+     seinen eigenen Hinweis ("You can add 2 gift product(s)"), den wir
+     optisch ausblenden. Ohne Angabe gehen wir von einem aus. */
+  function allowed(offer) {
+    var badge = offer.querySelector('.bogos-badge-title');
+    var m = badge && badge.textContent.match(/(\d+)/);
+    return m ? parseInt(m[1], 10) : 1;
+  }
+
+  /* Stehen dem Kunden mehrere verschiedene Geschenk-PRODUKTE gleichzeitig
+     zu (etwa Gratis-Geschenk ab 50 € und VIP-Geschenk ab 79 €, beide auf
+     einmal freigeschaltet), wirft BOGOS sie in einen einzigen Block. Früher
+     baute der Code daraus einen Umschalter, das las sich wie "entweder
+     oder", obwohl der Kunde beide bekommt. Jetzt wird pro Produkt ein
+     eigener Block gebaut, jeder mit eigener Auswahl und eigenem Button.
+     Ist wirklich nur eines von mehreren erlaubt, bleibt der Umschalter. */
   function build(offer) {
-    var items = read(offer); if (!items.length) return;
-    var sig = items.map(function (i) { return [i.name, i.color, i.size].join('|'); }).join(';');
+    var all = read(offer); if (!all.length) return;
+    var namen = uniq(all.map(function (i) { return i.name; }));
+    var darf = allowed(offer);
+    var gruppen = (namen.length > 1 && darf >= namen.length)
+      ? namen.map(function (n) { return all.filter(function (i) { return i.name === n; }); })
+      : [all];
+    var sig = gruppen.length + '#' + all.map(function (i) { return [i.name, i.color, i.size, i.btn.disabled ? 'x' : 'o'].join('|'); }).join(';');
     if (offer.__cmSig === sig && offer.querySelector('.cm-gift')) return;
     offer.__cmSig = sig;
-    var old = offer.querySelector('.cm-gift'); if (old) old.remove();
+    [].forEach.call(offer.querySelectorAll('.cm-gift'), function (b) { b.remove(); });
+    var frag = document.createDocumentFragment();
+    gruppen.forEach(function (gruppe) {
+      var box = buildOne(gruppe, offer);
+      if (box) frag.appendChild(box);
+    });
+    if (!frag.childNodes.length) return;
+    offer.insertBefore(frag, offer.firstChild);
+    offer.classList.add('cm-gift-on');
+  }
+
+  function buildOne(items, offer) {
     var sel = { name: items[0].name, color: items[0].color, size: items[0].size };
     var box = document.createElement('div'); box.className = 'cm-gift';
     function pick() {
@@ -739,17 +771,28 @@ document.addEventListener('DOMContentLoaded', function () {
       sel[b.getAttribute('data-k')] = b.getAttribute('data-v'); render();
     });
     render();
-    offer.insertBefore(box, offer.firstChild);
-    offer.classList.add('cm-gift-on');
+    return box;
   }
   function run() {
     var pop = document.getElementById('freegifts-main-popup-container'); if (!pop) return;
     try {
-      var title = pop.querySelector('#bogos-gift-popup-title');
-      if (title && title.textContent.trim() !== 'Dein Gratis-Geschenk') title.textContent = 'Dein Gratis-Geschenk';
-      var head = pop.querySelector('.bogos-gifts-slider-header');
-      if (head && !pop.querySelector('.cm-gift__sub')) { var p = document.createElement('p'); p.className = 'cm-gift__sub'; p.textContent = 'Wähle deine Variante, wir legen es kostenlos dazu.'; head.parentNode.insertBefore(p, head.nextSibling); }
       [].forEach.call(pop.querySelectorAll('.bogos-slider-offer'), build);
+
+      /* Überschrift und Unterzeile richten sich danach, wie viele Geschenke
+         gerade im Fenster stehen. */
+      var anzahl = pop.querySelectorAll('.cm-gift').length;
+      var titelText = anzahl > 1 ? 'Deine Gratis-Geschenke' : 'Dein Gratis-Geschenk';
+      var subText = anzahl > 1
+        ? 'Du hast ' + anzahl + ' Geschenke frei. Wähle je eine Variante, wir legen beide kostenlos dazu.'
+        : 'Wähle deine Variante, wir legen es kostenlos dazu.';
+
+      var title = pop.querySelector('#bogos-gift-popup-title');
+      if (title && title.textContent.trim() !== titelText) title.textContent = titelText;
+
+      var head = pop.querySelector('.bogos-gifts-slider-header');
+      var sub = pop.querySelector('.cm-gift__sub');
+      if (!sub && head) { sub = document.createElement('p'); sub.className = 'cm-gift__sub'; head.parentNode.insertBefore(sub, head.nextSibling); }
+      if (sub && sub.textContent !== subText) sub.textContent = subText;
     } catch (err) { [].forEach.call(pop.querySelectorAll('.cm-gift-on'), function (o) { o.classList.remove('cm-gift-on'); }); }
   }
   var queued = false;
