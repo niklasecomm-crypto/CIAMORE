@@ -36,7 +36,7 @@ jobs:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_THEME_TOKEN }}
           SHOPIFY_FLAG_STORE: c1yu1t-gq.myshopify.com
         run: |
-          shopify theme push --theme 200235417944 --path . --allow-live --verbose \
+          shopify theme push --theme 200235417944 --path . --allow-live \
             --ignore "templates/*.json" \
             --ignore "templates/customers/*.json" \
             --ignore "templates/metaobject/*.json" \
