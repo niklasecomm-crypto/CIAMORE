@@ -741,7 +741,9 @@ document.addEventListener('DOMContentLoaded', function () {
      Fenster schon angeboten wurde, und lassen das gewählte als erledigten
      Kasten stehen, solange noch eines offen ist. Ist nichts mehr offen,
      wird die Merkliste geleert und BOGOS schließt das Fenster wie gehabt. */
-  var gezeigt = {};
+  var gezeigt = {};   /* Produkte, die dieses Fenster angeboten hat */
+  var auswahl = {};   /* zuletzt gewählte Variante je Produkt */
+  var laeuft = {};    /* Produkte, deren Hinzufügen gerade läuft */
 
   function build(offer) {
     var all = read(offer); if (!all.length) return;
@@ -760,7 +762,10 @@ document.addEventListener('DOMContentLoaded', function () {
       teile.push({ name: namen[0], items: all });
     }
     Object.keys(gezeigt).forEach(function (n) {
-      if (namen.indexOf(n) === -1) teile.push({ name: n, fertig: gezeigt[n] });
+      if (namen.indexOf(n) === -1) {
+        delete laeuft[n];   /* liegt im Warenkorb, Wartezustand beenden */
+        teile.push({ name: n, fertig: gezeigt[n] });
+      }
     });
     teile.forEach(function (t, i) { t.s = schwelle(t.name); t.idx = i; });
     teile.sort(function (a, b) { return a.s === b.s ? a.idx - b.idx : a.s - b.s; });
@@ -769,6 +774,9 @@ document.addEventListener('DOMContentLoaded', function () {
       all.map(function (i) { return [i.name, i.color, i.size, i.btn.disabled ? 'x' : 'o'].join('|'); }).join(';');
     if (offer.__cmSig === sig && offer.querySelector('.cm-gift')) return;
     offer.__cmSig = sig;
+    /* Scrollstand merken, sonst springt der Inhalt beim Neuaufbau. */
+    var scroller = offer.closest('.bogos-gift-slider-modal');
+    var stand = scroller ? scroller.scrollTop : 0;
     [].forEach.call(offer.querySelectorAll('.cm-gift'), function (b) { b.remove(); });
     var frag = document.createDocumentFragment();
     teile.forEach(function (t) {
@@ -778,6 +786,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!frag.childNodes.length) return;
     offer.insertBefore(frag, offer.firstChild);
     offer.classList.add('cm-gift-on');
+    if (scroller && stand) scroller.scrollTop = stand;
   }
 
   /* Kasten für ein Geschenk, das in diesem Fenster schon genommen wurde. */
@@ -793,7 +802,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function buildOne(items, offer) {
-    var sel = { name: items[0].name, color: items[0].color, size: items[0].size };
+    /* Getroffene Auswahl überlebt einen Neuaufbau. BOGOS baut das Fenster
+       beim Hinzufügen neu, vorher sprang die Veredelung dadurch auf Gold
+       zurück, während im Hintergrund die richtige Variante gelegt wurde. */
+    var merk = auswahl[items[0].name] || {};
+    var sel = { name: items[0].name, color: merk.color || items[0].color, size: merk.size || items[0].size };
     var box = document.createElement('div'); box.className = 'cm-gift';
     function pick() {
       var pool = items.filter(function (i) { return i.name === sel.name; });
@@ -817,7 +830,10 @@ document.addEventListener('DOMContentLoaded', function () {
       var ci = Math.max(0, colors.indexOf(sel.color));
       if (colors.length > 1) h += row('Veredelung', esc(sel.color)) + '<div class="cm-gift__seg cm-gift__seg--color" style="--n:' + colors.length + ';--i:' + prevColor + '">' + colors.map(function (c) { return '<button type="button" data-k="color" data-v="' + esc(c) + '" class="' + (c === sel.color ? 'is-on' : '') + '"><span class="cm-gift__dot cm-gift__dot--' + esc(c.toLowerCase()) + '" style="background-image:url(/cdn/shop/files/' + encodeURIComponent(c) + '-png_small.png)"></span>' + esc(c) + '</button>'; }).join('') + '</div>';
       if (sizes.length > 1) h += row('Größe', esc(sel.size)) + '<div class="cm-gift__pills">' + sizes.map(function (i) { return '<button type="button" data-k="size" data-v="' + esc(i.size) + '" class="' + (i.size === sel.size ? 'is-on' : '') + '">' + esc(i.size) + '</button>'; }).join('') + '</div>';
-      h += '<button type="button" class="cm-gift__cta"' + (cur.btn.disabled ? ' disabled' : '') + '>' + (cur.btn.disabled ? 'Bereits gewählt' : 'Gratis hinzufügen') + '</button>';
+      var wartet = !!laeuft[sel.name];
+      var aus = wartet || cur.btn.disabled;
+      var text = wartet ? 'Wird hinzugefügt …' : (cur.btn.disabled ? 'Bereits gewählt' : 'Gratis hinzufügen');
+      h += '<button type="button" class="cm-gift__cta"' + (aus ? ' disabled' : '') + '>' + text + '</button>';
       box.innerHTML = h;
       var seg = box.querySelector('.cm-gift__seg--color');
       if (seg) { void seg.offsetWidth; seg.style.setProperty('--i', ci); }
@@ -825,8 +841,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     box.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
-      if (b.classList.contains('cm-gift__cta')) { var cur = pick(); if (cur.btn.disabled) return; b.disabled = true; b.textContent = 'Wird hinzugefügt …'; cur.btn.click(); setTimeout(function () { offer.__cmSig = ''; run(); }, 2500); return; }
-      sel[b.getAttribute('data-k')] = b.getAttribute('data-v'); render();
+      if (b.classList.contains('cm-gift__cta')) {
+        var cur = pick();
+        if (cur.btn.disabled || laeuft[sel.name]) return;
+        laeuft[sel.name] = Date.now();
+        b.disabled = true; b.textContent = 'Wird hinzugefügt …';
+        cur.btn.click();
+        /* Notnagel, falls BOGOS gar nicht reagiert: Zustand wieder freigeben. */
+        setTimeout(function () {
+          if (laeuft[sel.name]) { delete laeuft[sel.name]; offer.__cmSig = ''; run(); }
+        }, 8000);
+        return;
+      }
+      sel[b.getAttribute('data-k')] = b.getAttribute('data-v');
+      auswahl[sel.name] = { color: sel.color, size: sel.size };
+      render();
     });
     render();
     return box;
@@ -840,9 +869,16 @@ document.addEventListener('DOMContentLoaded', function () {
          Kasten stehen bleibt. */
       var zu = getComputedStyle(pop).visibility === 'hidden';
       if (zu || !pop.querySelector('.bogos-offer-gift-item')) {
-        gezeigt = {};
+        gezeigt = {}; auswahl = {}; laeuft = {};
         [].forEach.call(pop.querySelectorAll('.cm-gift'), function (b) { b.remove(); });
         [].forEach.call(pop.querySelectorAll('.cm-gift-on'), function (o) { o.classList.remove('cm-gift-on'); o.__cmSig = ''; });
+      }
+      /* Manche Modal-Skripte sperren das Scrollen, indem sie touchmove auf
+         dem Dokument abfangen. Innerhalb des Geschenk-Fensters lassen wir
+         das Ereignis nicht weiterlaufen, damit der Inhalt scrollbar bleibt. */
+      if (!pop.__cmTouch) {
+        pop.__cmTouch = true;
+        pop.addEventListener('touchmove', function (e) { e.stopPropagation(); }, { passive: true });
       }
       [].forEach.call(pop.querySelectorAll('.bogos-slider-offer'), build);
 
