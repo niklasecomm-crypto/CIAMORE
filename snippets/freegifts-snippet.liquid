@@ -415,10 +415,69 @@
       if (priceEl.innerHTML !== html) priceEl.innerHTML = html;
     }
 
+    /* "DEIN BUNDLE": Zeilen und Gesamtpreis sollen den Bundle-Preis sofort
+       zeigen, nicht erst wenn die Mindestmenge erreicht ist. BOGOS rechnet
+       vorher mit dem vollen Preis — hier wird jede Zeile auf den Preis
+       gesetzt, den der Kunde im Bundle zahlt, mit dem vollen Preis
+       durchgestrichen daneben. Basis ist data-price am Element, also der
+       echte Shop-Preis der gewählten Variante, nicht der angezeigte Text.
+       Dass unterhalb der Mindestmenge noch nicht bestellt werden kann,
+       steht weiter im Hinweis darüber und am gesperrten Button. */
+    /* BOGOS versteckt den Vergleichspreis, solange es keinen Rabatt gibt:
+       einmal per style="display:none", einmal über die Klasse cm-same aus
+       dem Theme. Beides hier selbst wegnehmen, damit die Anzeige nicht vom
+       Timing eines anderen Skripts abhängt. */
+    function sichtbar(el) {
+      if (!el) return;
+      if (el.style && el.style.display === 'none') el.style.display = '';
+      if (el.classList && el.classList.contains('cm-same')) el.classList.remove('cm-same');
+    }
+
+    function preisSpanne(item, klasse) {
+      var el = item.querySelector('.' + klasse);
+      if (el) return el;
+      var box = item.querySelector('.bogos-step-item-price');
+      if (!box) return null;
+      el = document.createElement('span');
+      el.className = klasse;
+      box.appendChild(el);
+      return el;
+    }
+
+    function updateWidget() {
+      var bi = bundleInfo();
+      if (!bi) return;
+      var items = document.querySelectorAll('.bogos-bp-widget .bogos-step-item');
+      if (!items.length) return;
+
+      var summeNeu = 0, summeAlt = 0, vollstaendig = true;
+      items.forEach(function (item) {
+        var basis = parseFloat(item.getAttribute('data-price'));
+        if (!basis || !isFinite(basis)) { vollstaendig = false; return; }
+        var mengeEl = item.querySelector('.bogos-bp-quantity-input');
+        var menge = mengeEl ? (parseInt(mengeEl.value, 10) || 1) : 1;
+        var neu = discounted(basis, bi);
+        summeNeu += neu * menge;
+        summeAlt += basis * menge;
+
+        setText(preisSpanne(item, 'bogos-step-item-discount-price'), fmt(neu));
+        var alt = preisSpanne(item, 'bogos-step-item-original-price');
+        setText(alt, fmt(basis));
+        sichtbar(alt);
+      });
+      if (!vollstaendig) return;
+
+      setText(document.querySelector('.bogos-bp-total-discount-price'), fmt(Math.round(summeNeu * 100) / 100));
+      var gesamtAlt = document.querySelector('.bogos-bp-total-original-price');
+      setText(gesamtAlt, fmt(Math.round(summeAlt * 100) / 100));
+      sichtbar(gesamtAlt);
+    }
+
     function updateAll() {
       try {
         document.querySelectorAll('.bogos-bp-product-card').forEach(updateCard);
         updateModal();
+        updateWidget();
       } catch (e) {}
     }
 
