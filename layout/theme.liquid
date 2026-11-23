@@ -766,8 +766,25 @@ document.addEventListener('DOMContentLoaded', function () {
     return out;
   }
 
-  /* Heisst dieses Geschenk "Free Gift" oder "VIP Gift"? */
+  /* Heisst dieses Geschenk "Free Gift" oder "VIP Gift"? Zuerst wird der
+     Name genommen, den du dem Angebot in BOGOS gegeben hast. Benennst du
+     es dort um, ändert sich die Überschrift automatisch mit. Klappt das
+     nicht, entscheidet die Schwelle: niedrigste ist Free, höchste VIP. */
   function stufenName(produkt) {
+    if (!produkt) return '';
+    try {
+      var offers = (window.fgData && window.fgData.offers) || [];
+      for (var i = 0; i < offers.length; i++) {
+        var gp = offers[i].gift_products || [];
+        for (var j = 0; j < gp.length; j++) {
+          if (String(gp[j].title || '').indexOf(produkt) > -1) {
+            var n = String(offers[i].name || offers[i].title || '').trim();
+            if (n) return n;
+          }
+        }
+      }
+    } catch (e) {}
+
     var s = schwelle(produkt), alle = stufen();
     if (!isFinite(s) || alle.length < 2) return '';
     return s >= alle[alle.length - 1] ? 'VIP Gift' : 'Free Gift';
