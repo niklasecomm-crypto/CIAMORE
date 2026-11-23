@@ -764,6 +764,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var ausKorb = {};   /* Varianten der Geschenke, aus dem Warenkorb gelesen */
   var fertigJetzt = {}; /* schon im Warenkorb, auch wenn BOGOS noch rendert */
   var korbLaeuft = false;
+  var korbGelesen = false;   /* Warenkorb mindestens einmal abgefragt */
 
   /* BOGOS braucht nach dem Klick rund 2,5 Sekunden, bis es sein Fenster
      neu aufbaut. Im Warenkorb liegt das Geschenk aber schon nach etwa
@@ -787,6 +788,7 @@ document.addEventListener('DOMContentLoaded', function () {
           var teile = String(treffer.variant_title || '').split('/').map(function (x) { return x.trim(); }).filter(Boolean);
           var farbe = teile.length && COLORS.test(teile[0]) ? teile.shift() : '';
           ausKorb[String(treffer.product_title)] = { color: farbe, size: teile.join(' / ') };
+          korbGelesen = true;
           fertigJetzt[name] = true;
           delete laeuft[name];
           [].forEach.call(document.querySelectorAll('.bogos-slider-offer'), function (o) { o.__cmSig = ''; });
@@ -813,6 +815,7 @@ document.addEventListener('DOMContentLoaded', function () {
           neu[String(it.product_title || '')] = { color: farbe, size: teile.join(' / ') };
         });
         ausKorb = neu;
+        korbGelesen = true;
         korbLaeuft = false;
         if (dann) dann();
       })
@@ -843,15 +846,21 @@ document.addEventListener('DOMContentLoaded', function () {
     } else if (offen.length) {
       teile.push({ name: offen[0], items: all.filter(function (i) { return offen.indexOf(i.name) > -1; }) });
     }
+    /* Ein erledigter Kasten wird NUR gezeigt, wenn das Geschenk auch
+       wirklich im Warenkorb liegt. Früher reichte dafür, dass es einmal
+       angeboten wurde. Sank der Warenkorbwert später unter die Schwelle,
+       stand dort "Liegt im Warenkorb", obwohl nichts drin lag. */
     var fehlt = false;
     Object.keys(gezeigt).forEach(function (n) {
-      if (offen.indexOf(n) === -1) {
-        delete laeuft[n];   /* liegt im Warenkorb, Wartezustand beenden */
-        if (!variante(n)) fehlt = true;
-        teile.push({ name: n, fertig: gezeigt[n] });
-      }
+      if (offen.indexOf(n) > -1) return;
+      delete laeuft[n];
+      if (variante(n)) { teile.push({ name: n, fertig: gezeigt[n] }); return; }
+      if (!korbGelesen) { fehlt = true; return; }   /* Warenkorb noch nicht geprüft */
+      delete gezeigt[n];                            /* liegt nicht drin: weg damit */
+      delete fertigJetzt[n];
     });
     if (fehlt) korbLesen(function () { offer.__cmSig = ''; run(); });
+    if (!teile.length) return;
     teile.forEach(function (t, i) { t.s = schwelle(t.name); t.idx = i; });
     teile.sort(function (a, b) { return a.s === b.s ? a.idx - b.idx : a.s - b.s; });
 
@@ -938,7 +947,14 @@ document.addEventListener('DOMContentLoaded', function () {
       var b = e.target.closest('button'); if (!b) return;
       if (b.classList.contains('cm-gift__cta')) {
         var cur = pick();
-        if (cur.btn.disabled || laeuft[sel.name]) return;
+        /* Den BOGOS-Knopf jetzt frisch suchen. Der gemerkte Verweis kann
+           ins Leere zeigen, wenn BOGOS zwischendurch neu gebaut hat; der
+           Klick wäre dann wirkungslos. */
+        var frisch = read(offer).filter(function (i) {
+          return i.name === cur.name && i.color === cur.color && i.size === cur.size;
+        })[0];
+        if (frisch) cur = frisch;
+        if (!cur.btn || cur.btn.disabled || laeuft[sel.name]) return;
         laeuft[sel.name] = Date.now();
         auswahl[sel.name] = { color: cur.color, size: cur.size };
         b.disabled = true; b.textContent = 'Wird hinzugefügt …';
@@ -966,7 +982,7 @@ document.addEventListener('DOMContentLoaded', function () {
          Kasten stehen bleibt. */
       var zu = getComputedStyle(pop).visibility === 'hidden';
       if (zu || !pop.querySelector('.bogos-offer-gift-item')) {
-        gezeigt = {}; auswahl = {}; laeuft = {}; ausKorb = {}; fertigJetzt = {};
+        gezeigt = {}; auswahl = {}; laeuft = {}; ausKorb = {}; fertigJetzt = {}; korbGelesen = false;
         [].forEach.call(pop.querySelectorAll('.cm-gift'), function (b) { b.remove(); });
         [].forEach.call(pop.querySelectorAll('.cm-gift-on'), function (o) { o.classList.remove('cm-gift-on'); o.__cmSig = ''; });
       }
