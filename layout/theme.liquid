@@ -745,7 +745,39 @@ document.addEventListener('DOMContentLoaded', function () {
   var auswahl = {};   /* zuletzt gewählte Variante je Produkt */
   var laeuft = {};    /* Produkte, deren Hinzufügen gerade läuft */
   var ausKorb = {};   /* Varianten der Geschenke, aus dem Warenkorb gelesen */
+  var fertigJetzt = {}; /* schon im Warenkorb, auch wenn BOGOS noch rendert */
   var korbLaeuft = false;
+
+  /* BOGOS braucht nach dem Klick rund 2,5 Sekunden, bis es sein Fenster
+     neu aufbaut. Im Warenkorb liegt das Geschenk aber schon nach etwa
+     einer halben Sekunde. Deshalb fragen wir den Warenkorb selbst ab und
+     schalten um, sobald es dort auftaucht. Das ist keine geschönte
+     Anzeige, sondern der frühere, genauso wahre Zeitpunkt. */
+  function warteAufKorb(name) {
+    var start = Date.now();
+    var iv = setInterval(function () {
+      if (Date.now() - start > 9000) {      /* Notausstieg */
+        clearInterval(iv); delete laeuft[name]; run(); return;
+      }
+      fetch('/cart.js', { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (c) {
+          var treffer = (c.items || []).filter(function (it) {
+            return it.final_price === 0 && String(it.product_title || '').indexOf(name) > -1;
+          })[0];
+          if (!treffer) return;
+          clearInterval(iv);
+          var teile = String(treffer.variant_title || '').split('/').map(function (x) { return x.trim(); }).filter(Boolean);
+          var farbe = teile.length && COLORS.test(teile[0]) ? teile.shift() : '';
+          ausKorb[String(treffer.product_title)] = { color: farbe, size: teile.join(' / ') };
+          fertigJetzt[name] = true;
+          delete laeuft[name];
+          [].forEach.call(document.querySelectorAll('.bogos-slider-offer'), function (o) { o.__cmSig = ''; });
+          run();
+        })
+        .catch(function () {});
+    }, 250);
+  }
 
   /* Welche Variante liegt im Warenkorb? Die Merkliste oben kennt nur, was
      in diesem Fenster angetippt wurde, und ist nach einem Seitenwechsel
@@ -786,15 +818,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     var darf = allowed(offer);
+    /* Schon im Warenkorb, auch wenn BOGOS die Karten noch anzeigt. */
+    var offen = namen.filter(function (n) { return !fertigJetzt[n]; });
     var teile = [];
-    if (namen.length > 1 && darf >= namen.length) {
-      namen.forEach(function (n) { teile.push({ name: n, items: all.filter(function (i) { return i.name === n; }) }); });
-    } else {
-      teile.push({ name: namen[0], items: all });
+    if (offen.length > 1 && darf >= offen.length) {
+      offen.forEach(function (n) { teile.push({ name: n, items: all.filter(function (i) { return i.name === n; }) }); });
+    } else if (offen.length) {
+      teile.push({ name: offen[0], items: all.filter(function (i) { return offen.indexOf(i.name) > -1; }) });
     }
     var fehlt = false;
     Object.keys(gezeigt).forEach(function (n) {
-      if (namen.indexOf(n) === -1) {
+      if (offen.indexOf(n) === -1) {
         delete laeuft[n];   /* liegt im Warenkorb, Wartezustand beenden */
         if (!variante(n)) fehlt = true;
         teile.push({ name: n, fertig: gezeigt[n] });
@@ -804,7 +838,7 @@ document.addEventListener('DOMContentLoaded', function () {
     teile.forEach(function (t, i) { t.s = schwelle(t.name); t.idx = i; });
     teile.sort(function (a, b) { return a.s === b.s ? a.idx - b.idx : a.s - b.s; });
 
-    var sig = teile.map(function (t) {
+    var sig = Object.keys(fertigJetzt).sort().join(',') + '|' + teile.map(function (t) {
       var w = variante(t.name) || {};
       return t.name + (t.fertig ? ':fertig:' + (w.color || '') + '/' + (w.size || '') : '');
     }).join(';') + '#' +
@@ -892,6 +926,7 @@ document.addEventListener('DOMContentLoaded', function () {
         auswahl[sel.name] = { color: cur.color, size: cur.size };
         b.disabled = true; b.textContent = 'Wird hinzugefügt …';
         cur.btn.click();
+        warteAufKorb(sel.name);
         /* Notnagel, falls BOGOS gar nicht reagiert: Zustand wieder freigeben. */
         setTimeout(function () {
           if (laeuft[sel.name]) { delete laeuft[sel.name]; offer.__cmSig = ''; run(); }
@@ -914,7 +949,7 @@ document.addEventListener('DOMContentLoaded', function () {
          Kasten stehen bleibt. */
       var zu = getComputedStyle(pop).visibility === 'hidden';
       if (zu || !pop.querySelector('.bogos-offer-gift-item')) {
-        gezeigt = {}; auswahl = {}; laeuft = {}; ausKorb = {};
+        gezeigt = {}; auswahl = {}; laeuft = {}; ausKorb = {}; fertigJetzt = {};
         [].forEach.call(pop.querySelectorAll('.cm-gift'), function (b) { b.remove(); });
         [].forEach.call(pop.querySelectorAll('.cm-gift-on'), function (o) { o.classList.remove('cm-gift-on'); o.__cmSig = ''; });
       }
