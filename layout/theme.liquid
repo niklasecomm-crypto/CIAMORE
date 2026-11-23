@@ -834,10 +834,12 @@ document.addEventListener('DOMContentLoaded', function () {
   function run() {
     var pop = document.getElementById('freegifts-main-popup-container'); if (!pop) return;
     try {
-      /* Kein Geschenk mehr im Fenster, also alles genommen: eigene Kästen
-         entfernen und Merkliste leeren. Sonst blieben die alten Kästen
-         stehen und BOGOS könnte das Fenster nicht sauber schließen. */
-      if (!pop.querySelector('.bogos-offer-gift-item')) {
+      /* Fenster zu (BOGOS setzt visibility auf hidden) oder kein Geschenk
+         mehr drin: eigene Kästen entfernen und Merkliste leeren, damit
+         beim nächsten Öffnen von vorne aufgebaut wird und kein veralteter
+         Kasten stehen bleibt. */
+      var zu = getComputedStyle(pop).visibility === 'hidden';
+      if (zu || !pop.querySelector('.bogos-offer-gift-item')) {
         gezeigt = {};
         [].forEach.call(pop.querySelectorAll('.cm-gift'), function (b) { b.remove(); });
         [].forEach.call(pop.querySelectorAll('.cm-gift-on'), function (o) { o.classList.remove('cm-gift-on'); o.__cmSig = ''; });
