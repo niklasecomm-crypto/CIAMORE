@@ -633,6 +633,35 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 <script>
+/* Geschenk-Fenster: Zurück-Taste und Zurück-Wischen schließen nur das
+   Fenster, statt die Seite zu verlassen.
+
+   Das Fenster hat bewusst kein X und lässt sich nicht danebenklicken,
+   damit das Geschenk nicht übersehen wird. Dadurch landete der Kunde beim
+   Zurückgehen aber auf der vorigen Seite, wo das Fenster sofort wieder
+   aufging: er kam nicht mehr in den Shop. Jetzt schließt Zurück erst das
+   Fenster, erst ein weiteres Zurück verlässt die Seite. Das Geschenk
+   bleibt offen und wird beim nächsten Seitenaufruf wieder angeboten. */
+(function () {
+  var pushed = false;
+  function popup() { return document.getElementById('freegifts-main-popup-container'); }
+  function isOpen() { var p = popup(); return !!p && getComputedStyle(p).visibility !== 'hidden'; }
+  function closePopup() { var p = popup(); var b = p && p.querySelector('.bogos-slider-close-btn'); if (b) b.click(); }
+  function sync() {
+    var open = isOpen();
+    if (open && !pushed) { try { history.pushState({ cmGiftPopup: 1 }, ''); pushed = true; } catch (e) {} }
+    /* Fenster von selbst zu (alle Geschenke genommen): den eigenen
+       Verlaufseintrag wieder abräumen, damit Zurück normal funktioniert. */
+    if (!open && pushed) { pushed = false; if (history.state && history.state.cmGiftPopup) { try { history.back(); } catch (e) {} } }
+  }
+  window.addEventListener('popstate', function () { if (pushed && isOpen()) { pushed = false; closePopup(); } });
+  var t = 0;
+  new MutationObserver(function () { clearTimeout(t); t = setTimeout(sync, 60); })
+    .observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class'] });
+  if (document.readyState !== 'loading') sync(); else document.addEventListener('DOMContentLoaded', sync);
+})();
+</script>
+<script>
 /* Cookie-Banner kompakt (Shopify-Banner): kurzer Text, "Okay" zuerst, "Einstellungen" als Link in der Textzeile. */
 (function () {
   function fix() {
