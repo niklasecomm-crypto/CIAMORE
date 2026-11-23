@@ -744,6 +744,37 @@ document.addEventListener('DOMContentLoaded', function () {
   var gezeigt = {};   /* Produkte, die dieses Fenster angeboten hat */
   var auswahl = {};   /* zuletzt gewählte Variante je Produkt */
   var laeuft = {};    /* Produkte, deren Hinzufügen gerade läuft */
+  var ausKorb = {};   /* Varianten der Geschenke, aus dem Warenkorb gelesen */
+  var korbLaeuft = false;
+
+  /* Welche Variante liegt im Warenkorb? Die Merkliste oben kennt nur, was
+     in diesem Fenster angetippt wurde, und ist nach einem Seitenwechsel
+     leer. Der Warenkorb weiß es immer, deshalb lesen wir dort nach. */
+  function korbLesen(dann) {
+    if (korbLaeuft) return;
+    korbLaeuft = true;
+    fetch('/cart.js', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (c) {
+        var neu = {};
+        (c.items || []).forEach(function (it) {
+          if (it.final_price !== 0) return;          /* nur Geschenke */
+          var teile = String(it.variant_title || '').split('/').map(function (x) { return x.trim(); }).filter(Boolean);
+          var farbe = teile.length && COLORS.test(teile[0]) ? teile.shift() : '';
+          neu[String(it.product_title || '')] = { color: farbe, size: teile.join(' / ') };
+        });
+        ausKorb = neu;
+        korbLaeuft = false;
+        if (dann) dann();
+      })
+      .catch(function () { korbLaeuft = false; });
+  }
+
+  function variante(name) {
+    if (auswahl[name]) return auswahl[name];
+    var treffer = Object.keys(ausKorb).filter(function (t) { return t.indexOf(name) > -1; })[0];
+    return treffer ? ausKorb[treffer] : null;
+  }
 
   function build(offer) {
     var all = read(offer); if (!all.length) return;
@@ -761,17 +792,20 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       teile.push({ name: namen[0], items: all });
     }
+    var fehlt = false;
     Object.keys(gezeigt).forEach(function (n) {
       if (namen.indexOf(n) === -1) {
         delete laeuft[n];   /* liegt im Warenkorb, Wartezustand beenden */
+        if (!variante(n)) fehlt = true;
         teile.push({ name: n, fertig: gezeigt[n] });
       }
     });
+    if (fehlt) korbLesen(function () { offer.__cmSig = ''; run(); });
     teile.forEach(function (t, i) { t.s = schwelle(t.name); t.idx = i; });
     teile.sort(function (a, b) { return a.s === b.s ? a.idx - b.idx : a.s - b.s; });
 
     var sig = teile.map(function (t) {
-      var w = auswahl[t.name] || {};
+      var w = variante(t.name) || {};
       return t.name + (t.fertig ? ':fertig:' + (w.color || '') + '/' + (w.size || '') : '');
     }).join(';') + '#' +
       all.map(function (i) { return [i.name, i.color, i.size, i.btn.disabled ? 'x' : 'o'].join('|'); }).join(';');
@@ -797,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     /* Gewählte Variante mit anzeigen, in derselben Schreibweise wie auf der
        Produktseite, damit der Kunde sieht, was im Warenkorb liegt. */
-    var gew = auswahl[info.name] || {};
+    var gew = variante(info.name) || {};
     var zeilen = '';
     if (gew.color) zeilen += '<div class="cm-gift__label"><b>Veredelung:</b><small>' + esc(gew.color) + '</small></div>';
     if (gew.size) zeilen += '<div class="cm-gift__label"><b>Größe:</b><small>' + esc(gew.size) + '</small></div>';
@@ -880,7 +914,7 @@ document.addEventListener('DOMContentLoaded', function () {
          Kasten stehen bleibt. */
       var zu = getComputedStyle(pop).visibility === 'hidden';
       if (zu || !pop.querySelector('.bogos-offer-gift-item')) {
-        gezeigt = {}; auswahl = {}; laeuft = {};
+        gezeigt = {}; auswahl = {}; laeuft = {}; ausKorb = {};
         [].forEach.call(pop.querySelectorAll('.cm-gift'), function (b) { b.remove(); });
         [].forEach.call(pop.querySelectorAll('.cm-gift-on'), function (o) { o.classList.remove('cm-gift-on'); o.__cmSig = ''; });
       }
