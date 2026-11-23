@@ -706,6 +706,27 @@ document.addEventListener('DOMContentLoaded', function () {
     return m ? parseInt(m[1], 10) : 1;
   }
 
+  /* Ab welchem Warenkorbwert gibt es dieses Geschenk? Steht in den
+     BOGOS-Daten am jeweiligen Angebot. Damit sortieren wir die Geschenke
+     so, wie der Kunde sie beim normalen Einkaufen erreichen würde: erst
+     das Gratis-Geschenk ab 50 €, darunter das VIP-Geschenk ab 79 €. */
+  function schwelle(name) {
+    try {
+      var offers = (window.fgData && window.fgData.offers) || [];
+      for (var i = 0; i < offers.length; i++) {
+        var gp = offers[i].gift_products || [];
+        for (var j = 0; j < gp.length; j++) {
+          if (String(gp[j].title || '').indexOf(name) > -1) {
+            var c = (offers[i].offer_conditions || [])[0];
+            var v = c && c.min_amount != null ? parseFloat(c.min_amount) : NaN;
+            if (!isNaN(v)) return v;
+          }
+        }
+      }
+    } catch (e) {}
+    return Infinity;   /* unbekannt: hinten anstellen, Reihenfolge bleibt */
+  }
+
   /* Stehen dem Kunden mehrere verschiedene Geschenk-PRODUKTE gleichzeitig
      zu (etwa Gratis-Geschenk ab 50 € und VIP-Geschenk ab 79 €, beide auf
      einmal freigeschaltet), wirft BOGOS sie in einen einzigen Block. Früher
@@ -717,9 +738,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var all = read(offer); if (!all.length) return;
     var namen = uniq(all.map(function (i) { return i.name; }));
     var darf = allowed(offer);
-    var gruppen = (namen.length > 1 && darf >= namen.length)
-      ? namen.map(function (n) { return all.filter(function (i) { return i.name === n; }); })
-      : [all];
+    var gruppen = [all];
+    if (namen.length > 1 && darf >= namen.length) {
+      var sortiert = namen.map(function (n, idx) { return { n: n, s: schwelle(n), idx: idx }; });
+      sortiert.sort(function (a, b) { return a.s === b.s ? a.idx - b.idx : a.s - b.s; });
+      gruppen = sortiert.map(function (e) { return all.filter(function (i) { return i.name === e.n; }); });
+    }
     var sig = gruppen.length + '#' + all.map(function (i) { return [i.name, i.color, i.size, i.btn.disabled ? 'x' : 'o'].join('|'); }).join(';');
     if (offer.__cmSig === sig && offer.querySelector('.cm-gift')) return;
     offer.__cmSig = sig;
