@@ -1906,13 +1906,19 @@ html[data-fbt="beige"] body.template-product .bogos-fbt-upsell-select-variant-ti
    (sections/group-header.json, block_order von cm_chips).
    ============================================================ */
 .header__menu .menu__item:has(> a[href$="/collections/sale"]),
+.header__menu .menu__item:has(> a[href$="/collections/sale/"]),
 .header__menu .menu__item:has(> a[href*="/collections/sale?"]),
 .sliderule__wrapper:has(a[href$="/collections/sale"]),
+.sliderule__wrapper:has(a[href$="/collections/sale/"]),
 .sliderow:has(> a[href$="/collections/sale"]),
-li:has(> a[href$="/collections/sale"]) {
+.sliderow:has(> a[href$="/collections/sale/"]),
+li:has(> a[href$="/collections/sale"]),
+li:has(> a[href$="/collections/sale/"]) {
   display: none !important;
 }
 a[href$="/collections/sale"],
-a[href*="/collections/sale?"] {
+a[href$="/collections/sale/"],
+a[href*="/collections/sale?"],
+a[href*="/collections/sale#"] {
   display: none !important;
 }
