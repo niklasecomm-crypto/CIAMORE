@@ -1,0 +1,6 @@
+Diese Datei ist nur ein Auslöser.
+Wird sie geändert und gepusht, holt der Workflow
+"Einstellungen aus dem Shop ins Repo holen" den aktuellen
+Customizer-Stand aus dem Live-Theme ins Repo.
+
+Letzter Abgleich: 2026-11-23

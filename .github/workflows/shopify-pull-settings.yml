@@ -1,0 +1,59 @@
+name: Einstellungen aus dem Shop ins Repo holen
+
+# Holt die Customizer-Einstellungen aus dem Live-Theme zurück ins Repo.
+#
+# Hintergrund: der Deploy pusht diese Dateien absichtlich nicht mehr
+# (siehe shopify-deploy.yml), damit er keine Änderungen aus dem Customizer
+# überschreibt. Dadurch veraltet der Stand im Repo. Dieser Job gleicht ihn
+# wieder an, damit das Repo eine brauchbare Sicherung bleibt.
+#
+# Läuft nicht automatisch bei jedem Push, sondern nur
+#   - über "Run workflow" im Actions-Tab
+#   - oder wenn die Datei .github/pull-settings.txt geändert wird
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/pull-settings.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Shopify CLI
+        run: npm install -g @shopify/cli @shopify/theme
+
+      - name: Einstellungen herunterladen
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_THEME_TOKEN }}
+          SHOPIFY_FLAG_STORE: c1yu1t-gq.myshopify.com
+        run: |
+          shopify theme pull --theme 200235417944 --path . --force \
+            --only "templates/*.json" \
+            --only "templates/customers/*.json" \
+            --only "sections/*.json" \
+            --only "config/settings_data.json"
+
+      - name: Änderungen committen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add templates sections config
+          if git diff --cached --quiet; then
+            echo "Keine Unterschiede, Repo war schon aktuell."
+          else
+            git diff --cached --stat
+            git commit -m "Einstellungen aus dem Live-Theme übernommen
+
+          Automatisch geholt, damit das Repo den aktuellen Stand aus dem
+          Customizer enthält. Diese Dateien werden vom Deploy nicht
+          hochgeladen."
+            git push
+          fi
