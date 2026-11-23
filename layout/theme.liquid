@@ -770,7 +770,10 @@ document.addEventListener('DOMContentLoaded', function () {
     teile.forEach(function (t, i) { t.s = schwelle(t.name); t.idx = i; });
     teile.sort(function (a, b) { return a.s === b.s ? a.idx - b.idx : a.s - b.s; });
 
-    var sig = teile.map(function (t) { return t.name + (t.fertig ? ':fertig' : ''); }).join(';') + '#' +
+    var sig = teile.map(function (t) {
+      var w = auswahl[t.name] || {};
+      return t.name + (t.fertig ? ':fertig:' + (w.color || '') + '/' + (w.size || '') : '');
+    }).join(';') + '#' +
       all.map(function (i) { return [i.name, i.color, i.size, i.btn.disabled ? 'x' : 'o'].join('|'); }).join(';');
     if (offer.__cmSig === sig && offer.querySelector('.cm-gift')) return;
     offer.__cmSig = sig;
@@ -792,11 +795,18 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Kasten für ein Geschenk, das in diesem Fenster schon genommen wurde. */
   function buildFertig(info) {
     function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    /* Gewählte Variante mit anzeigen, in derselben Schreibweise wie auf der
+       Produktseite, damit der Kunde sieht, was im Warenkorb liegt. */
+    var gew = auswahl[info.name] || {};
+    var zeilen = '';
+    if (gew.color) zeilen += '<div class="cm-gift__label"><b>Veredelung:</b><small>' + esc(gew.color) + '</small></div>';
+    if (gew.size) zeilen += '<div class="cm-gift__label"><b>Größe:</b><small>' + esc(gew.size) + '</small></div>';
     var box = document.createElement('div');
     box.className = 'cm-gift cm-gift--fertig';
     box.innerHTML = '<div class="cm-gift__top">' + (info.img ? '<img class="cm-gift__img" src="' + esc(info.img) + '" alt="">' : '') +
       '<div><p class="cm-gift__name">' + esc(info.name) + '</p><div class="cm-gift__price"><span class="cm-gift__free">Gratis</span>' +
       (info.old ? '<span class="cm-gift__old">' + esc(info.old) + '</span>' : '') + '</div></div></div>' +
+      zeilen +
       '<button type="button" class="cm-gift__cta" disabled>Liegt im Warenkorb</button>';
     return box;
   }
@@ -845,6 +855,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var cur = pick();
         if (cur.btn.disabled || laeuft[sel.name]) return;
         laeuft[sel.name] = Date.now();
+        auswahl[sel.name] = { color: cur.color, size: cur.size };
         b.disabled = true; b.textContent = 'Wird hinzugefügt …';
         cur.btn.click();
         /* Notnagel, falls BOGOS gar nicht reagiert: Zustand wieder freigeben. */
