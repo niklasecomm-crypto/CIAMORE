@@ -724,22 +724,37 @@
     function kurzTausch(el, text, ms) {
       if (!el) return;
       clearTimeout(el.__cmZeit);
+
       if (el.__cmAlt === undefined) {
         el.__cmAlt = el.textContent;
+        /* Kasten auf genau die Maße einfrieren, die er gerade hat.
+           Am Handy richtet sich die Knopfbreite nach dem Text, ein
+           längerer Text hätte sonst die ganze Reihe verschoben. */
+        el.style.boxSizing = 'border-box';
+        el.style.width = el.offsetWidth + 'px';
         el.style.minHeight = el.offsetHeight + 'px';
+        el.style.maxHeight = el.offsetHeight + 'px';
       }
+
       el.textContent = text;
       el.classList.add('cm-max');
-      /* falls der Text doch mal breiter ist als der Kasten: verkleinern,
-         statt umbrechen und die Höhe zu sprengen */
+
+      /* Schrift so weit verkleinern, bis der Text in den eingefrorenen
+         Kasten passt. Lieber etwas kleinere Schrift als ein Layout,
+         das springt. */
       el.style.fontSize = '';
-      ['95%', '88%', '82%'].forEach(function (s) {
-        if (el.scrollWidth > el.clientWidth) el.style.fontSize = s;
-      });
+      var stufen = ['96%', '92%', '88%', '84%', '80%', '76%', '72%'];
+      for (var i = 0; i < stufen.length && el.scrollWidth > el.clientWidth; i++) {
+        el.style.fontSize = stufen[i];
+      }
+
       el.__cmZeit = setTimeout(function () {
         el.textContent = el.__cmAlt;
         el.classList.remove('cm-max');
+        el.style.boxSizing = '';
+        el.style.width = '';
         el.style.minHeight = '';
+        el.style.maxHeight = '';
         el.style.fontSize = '';
         el.__cmAlt = undefined;
       }, ms || 2800);
