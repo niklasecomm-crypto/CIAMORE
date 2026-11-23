@@ -575,8 +575,12 @@
   /* Der Originaltext bleibt stehen und bestimmt weiter die Größe,
      er wird nur unsichtbar. Dadurch kann der Knopf seine Breite
      nicht ändern und nichts im Raster verrutschen. */
-  .cm-stumm {
+  .cm-stumm,
+  .bogos-bp-product-card .bogos-bp-btn-add-product.cm-stumm,
+  .bogos-step-item .bogos-step-item-info .bogos-step-item-variant-title.cm-stumm {
     color: transparent !important;
+    text-shadow: none !important;
+    -webkit-text-fill-color: transparent !important;
   }
 
   /* Die Meldung liegt als eigene Ebene darüber, absolut positioniert,
