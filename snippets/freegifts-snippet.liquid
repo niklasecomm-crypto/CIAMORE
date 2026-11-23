@@ -733,10 +733,14 @@
       if (el.__cmAlt === undefined) {
         el.__cmAlt = el.textContent;
         if (breiteFest) {
+          /* Nachkommastellen mitnehmen. offsetWidth rundet auf ganze
+             Pixel, dadurch wäre das Raster um bis zu einen Pixel
+             verrutscht. */
+          var kasten = el.getBoundingClientRect();
           el.style.boxSizing = 'border-box';
-          el.style.width = el.offsetWidth + 'px';
-          el.style.minHeight = el.offsetHeight + 'px';
-          el.style.maxHeight = el.offsetHeight + 'px';
+          el.style.width = kasten.width + 'px';
+          el.style.minHeight = kasten.height + 'px';
+          el.style.maxHeight = kasten.height + 'px';
         }
       }
 
