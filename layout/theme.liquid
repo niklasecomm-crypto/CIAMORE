@@ -447,7 +447,11 @@ document.addEventListener('DOMContentLoaded', function () {
     [/^See more/,'Mehr anzeigen'],[/^See product.?s details$/i,'Produktdetails ansehen'],[/^See less$/,'Weniger anzeigen'],
     [/^Get our special offers$/,'Unsere Angebote'],
     [/^Not reached yet$/,'Noch nicht erreicht'],
-    [/^Free Shipping$/,'Gratis Versand'],[/^Free Gift$/,'Gratis Geschenk'],[/^VIP Gift$/,'VIP Geschenk'],
+    /* "Free Gift" und "VIP Gift" bleiben bewusst englisch stehen, damit
+       die Namen überall gleich heissen: Fortschrittsleiste, Geschenk-
+       Fenster und BOGOS-Admin. "Free Shipping" ist kein Produktname,
+       das bleibt übersetzt. */
+    [/^Free Shipping$/,'Gratis Versand'],
     [/^Buy (.+)$/,'Ab $1']
   ];
   function fix(root){
@@ -744,6 +748,31 @@ document.addEventListener('DOMContentLoaded', function () {
     return Infinity;   /* unbekannt: hinten anstellen, Reihenfolge bleibt */
   }
 
+  /* Alle Geschenk-Schwellen des Shops, aufsteigend. Daraus ergibt sich,
+     welches Angebot das Free Gift ist (niedrigste Schwelle) und welches
+     das VIP Gift (höchste). Bewusst nicht fest auf 50 und 79 verdrahtet,
+     damit die Überschriften stimmen, wenn du die Beträge änderst. */
+  function stufen() {
+    var out = [];
+    try {
+      var offers = (window.fgData && window.fgData.offers) || [];
+      for (var i = 0; i < offers.length; i++) {
+        var c = (offers[i].offer_conditions || [])[0];
+        var v = c && c.min_amount != null ? parseFloat(c.min_amount) : NaN;
+        if (!isNaN(v) && out.indexOf(v) === -1) out.push(v);
+      }
+    } catch (e) {}
+    out.sort(function (a, b) { return a - b; });
+    return out;
+  }
+
+  /* Heisst dieses Geschenk "Free Gift" oder "VIP Gift"? */
+  function stufenName(produkt) {
+    var s = schwelle(produkt), alle = stufen();
+    if (!isFinite(s) || alle.length < 2) return '';
+    return s >= alle[alle.length - 1] ? 'VIP Gift' : 'Free Gift';
+  }
+
   /* Stehen dem Kunden mehrere verschiedene Geschenk-PRODUKTE gleichzeitig
      zu (etwa Gratis-Geschenk ab 50 € und VIP-Geschenk ab 79 €, beide auf
      einmal freigeschaltet), wirft BOGOS sie in einen einzigen Block. Früher
@@ -897,6 +926,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (gew.size) zeilen += '<div class="cm-gift__label"><b>Größe:</b><small>' + esc(gew.size) + '</small></div>';
     var box = document.createElement('div');
     box.className = 'cm-gift cm-gift--fertig';
+    box.setAttribute('data-cm-produkt', info.name || '');
     box.innerHTML = '<div class="cm-gift__top">' + (info.img ? '<img class="cm-gift__img" src="' + esc(info.img) + '" alt="">' : '') +
       '<div><p class="cm-gift__name">' + esc(info.name) + '</p><div class="cm-gift__price"><span class="cm-gift__free">Gratis</span>' +
       (info.old ? '<span class="cm-gift__old">' + esc(info.old) + '</span>' : '') + '</div></div></div>' +
@@ -912,6 +942,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var merk = auswahl[items[0].name] || {};
     var sel = { name: items[0].name, color: merk.color || items[0].color, size: merk.size || items[0].size };
     var box = document.createElement('div'); box.className = 'cm-gift';
+    box.setAttribute('data-cm-produkt', items[0].name || '');
     function pick() {
       var pool = items.filter(function (i) { return i.name === sel.name; });
       if (!pool.some(function (i) { return i.color === sel.color; })) sel.color = pool[0].color;
@@ -997,8 +1028,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
       /* Überschrift und Unterzeile richten sich danach, wie viele Geschenke
          gerade im Fenster stehen. */
-      var anzahl = pop.querySelectorAll('.cm-gift').length;
-      var titelText = anzahl > 1 ? 'Deine Gratis-Geschenke' : 'Dein Gratis-Geschenk';
+      var kaesten = [].slice.call(pop.querySelectorAll('.cm-gift'));
+      var anzahl = kaesten.length;
+
+      /* Die Überschrift benennt das Geschenk so, wie es auch in der
+         Fortschrittsleiste im Warenkorb steht: Free Gift oder VIP Gift.
+         Stehen beide gleichzeitig im Fenster, gibt es eine gemeinsame
+         Überschrift. Lässt sich die Stufe nicht bestimmen, bleibt es
+         beim neutralen "Dein Geschenk". */
+      var titelText;
+      if (anzahl > 1) {
+        titelText = 'Dein Free & VIP Gift';
+      } else {
+        var stufe = anzahl === 1 ? stufenName(kaesten[0].getAttribute('data-cm-produkt') || '') : '';
+        titelText = stufe ? 'Dein ' + stufe : 'Dein Geschenk';
+      }
       var subText = anzahl > 1
         ? 'Du hast ' + anzahl + ' Geschenke frei. Wähle je eine Variante, wir legen beide kostenlos dazu.'
         : 'Wähle deine Variante, wir legen es kostenlos dazu.';
