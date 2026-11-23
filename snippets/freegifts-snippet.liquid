@@ -572,23 +572,18 @@
      wenn jemand mehr will, als wir haben, erscheint diese Zeile, und
      nach ein paar Sekunden verschwindet sie wieder.
      --------------------------------------------------------------- */
-  .cm-lager-warnung {
-    font-size: 11px;
-    line-height: 1.35;
+  /* Knopf behält Kasten, Farbe und Höhe, nur der Text wechselt kurz.
+     Etwas kleiner und enger, damit der längere Text einzeilig bleibt. */
+  .bogos-bp-product-card .bogos-bp-btn-add-product.cm-max {
+    font-size: 90%;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  /* Variantenzeile im Widget, gleiche Zeile, gleiche Höhe */
+  .bogos-step-item-variant-title.cm-max {
     color: #c0392b;
-    font-weight: 500;
-    margin-top: 4px;
-    animation: cm-lager-auf .18s ease-out;
-  }
-
-  .bogos-bp-product-card .cm-lager-warnung {
-    margin: 6px 0 0;
-    text-align: center;
-  }
-
-  @keyframes cm-lager-auf {
-    from { opacity: 0; transform: translateY(-2px); }
-    to   { opacity: 1; transform: none; }
+    font-weight: 600;
   }
 
   .cm-lager-fehler {
@@ -720,29 +715,36 @@
       return summe;
     }
 
-    /* ---------- Warnung erst beim Versuch ---------- */
+    /* ---------- Rückmeldung erst beim Versuch ---------- */
 
-    /* Wichtig: der Restbestand wird NICHT von vornherein angezeigt. Erst
-       wenn jemand mehr will, als da ist, erscheint die Zeile. Sie
-       verschwindet nach ein paar Sekunden von selbst wieder. */
-    function warnen(anker, text) {
-      if (!anker) return;
-      var w = anker.querySelector('.cm-lager-warnung');
-      if (!w) {
-        w = document.createElement('div');
-        w.className = 'cm-lager-warnung';
-        anker.appendChild(w);
+    /* Der Restbestand wird NICHT von vornherein angezeigt. Erst wenn
+       jemand mehr will, als da ist, kommt die Rückmeldung, und zwar
+       ohne dass sich irgendwas verschiebt: der vorhandene Text wird
+       kurz ausgetauscht und danach wieder zurückgesetzt. Die Höhe wird
+       während des Tauschs festgehalten, damit nichts springt. */
+    function kurzTausch(el, text, ms) {
+      if (!el) return;
+      clearTimeout(el.__cmZeit);
+      if (el.__cmAlt === undefined) {
+        el.__cmAlt = el.textContent;
+        el.style.minHeight = el.offsetHeight + 'px';
       }
-      w.textContent = text;
-      clearTimeout(w.__weg);
-      w.__weg = setTimeout(function () {
-        if (w.parentNode) w.parentNode.removeChild(w);
-      }, 7000);
+      el.textContent = text;
+      el.classList.add('cm-max');
+      el.__cmZeit = setTimeout(function () {
+        el.textContent = el.__cmAlt;
+        el.classList.remove('cm-max');
+        el.style.minHeight = '';
+        el.__cmAlt = undefined;
+      }, ms || 2800);
     }
 
-    function grenze(n, max) {
-      if (max === 1) return 'Vom ' + n + ' haben wir nur noch 1 Stück. Mehr geht leider nicht.';
-      return 'Vom ' + n + ' haben wir nur noch ' + max + ' Stück. Mehr geht leider nicht.';
+    function grossText(max) {
+      return max < 1 ? 'NICHT MEHR VERFÜGBAR' : 'NUR NOCH ' + max + ' MÖGLICH';
+    }
+
+    function kleinText(max) {
+      return max < 1 ? 'Nicht mehr verfügbar' : 'Nur noch ' + max + ' möglich';
     }
 
     /* ---------- Anzeige und Deckel ---------- */
@@ -767,7 +769,7 @@
           for (var i = 0; i < m - max; i++) minus.click();
           setTimeout(function () {
             busy = false;
-            warnen(it.querySelector('.bogos-step-item-info'), grenze(name(it), max));
+            kurzTausch(it.querySelector('.bogos-step-item-variant-title'), kleinText(max));
             anwenden();
           }, 400);
           return;
@@ -864,7 +866,9 @@
         e.preventDefault();
         e.stopPropagation();
         if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-        warnen(it.querySelector('.bogos-step-item-info'), grenze(name(it), pmax));
+        /* im Widget die Variantenzeile kurz umschreiben, gleiche Zeile,
+           gleiche Höhe, nichts rutscht */
+        kurzTausch(it.querySelector('.bogos-step-item-variant-title'), kleinText(pmax));
         return;
       }
 
@@ -881,8 +885,9 @@
         e.preventDefault();
         e.stopPropagation();
         if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-        var anker = card.querySelector('.bogos-bp-add-product-container') || card;
-        warnen(anker, grenze(karteName(card), max));
+        /* Knopftext selbst tauschen: gleicher Kasten, gleiche Farbe,
+           nur ein anderer Text. Danach wieder zurück. */
+        kurzTausch(kbtn, grossText(max));
         return;
       }
 
