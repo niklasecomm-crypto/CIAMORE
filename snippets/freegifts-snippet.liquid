@@ -567,34 +567,28 @@
 </script>
 <style>
   /* ---------------------------------------------------------------
-     LAGERBESTAND IM BUNDLE-WIDGET
-     Hinweistext unter dem Produkt und ausgegrauter Plus-Button,
-     sobald der echte Bestand erreicht ist.
+     LAGERBESTAND IM BUNDLE
+     Der Restbestand wird bewusst NICHT von vornherein angezeigt. Erst
+     wenn jemand mehr will, als wir haben, erscheint diese Zeile, und
+     nach ein paar Sekunden verschwindet sie wieder.
      --------------------------------------------------------------- */
-  .cm-lager-hinweis {
+  .cm-lager-warnung {
     font-size: 11px;
-    line-height: 1.3;
+    line-height: 1.35;
     color: #c0392b;
-    margin-top: 2px;
     font-weight: 500;
+    margin-top: 4px;
+    animation: cm-lager-auf .18s ease-out;
   }
 
-  .bogos-plus-step-item-btn.cm-aus {
-    opacity: .3;
-    pointer-events: none;
-    cursor: default;
+  .bogos-bp-product-card .cm-lager-warnung {
+    margin: 6px 0 0;
+    text-align: center;
   }
 
-  /* Produktkarte: Knopf ist gesperrt, sobald der Bestand im Bundle
-     ausgereizt ist. So zählt BOGOS gar nicht erst hoch. */
-  .bogos-bp-product-card .bogos-bp-btn-add-product.cm-aus {
-    opacity: .4;
-    pointer-events: none;
-    cursor: default;
-  }
-
-  .bogos-bp-product-card .cm-lager-hinweis {
-    margin: 2px 0 4px;
+  @keyframes cm-lager-auf {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: none; }
   }
 
   .cm-lager-fehler {
@@ -726,56 +720,35 @@
       return summe;
     }
 
-    /* ---------- Anzeige und Deckel ---------- */
+    /* ---------- Warnung erst beim Versuch ---------- */
 
-    /* Die Karten bekommen den gleichen Deckel wie das Widget. Wichtig:
-       der Knopf wird gesperrt, BEVOR geklickt wird. Früher hat BOGOS erst
-       hochgezählt und wir haben danach zurückgedreht, das hat sichtbar
-       gezuckt (Preis und "Noch X Produkte wählen" sprangen kurz um). */
-    function karten() {
-      if (!cache) return;
-
-      [].slice.call(document.querySelectorAll('.bogos-bp-product-card')).forEach(function (card) {
-        var vid = karteVariante(card);
-        var btn = card.querySelector('.bogos-bp-btn-add-product');
-        if (!btn) return;
-
-        var max = vid ? frei(vid) : -1;
-        var voll = max >= 0 && schonDrin(vid) >= max;
-
-        if (voll !== btn.classList.contains('cm-aus')) {
-          btn.classList.toggle('cm-aus', voll);
-        }
-
-        var h = card.querySelector('.cm-lager-hinweis');
-        var text = '';
-        /* Bei 0 sagt BOGOS auf dem Knopf schon "AUSVERKAUFT",
-           dann brauchen wir die Zeile nicht nochmal. */
-        if (max >= 1 && max <= 5) {
-          text = voll
-            ? 'Mehr als ' + max + ' geht nicht, nur noch ' + max + ' verfügbar'
-            : 'Nur noch ' + max + ' verfügbar';
-        }
-
-        if (text) {
-          if (!h) {
-            h = document.createElement('div');
-            h.className = 'cm-lager-hinweis';
-            var anker = card.querySelector('.ciamore-price-row') ||
-                        card.querySelector('.bogos-bp-product-price');
-            if (anker && anker.parentNode) anker.parentNode.insertBefore(h, anker.nextSibling);
-            else card.appendChild(h);
-          }
-          if (h.textContent !== text) h.textContent = text;
-        } else if (h && h.parentNode) {
-          h.parentNode.removeChild(h);
-        }
-      });
+    /* Wichtig: der Restbestand wird NICHT von vornherein angezeigt. Erst
+       wenn jemand mehr will, als da ist, erscheint die Zeile. Sie
+       verschwindet nach ein paar Sekunden von selbst wieder. */
+    function warnen(anker, text) {
+      if (!anker) return;
+      var w = anker.querySelector('.cm-lager-warnung');
+      if (!w) {
+        w = document.createElement('div');
+        w.className = 'cm-lager-warnung';
+        anker.appendChild(w);
+      }
+      w.textContent = text;
+      clearTimeout(w.__weg);
+      w.__weg = setTimeout(function () {
+        if (w.parentNode) w.parentNode.removeChild(w);
+      }, 7000);
     }
+
+    function grenze(n, max) {
+      if (max === 1) return 'Vom ' + n + ' haben wir nur noch 1 Stück. Mehr geht leider nicht.';
+      return 'Vom ' + n + ' haben wir nur noch ' + max + ' Stück. Mehr geht leider nicht.';
+    }
+
+    /* ---------- Anzeige und Deckel ---------- */
 
     function anwenden() {
       if (!cache || busy) return;
-      karten();
 
       posten().forEach(function (it) {
         var max = frei(it.getAttribute('data-variant-id'));
@@ -786,37 +759,20 @@
 
         var m = menge(it);
 
-        /* Hinweis nur zeigen, wenn es wirklich knapp wird */
-        var h = it.querySelector('.cm-lager-hinweis');
-        if (max >= 0 && max <= 5) {
-          if (!h) {
-            h = document.createElement('div');
-            h.className = 'cm-lager-hinweis';
-            (it.querySelector('.bogos-step-item-info') || it).appendChild(h);
-          }
-          var txt = max === 0
-            ? 'Leider ausverkauft'
-            : 'Nur noch ' + max + ' verfügbar';
-          if (h.textContent !== txt) h.textContent = txt;
-        } else if (h) {
-          h.parentNode.removeChild(h);
-        }
-
-        /* Zu viel drin? Über die echten Minus-Klicks zurückdrehen,
-           damit BOGOS seine eigenen Summen mitbekommt. */
+        /* Netz für den Fall, dass doch zu viel drin landet (getippte
+           Menge, BOGOS-Eigenleben). Über echte Minus-Klicks zurück,
+           damit BOGOS seine Summen mitbekommt. */
         if (max >= 0 && m > max && minus) {
           busy = true;
           for (var i = 0; i < m - max; i++) minus.click();
-          setTimeout(function () { busy = false; anwenden(); }, 400);
+          setTimeout(function () {
+            busy = false;
+            warnen(it.querySelector('.bogos-step-item-info'), grenze(name(it), max));
+            anwenden();
+          }, 400);
           return;
         }
 
-        if (plus) {
-          var sperren = max >= 0 && m >= max;
-          if (sperren !== plus.classList.contains('cm-aus')) {
-            plus.classList.toggle('cm-aus', sperren);
-          }
-        }
         if (max >= 0) inp.setAttribute('max', String(max));
       });
 
@@ -895,8 +851,24 @@
     window.addEventListener('click', function (e) {
       if (!e.target || !e.target.closest) return;
 
-      /* Produktkarte: blocken, bevor BOGOS hochzählt. Sonst sieht man
-         kurz den falschen Preis und die falsche Restanzahl. */
+      /* Plus im Widget: blocken, bevor BOGOS hochzählt. Sonst sieht man
+         für ein paar Hundert Millisekunden den falschen Preis und die
+         falsche Restanzahl, bevor es zurückspringt. */
+      var pbtn = e.target.closest('.bogos-plus-step-item-btn');
+      if (pbtn) {
+        var it = pbtn.closest('.bogos-step-item[data-variant-id]');
+        if (!it || !cache) return;
+        var pmax = frei(it.getAttribute('data-variant-id'));
+        if (pmax < 0 || menge(it) < pmax) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        warnen(it.querySelector('.bogos-step-item-info'), grenze(name(it), pmax));
+        return;
+      }
+
+      /* Produktkarte: gleiches Spiel */
       var kbtn = e.target.closest('.bogos-bp-btn-add-product');
       if (kbtn) {
         var card = kbtn.closest('.bogos-bp-product-card');
@@ -909,8 +881,8 @@
         e.preventDefault();
         e.stopPropagation();
         if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-        meldung(satz(karteName(card), max) + '. Mehr können wir leider nicht ins Bundle legen.');
-        karten();
+        var anker = card.querySelector('.bogos-bp-add-product-container') || card;
+        warnen(anker, grenze(karteName(card), max));
         return;
       }
 
