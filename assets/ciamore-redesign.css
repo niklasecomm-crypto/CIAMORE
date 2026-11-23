@@ -1894,3 +1894,25 @@ html[data-fbt="beige"] body.template-product .bogos-fbt-upsell-select-variant-ti
   border-bottom-color: #212121 !important; border-left-color: #212121 !important;
   border-top-color: transparent !important; border-right-color: transparent !important;
 }
+
+/* ============================================================
+   SALE-KOLLEKTION VORÜBERGEHEND AUSGEBLENDET (23.11.2026)
+   Seit der Preisumstellung gibt es keine direkt reduzierten
+   Produkte mehr, die Kollektion "Sale" ist dadurch leer an
+   Angeboten. Hier werden alle Links darauf versteckt:
+   Hauptnavigation, Handymenü, Chip-Leiste und Footer.
+   Zum Zurückholen diesen ganzen Block löschen und im
+   Customizer den Chip "Sale" wieder einblenden
+   (sections/group-header.json, block_order von cm_chips).
+   ============================================================ */
+.header__menu .menu__item:has(> a[href$="/collections/sale"]),
+.header__menu .menu__item:has(> a[href*="/collections/sale?"]),
+.sliderule__wrapper:has(a[href$="/collections/sale"]),
+.sliderow:has(> a[href$="/collections/sale"]),
+li:has(> a[href$="/collections/sale"]) {
+  display: none !important;
+}
+a[href$="/collections/sale"],
+a[href*="/collections/sale?"] {
+  display: none !important;
+}
