@@ -16,8 +16,29 @@ jobs:
       - name: Install Shopify CLI
         run: npm install -g @shopify/cli @shopify/theme
 
+      # WICHTIG: Einstellungsdateien werden NICHT mitgeschickt.
+      #
+      # In templates/*.json, sections/group-*.json und
+      # config/settings_data.json stehen die Customizer-Einstellungen:
+      # welche Sektion sichtbar ist, welches Banner oben liegt, welche
+      # Texte und Bilder gesetzt sind. Diese Dateien gehören dem
+      # Customizer, nicht dem Repo.
+      #
+      # Ohne diese Ausnahmen hat jeder Deploy den Stand aus dem Repo
+      # darübergebügelt und damit jede Änderung zurückgesetzt, die Niklas
+      # im Customizer gemacht hat (23.11.2026: das ausgeblendete
+      # rotierende Banner kam nach jedem Push zurück).
+      #
+      # Folge davon: Änderungen an diesen Dateien im Repo landen nicht
+      # mehr im Shop. Solche Änderungen also direkt im Customizer machen.
       - name: Deploy theme
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_THEME_TOKEN }}
           SHOPIFY_FLAG_STORE: c1yu1t-gq.myshopify.com
-        run: shopify theme push --theme 200235417944 --path . --allow-live
+        run: |
+          shopify theme push --theme 200235417944 --path . --allow-live \
+            --ignore "templates/*.json" \
+            --ignore "templates/customers/*.json" \
+            --ignore "templates/metaobject/*.json" \
+            --ignore "sections/*.json" \
+            --ignore "config/settings_data.json"
