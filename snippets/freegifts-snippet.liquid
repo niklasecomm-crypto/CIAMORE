@@ -572,17 +572,40 @@
      wenn jemand mehr will, als wir haben, erscheint diese Zeile, und
      nach ein paar Sekunden verschwindet sie wieder.
      --------------------------------------------------------------- */
-  /* Knopf behält Kasten, Farbe und Höhe, nur der Text wechselt kurz.
-     Etwas kleiner und enger, damit der längere Text einzeilig bleibt. */
-  .bogos-bp-product-card .bogos-bp-btn-add-product.cm-max {
-    letter-spacing: 0;
-    white-space: nowrap;
+  /* Der Originaltext bleibt stehen und bestimmt weiter die Größe,
+     er wird nur unsichtbar. Dadurch kann der Knopf seine Breite
+     nicht ändern und nichts im Raster verrutschen. */
+  .cm-stumm {
+    color: transparent !important;
   }
 
-  /* Variantenzeile im Widget, gleiche Zeile, gleiche Höhe */
-  .bogos-step-item-variant-title.cm-max {
+  /* Die Meldung liegt als eigene Ebene darüber, absolut positioniert,
+     zählt also für die Größenberechnung gar nicht mit. */
+  .bogos-bp-product-card .bogos-bp-btn-add-product .cm-lay {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    letter-spacing: 0;
+    pointer-events: none;
+  }
+
+  .bogos-step-item-info .cm-lay-zeile {
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
     color: #c0392b;
     font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
   }
 
   .cm-lager-fehler {
@@ -717,56 +740,68 @@
     /* ---------- Rückmeldung erst beim Versuch ---------- */
 
     /* Der Restbestand wird NICHT von vornherein angezeigt. Erst wenn
-       jemand mehr will, als da ist, kommt die Rückmeldung, und zwar
-       ohne dass sich irgendwas verschiebt: der vorhandene Text wird
-       kurz ausgetauscht und danach wieder zurückgesetzt. Die Höhe wird
-       während des Tauschs festgehalten, damit nichts springt. */
-    /* breiteFest: nur für den Knopf auf der Produktkarte. Dessen Breite
-       richtet sich am Handy nach dem Text, ein längerer Text hätte sonst
-       die ganze Reihe verschoben. Die Variantenzeile im Widget ist
-       dagegen schmal am Inhalt ("Gold"), die darf mitwachsen, dort
-       bewegt sich dadurch nichts. */
-    function kurzTausch(el, text, breiteFest, ms) {
-      if (!el) return;
-      clearTimeout(el.__cmZeit);
+       jemand mehr will, als da ist, kommt die Rückmeldung.
 
-      if (el.__cmAlt === undefined) {
-        el.__cmAlt = el.textContent;
-        if (breiteFest) {
-          /* Nachkommastellen mitnehmen. offsetWidth rundet auf ganze
-             Pixel, dadurch wäre das Raster um bis zu einen Pixel
-             verrutscht. */
-          var kasten = el.getBoundingClientRect();
-          el.style.boxSizing = 'border-box';
-          el.style.width = kasten.width + 'px';
-          el.style.minHeight = kasten.height + 'px';
-          el.style.maxHeight = kasten.height + 'px';
-        }
+       Wichtig: der Originaltext wird NICHT ersetzt, sondern bleibt stehen
+       und wird nur unsichtbar gemacht. Die Meldung legt sich als eigene
+       Ebene darüber. Diese Ebene liegt absolut positioniert, zählt also
+       für die Größenberechnung gar nicht mit.
+
+       Der Grund: am Handy richtet sich die Knopfbreite nach seinem Text.
+       Jeder echte Textwechsel hätte den Knopf breiter gemacht und damit
+       die ganze Spalte verschoben. Mit der Ebene darüber ist das
+       technisch ausgeschlossen, egal wie lang der Text ist. */
+
+    function knopfMeldung(btn, text, ms) {
+      if (!btn) return;
+      clearTimeout(btn.__cmZeit);
+
+      var lage = btn.querySelector('.cm-lay');
+      if (!lage) {
+        lage = document.createElement('span');
+        lage.className = 'cm-lay';
+        btn.appendChild(lage);
+      }
+      lage.textContent = text;
+      btn.classList.add('cm-stumm');
+
+      /* Nur die Ebene selbst verkleinern, falls sie zu breit wäre.
+         Am Kasten ändert das nichts. */
+      lage.style.fontSize = '';
+      var stufen = ['96%', '92%', '88%', '84%', '80%'];
+      for (var i = 0; i < stufen.length && lage.scrollWidth > btn.clientWidth - 6; i++) {
+        lage.style.fontSize = stufen[i];
       }
 
-      el.textContent = text;
-      el.classList.add('cm-max');
+      btn.__cmZeit = setTimeout(function () {
+        btn.classList.remove('cm-stumm');
+        if (lage.parentNode) lage.parentNode.removeChild(lage);
+      }, ms || 2800);
+    }
 
-      /* Schrift nur so weit verkleinern, wie es der eingefrorene Kasten
-         verlangt. Lieber ein paar Prozent kleiner als ein Layout, das
-         springt. */
-      el.style.fontSize = '';
-      if (breiteFest) {
-        var stufen = ['96%', '92%', '88%', '84%', '80%'];
-        for (var i = 0; i < stufen.length && el.scrollWidth > el.clientWidth; i++) {
-          el.style.fontSize = stufen[i];
-        }
+    function zeileMeldung(it, text, ms) {
+      if (!it) return;
+      var info = it.querySelector('.bogos-step-item-info');
+      var vt = it.querySelector('.bogos-step-item-variant-title');
+      if (!info || !vt) return;
+
+      clearTimeout(info.__cmZeit);
+      if (getComputedStyle(info).position === 'static') info.style.position = 'relative';
+
+      var lage = info.querySelector('.cm-lay-zeile');
+      if (!lage) {
+        lage = document.createElement('span');
+        lage.className = 'cm-lay-zeile';
+        info.appendChild(lage);
       }
+      lage.textContent = text;
+      vt.classList.add('cm-stumm');
+      lage.style.top = vt.offsetTop + 'px';
+      lage.style.height = vt.offsetHeight + 'px';
 
-      el.__cmZeit = setTimeout(function () {
-        el.textContent = el.__cmAlt;
-        el.classList.remove('cm-max');
-        el.style.boxSizing = '';
-        el.style.width = '';
-        el.style.minHeight = '';
-        el.style.maxHeight = '';
-        el.style.fontSize = '';
-        el.__cmAlt = undefined;
+      info.__cmZeit = setTimeout(function () {
+        vt.classList.remove('cm-stumm');
+        if (lage.parentNode) lage.parentNode.removeChild(lage);
       }, ms || 2800);
     }
 
@@ -803,7 +838,7 @@
           for (var i = 0; i < m - max; i++) minus.click();
           setTimeout(function () {
             busy = false;
-            kurzTausch(it.querySelector('.bogos-step-item-variant-title'), kleinText(max));
+            zeileMeldung(it, kleinText(max));
             anwenden();
           }, 400);
           return;
@@ -902,7 +937,7 @@
         if (e.stopImmediatePropagation) e.stopImmediatePropagation();
         /* im Widget die Variantenzeile kurz umschreiben, gleiche Zeile,
            gleiche Höhe, nichts rutscht */
-        kurzTausch(it.querySelector('.bogos-step-item-variant-title'), kleinText(pmax));
+        zeileMeldung(it, kleinText(pmax));
         return;
       }
 
@@ -921,7 +956,7 @@
         if (e.stopImmediatePropagation) e.stopImmediatePropagation();
         /* Knopftext selbst tauschen: gleicher Kasten, gleiche Farbe,
            nur ein anderer Text. Danach wieder zurück. */
-        kurzTausch(kbtn, grossText(max), true);
+        knopfMeldung(kbtn, grossText(max));
         return;
       }
 
