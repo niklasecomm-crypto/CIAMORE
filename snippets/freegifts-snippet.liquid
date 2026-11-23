@@ -749,11 +749,12 @@
 
         var h = card.querySelector('.cm-lager-hinweis');
         var text = '';
-        if (max >= 0 && max <= 5) {
-          text = max === 0
-            ? 'Leider ausverkauft'
-            : (voll ? 'Mehr als ' + max + ' geht nicht, nur noch ' + max + ' verfügbar'
-                    : 'Nur noch ' + max + ' verfügbar');
+        /* Bei 0 sagt BOGOS auf dem Knopf schon "AUSVERKAUFT",
+           dann brauchen wir die Zeile nicht nochmal. */
+        if (max >= 1 && max <= 5) {
+          text = voll
+            ? 'Mehr als ' + max + ' geht nicht, nur noch ' + max + ' verfügbar'
+            : 'Nur noch ' + max + ' verfügbar';
         }
 
         if (text) {
