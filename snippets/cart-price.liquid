@@ -63,23 +63,32 @@
   </div>
 {%- endunless -%}
 
+{%- comment -%}
+  CIAMORE: Vergleichspreis (Summe der Streichpreise) ermitteln. Daraus
+  ergibt sich auch, ob im Warenkorb überhaupt etwas gespart wird. Nur dann
+  wird die Zwischensumme rot (Klasse cm-hat-rabatt). Liegen nur unrabattierte
+  Produkte drin, bleibt sie schwarz wie auf der Produktseite.
+{%- endcomment -%}
+{%- assign cm_compare = 0 -%}
+{%- for item in cart.items -%}
+  {%- assign cm_unit = item.original_price -%}
+  {%- if item.variant.compare_at_price > cm_unit -%}{%- assign cm_unit = item.variant.compare_at_price -%}{%- endif -%}
+  {%- assign cm_compare = cm_unit | times: item.quantity | plus: cm_compare -%}
+{%- endfor -%}
+{%- assign cm_hat_rabatt = false -%}
+{%- if cm_compare > subtotal -%}{%- assign cm_hat_rabatt = true -%}{%- endif -%}
+{%- if cart.original_total_price > subtotal -%}{%- assign cm_hat_rabatt = true -%}{%- endif -%}
+
 <div class="cart__total">
   <span class="cart__total__label">{{- 'cart.general.subtotal' | t -}}</span>
 
-  <span class="cart__total__price cart__total__price--animated" data-cart-total="{{ subtotal }}">
+  <span class="cart__total__price cart__total__price--animated{% if cm_hat_rabatt %} cm-hat-rabatt{% endif %}" data-cart-total="{{ subtotal }}">
     {%- if subtotal == 0 -%}
       {{ 'general.money.free' | t }}
     {%- else -%}
       {{- subtotal | money -}}
     {%- endif -%}
   </span>
-  {%- comment -%} CIAMORE: Vergleichspreis (Summe der Streichpreise) durchgestrichen hinter der Zwischensumme {%- endcomment -%}
-  {%- assign cm_compare = 0 -%}
-  {%- for item in cart.items -%}
-    {%- assign cm_unit = item.original_price -%}
-    {%- if item.variant.compare_at_price > cm_unit -%}{%- assign cm_unit = item.variant.compare_at_price -%}{%- endif -%}
-    {%- assign cm_compare = cm_unit | times: item.quantity | plus: cm_compare -%}
-  {%- endfor -%}
   {%- if cm_compare > subtotal -%}<s class="cm-total-compare">{{ cm_compare | money }}</s>{%- endif -%}
 
   <div class="cart__price__loader loader"><div class="loader-indeterminate"></div></div>

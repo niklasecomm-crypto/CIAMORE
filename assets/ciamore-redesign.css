@@ -811,7 +811,11 @@ html body .drawer--cart .cart__checkout, html body .cart__checkout { border-radi
 /* Warenkorb-Zwischensumme rot, Summe der Streichpreise dunkelgrau durchgestrichen dahinter */
 .drawer--cart .cart__total { display: flex !important; align-items: baseline; flex-wrap: wrap; column-gap: 10px; }
 .drawer--cart .cart__total__label { margin-right: auto; }
-.drawer--cart .cart__total__price { color: #d82323 !important; }
+/* Zwischensumme nur rot, wenn im Warenkorb wirklich etwas gespart wird.
+   Die Klasse cm-hat-rabatt setzt snippets/cart-price.liquid. Liegen nur
+   unrabattierte Produkte drin, bleibt die Summe schwarz wie der Preis auf
+   der Produktseite. */
+.drawer--cart .cart__total__price.cm-hat-rabatt { color: #d82323 !important; }
 .cm-total-compare { color: #4d4d4d; font-size: 16px; font-weight: 500; text-decoration: line-through; order: 3; }
 .drawer--cart .cart__total__price { order: 2; }
 
