@@ -78,6 +78,19 @@
    zu filtern. */
 
 
+/* KEIN AUFBLITZEN DES VOLLEN PREISES IM BUNDLE-WARENKORB
+   BOGOS fügt eine neue Zeile zuerst mit dem vollen Preis ein. Das Skript
+   rechnet sie noch vor dem Zeichnen um, trotzdem hier eine Sperre als
+   Absicherung: der Preis einer Zeile wird erst sichtbar, wenn er
+   umgerechnet ist (Klasse cm-preis-ok). Nur in den Bundles mit
+   Prozentrabatt, die Festpreis-Bundles rechnen nichts um. */
+.bundle-blackweek .bogos-step-item:not(.cm-preis-ok) .bogos-step-item-price,
+.bundle-50off .bogos-step-item:not(.cm-preis-ok) .bogos-step-item-price {
+  visibility: hidden;
+}
+/* BIS HIER HIN */
+
+
 /* RABATT-BADGE + PREISANZEIGE auf BOGOS-Karten (alle Bundles) */
 
 /* Badge oben links auf dem Produktbild */
@@ -453,7 +466,13 @@
       var summeNeu = 0, summeAlt = 0, vollstaendig = true;
       items.forEach(function (item) {
         var basis = parseFloat(item.getAttribute('data-price'));
-        if (!basis || !isFinite(basis)) { vollstaendig = false; return; }
+        if (!basis || !isFinite(basis)) {
+          vollstaendig = false;
+          /* Ohne Grundpreis nichts rechnen, aber freigeben — sonst bliebe
+             der Preis durch die CSS-Sperre dauerhaft unsichtbar. */
+          item.classList.add('cm-preis-ok');
+          return;
+        }
         var mengeEl = item.querySelector('.bogos-bp-quantity-input');
         var menge = mengeEl ? (parseInt(mengeEl.value, 10) || 1) : 1;
         var neu = discounted(basis, bi);
@@ -464,6 +483,7 @@
         var alt = preisSpanne(item, 'bogos-step-item-original-price');
         setText(alt, fmt(basis));
         sichtbar(alt);
+        if (!item.classList.contains('cm-preis-ok')) item.classList.add('cm-preis-ok');
       });
       if (!vollstaendig) return;
 
@@ -482,10 +502,17 @@
     }
 
     /* BOGOS rendert verzögert, lädt per "Mehr Produkte ansehen" nach und
-       tauscht Preise beim Variantenwechsel. Deshalb ein entprellter
-       Observer auf dem ganzen Body plus ein Startintervall. */
+       tauscht Preise beim Variantenwechsel. Deshalb ein Observer auf dem
+       ganzen Body plus ein Startintervall.
+
+       Das Widget wird dabei SOFORT aktualisiert, nicht entprellt: der
+       Callback eines MutationObservers läuft noch vor dem Zeichnen. Mit
+       Verzögerung blitzte beim Hinzufügen eines Produkts kurz der volle
+       Preis auf, bevor er auf den Bundle-Preis sprang. Die Karten sind
+       teurer zu berechnen und bleiben entprellt. */
     var t = 0;
     new MutationObserver(function () {
+      try { updateWidget(); } catch (e) {}
       clearTimeout(t);
       t = setTimeout(updateAll, 80);
     }).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
@@ -493,7 +520,16 @@
     var tries = 0;
     var iv = setInterval(function () {
       updateAll();
-      if (++tries > 40) clearInterval(iv);
+      tries++;
+      /* Notbremse: kommen die BOGOS-Daten nach rund fünf Sekunden immer
+         noch nicht, die CSS-Sperre aufheben. Dann steht dort zwar der
+         volle Preis, aber besser als eine leere Stelle. */
+      if (tries === 13 && !bundleInfo()) {
+        document.querySelectorAll('.bogos-step-item').forEach(function (item) {
+          item.classList.add('cm-preis-ok');
+        });
+      }
+      if (tries > 40) clearInterval(iv);
     }, 400);
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateAll);
