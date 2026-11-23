@@ -734,28 +734,62 @@ document.addEventListener('DOMContentLoaded', function () {
      oder", obwohl der Kunde beide bekommt. Jetzt wird pro Produkt ein
      eigener Block gebaut, jeder mit eigener Auswahl und eigenem Button.
      Ist wirklich nur eines von mehreren erlaubt, bleibt der Umschalter. */
+  /* Sobald ein Geschenk gewählt ist, nimmt BOGOS dessen Varianten komplett
+     aus dem Fenster. Aus dem Fenster mit zwei Geschenken wurde dadurch
+     mitten im Vorgang wieder das Fenster mit einem Geschenk, inklusive
+     anderer Überschrift. Deshalb merken wir uns, was in diesem geöffneten
+     Fenster schon angeboten wurde, und lassen das gewählte als erledigten
+     Kasten stehen, solange noch eines offen ist. Ist nichts mehr offen,
+     wird die Merkliste geleert und BOGOS schließt das Fenster wie gehabt. */
+  var gezeigt = {};
+
   function build(offer) {
     var all = read(offer); if (!all.length) return;
     var namen = uniq(all.map(function (i) { return i.name; }));
+    namen.forEach(function (n) {
+      if (gezeigt[n]) return;
+      var erst = all.filter(function (i) { return i.name === n; })[0];
+      gezeigt[n] = { name: n, img: erst.img, old: erst.old };
+    });
+
     var darf = allowed(offer);
-    var gruppen = [all];
+    var teile = [];
     if (namen.length > 1 && darf >= namen.length) {
-      var sortiert = namen.map(function (n, idx) { return { n: n, s: schwelle(n), idx: idx }; });
-      sortiert.sort(function (a, b) { return a.s === b.s ? a.idx - b.idx : a.s - b.s; });
-      gruppen = sortiert.map(function (e) { return all.filter(function (i) { return i.name === e.n; }); });
+      namen.forEach(function (n) { teile.push({ name: n, items: all.filter(function (i) { return i.name === n; }) }); });
+    } else {
+      teile.push({ name: namen[0], items: all });
     }
-    var sig = gruppen.length + '#' + all.map(function (i) { return [i.name, i.color, i.size, i.btn.disabled ? 'x' : 'o'].join('|'); }).join(';');
+    Object.keys(gezeigt).forEach(function (n) {
+      if (namen.indexOf(n) === -1) teile.push({ name: n, fertig: gezeigt[n] });
+    });
+    teile.forEach(function (t, i) { t.s = schwelle(t.name); t.idx = i; });
+    teile.sort(function (a, b) { return a.s === b.s ? a.idx - b.idx : a.s - b.s; });
+
+    var sig = teile.map(function (t) { return t.name + (t.fertig ? ':fertig' : ''); }).join(';') + '#' +
+      all.map(function (i) { return [i.name, i.color, i.size, i.btn.disabled ? 'x' : 'o'].join('|'); }).join(';');
     if (offer.__cmSig === sig && offer.querySelector('.cm-gift')) return;
     offer.__cmSig = sig;
     [].forEach.call(offer.querySelectorAll('.cm-gift'), function (b) { b.remove(); });
     var frag = document.createDocumentFragment();
-    gruppen.forEach(function (gruppe) {
-      var box = buildOne(gruppe, offer);
+    teile.forEach(function (t) {
+      var box = t.fertig ? buildFertig(t.fertig) : buildOne(t.items, offer);
       if (box) frag.appendChild(box);
     });
     if (!frag.childNodes.length) return;
     offer.insertBefore(frag, offer.firstChild);
     offer.classList.add('cm-gift-on');
+  }
+
+  /* Kasten für ein Geschenk, das in diesem Fenster schon genommen wurde. */
+  function buildFertig(info) {
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    var box = document.createElement('div');
+    box.className = 'cm-gift cm-gift--fertig';
+    box.innerHTML = '<div class="cm-gift__top">' + (info.img ? '<img class="cm-gift__img" src="' + esc(info.img) + '" alt="">' : '') +
+      '<div><p class="cm-gift__name">' + esc(info.name) + '</p><div class="cm-gift__price"><span class="cm-gift__free">Gratis</span>' +
+      (info.old ? '<span class="cm-gift__old">' + esc(info.old) + '</span>' : '') + '</div></div></div>' +
+      '<button type="button" class="cm-gift__cta" disabled>Liegt im Warenkorb</button>';
+    return box;
   }
 
   function buildOne(items, offer) {
@@ -800,6 +834,9 @@ document.addEventListener('DOMContentLoaded', function () {
   function run() {
     var pop = document.getElementById('freegifts-main-popup-container'); if (!pop) return;
     try {
+      /* Kein Geschenk mehr im Fenster: Merkliste leeren, damit beim
+         nächsten Öffnen von vorne gezählt wird. */
+      if (!pop.querySelector('.bogos-offer-gift-item')) gezeigt = {};
       [].forEach.call(pop.querySelectorAll('.bogos-slider-offer'), build);
 
       /* Überschrift und Unterzeile richten sich danach, wie viele Geschenke

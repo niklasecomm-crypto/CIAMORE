@@ -1639,6 +1639,9 @@ html body.cm-multi-pdp .product__selectors .radio__button label {
 /* Mehrere Geschenke gleichzeitig frei: BOGOS legt sie in einen Block, wir
    bauen pro Geschenk einen eigenen Kasten. Trennlinie dazwischen. */
 #freegifts-main-popup-container .cm-gift + .cm-gift { margin-top: 18px; padding-top: 18px; border-top: 1px solid #eceae6; }
+/* Schon genommenes Geschenk bleibt sichtbar, aber zurückgenommen. */
+#freegifts-main-popup-container .cm-gift--fertig { opacity: .5; }
+#freegifts-main-popup-container .cm-gift--fertig .cm-gift__top { margin-bottom: 12px; }
 /* Original-Karussell ausblenden, aber klickbar per Skript lassen */
 #freegifts-main-popup-container .cm-gift-on > .glider-contain,
 #freegifts-main-popup-container .cm-gift-on > .dots,
