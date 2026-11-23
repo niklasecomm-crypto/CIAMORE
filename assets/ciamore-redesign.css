@@ -427,6 +427,21 @@ mobile-menu .header__logo__link--drawer figure,
 .drawer--cart .cart__item__image, .drawer--cart .cart__item__image img, .drawer--cart .cart__item__image .lazy-image { overflow: hidden; background: var(--cm-sand) !important; }
 .drawer--cart .cart__item__image img { mix-blend-mode: multiply; }
 .drawer--cart .cart__item__image a { margin-top: 0 !important; }
+
+/* Kein Einblenden der Bilder beim Neuberechnen des Warenkorbs.
+   Shopify baut den Warenkorb bei jeder Mengenänderung komplett neu auf.
+   Das frische Markup bringt die Klasse is-loading wieder mit, und das
+   Theme setzt darauf "opacity: 0.000001" plus eine halbe Sekunde
+   Überblendung. Jedes Bild verschwand dadurch bei jedem Klick kurz und
+   blendete sich wieder ein, auch wenn es längst im Zwischenspeicher lag.
+   Gilt nur für die Bilder im Warenkorb, überall sonst bleibt das sanfte
+   Einblenden erhalten. Liegt ein Bild wirklich noch nicht vor, zeigt der
+   sandfarbene Hintergrund darunter eine ruhige Fläche. */
+.cart__item__image .lazy-image img,
+.cart__item__image .lazy-image img.is-loading {
+  opacity: 1 !important;
+  transition: none !important;
+}
 .drawer--cart .cart__item__title, .drawer--cart .cart__item__title a { font-family: var(--cm-body) !important; font-weight: 700 !important; font-size: 14.5px !important; text-transform: none !important; letter-spacing: 0 !important; color: var(--cm-ink) !important; }
 .drawer--cart .cart__item__selected-options { font-size: 12.5px; color: var(--cm-muted); }
 .drawer--cart .cart__price ins { color: var(--cm-ink) !important; font-weight: 700; text-decoration: none; }
