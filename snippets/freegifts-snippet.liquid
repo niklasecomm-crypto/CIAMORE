@@ -733,8 +733,9 @@
       /* falls der Text doch mal breiter ist als der Kasten: verkleinern,
          statt umbrechen und die Höhe zu sprengen */
       el.style.fontSize = '';
-      if (el.scrollWidth > el.clientWidth) el.style.fontSize = '90%';
-      if (el.scrollWidth > el.clientWidth) el.style.fontSize = '82%';
+      ['95%', '88%', '82%'].forEach(function (s) {
+        if (el.scrollWidth > el.clientWidth) el.style.fontSize = s;
+      });
       el.__cmZeit = setTimeout(function () {
         el.textContent = el.__cmAlt;
         el.classList.remove('cm-max');
@@ -748,11 +749,11 @@
        möglich" liest sich so, als ginge noch eins, obwohl genau dieses
        eine schon im Bundle liegt. */
     function grossText(max) {
-      return max < 1 ? 'NICHT MEHR VERFÜGBAR' : 'MEHR GIBT ES NICHT';
+      return max < 1 ? 'NICHT MEHR VERFÜGBAR' : 'MAX. MENGE ERREICHT';
     }
 
     function kleinText(max) {
-      return max < 1 ? 'Nicht mehr verfügbar' : 'Mehr gibt es nicht';
+      return max < 1 ? 'Nicht mehr verfügbar' : 'Max. Menge erreicht';
     }
 
     /* ---------- Anzeige und Deckel ---------- */
