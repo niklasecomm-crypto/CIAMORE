@@ -585,6 +585,18 @@
     cursor: default;
   }
 
+  /* Produktkarte: Knopf ist gesperrt, sobald der Bestand im Bundle
+     ausgereizt ist. So zählt BOGOS gar nicht erst hoch. */
+  .bogos-bp-product-card .bogos-bp-btn-add-product.cm-aus {
+    opacity: .4;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .bogos-bp-product-card .cm-lager-hinweis {
+    margin: 2px 0 4px;
+  }
+
   .cm-lager-fehler {
     background: #fdecea;
     border: 1px solid #f5c2bd;
@@ -691,10 +703,78 @@
       return t ? t.textContent.trim() : 'Artikel';
     }
 
+    /* Welche Variante würde diese Produktkarte gerade hinzufügen? */
+    function karteVariante(card) {
+      var sel = card.querySelector('.bogos-bp-product-variant-option-item[aria-selected="true"][data-variant-id]');
+      if (sel) return sel.getAttribute('data-variant-id');
+      var alle = card.querySelectorAll('.bogos-bp-product-variant-option-item[data-variant-id]');
+      if (alle.length === 1) return alle[0].getAttribute('data-variant-id');
+      return null;
+    }
+
+    function karteName(card) {
+      var t = card.querySelector('.bogos-bp-product-title');
+      return t ? t.textContent.trim() : 'Artikel';
+    }
+
+    /* Wie viele Stück dieser Variante liegen schon im Bundle? */
+    function schonDrin(variantId) {
+      var summe = 0;
+      posten().forEach(function (it) {
+        if (it.getAttribute('data-variant-id') === String(variantId)) summe += menge(it);
+      });
+      return summe;
+    }
+
     /* ---------- Anzeige und Deckel ---------- */
+
+    /* Die Karten bekommen den gleichen Deckel wie das Widget. Wichtig:
+       der Knopf wird gesperrt, BEVOR geklickt wird. Früher hat BOGOS erst
+       hochgezählt und wir haben danach zurückgedreht, das hat sichtbar
+       gezuckt (Preis und "Noch X Produkte wählen" sprangen kurz um). */
+    function karten() {
+      if (!cache) return;
+
+      [].slice.call(document.querySelectorAll('.bogos-bp-product-card')).forEach(function (card) {
+        var vid = karteVariante(card);
+        var btn = card.querySelector('.bogos-bp-btn-add-product');
+        if (!btn) return;
+
+        var max = vid ? frei(vid) : -1;
+        var voll = max >= 0 && schonDrin(vid) >= max;
+
+        if (voll !== btn.classList.contains('cm-aus')) {
+          btn.classList.toggle('cm-aus', voll);
+        }
+
+        var h = card.querySelector('.cm-lager-hinweis');
+        var text = '';
+        if (max >= 0 && max <= 5) {
+          text = max === 0
+            ? 'Leider ausverkauft'
+            : (voll ? 'Mehr als ' + max + ' geht nicht, nur noch ' + max + ' verfügbar'
+                    : 'Nur noch ' + max + ' verfügbar');
+        }
+
+        if (text) {
+          if (!h) {
+            h = document.createElement('div');
+            h.className = 'cm-lager-hinweis';
+            var anker = card.querySelector('.ciamore-price-row') ||
+                        card.querySelector('.bogos-bp-product-price');
+            if (anker && anker.parentNode) anker.parentNode.insertBefore(h, anker.nextSibling);
+            else card.appendChild(h);
+          }
+          if (h.textContent !== text) h.textContent = text;
+        } else if (h && h.parentNode) {
+          h.parentNode.removeChild(h);
+        }
+      });
+    }
 
     function anwenden() {
       if (!cache || busy) return;
+      karten();
 
       posten().forEach(function (it) {
         var max = frei(it.getAttribute('data-variant-id'));
@@ -713,9 +793,10 @@
             h.className = 'cm-lager-hinweis';
             (it.querySelector('.bogos-step-item-info') || it).appendChild(h);
           }
-          h.textContent = max === 0
+          var txt = max === 0
             ? 'Leider ausverkauft'
             : 'Nur noch ' + max + ' verfügbar';
+          if (h.textContent !== txt) h.textContent = txt;
         } else if (h) {
           h.parentNode.removeChild(h);
         }
@@ -730,8 +811,10 @@
         }
 
         if (plus) {
-          if (max >= 0 && m >= max) plus.classList.add('cm-aus');
-          else plus.classList.remove('cm-aus');
+          var sperren = max >= 0 && m >= max;
+          if (sperren !== plus.classList.contains('cm-aus')) {
+            plus.classList.toggle('cm-aus', sperren);
+          }
         }
         if (max >= 0) inp.setAttribute('max', String(max));
       });
@@ -809,7 +892,28 @@
     /* Klick auf "Zum Warenkorb" abfangen, bevor BOGOS ihn bekommt.
        window-capture läuft vor allem anderen. */
     window.addEventListener('click', function (e) {
-      var btn = e.target && e.target.closest ? e.target.closest('.bogos-bp-button-add') : null;
+      if (!e.target || !e.target.closest) return;
+
+      /* Produktkarte: blocken, bevor BOGOS hochzählt. Sonst sieht man
+         kurz den falschen Preis und die falsche Restanzahl. */
+      var kbtn = e.target.closest('.bogos-bp-btn-add-product');
+      if (kbtn) {
+        var card = kbtn.closest('.bogos-bp-product-card');
+        if (!card || !cache) return;
+        var vid = karteVariante(card);
+        if (!vid) return;
+        var max = frei(vid);
+        if (max < 0 || schonDrin(vid) < max) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        meldung(satz(karteName(card), max) + '. Mehr können wir leider nicht ins Bundle legen.');
+        karten();
+        return;
+      }
+
+      var btn = e.target.closest('.bogos-bp-button-add');
       if (!btn) return;
 
       /* unser eigener Nachklick, durchlassen */
@@ -868,15 +972,13 @@
 
     /* ---------- Start ---------- */
 
-    var tick = null;
-    function spaeter() {
-      clearTimeout(tick);
-      tick = setTimeout(anwenden, 120);
-    }
-
+    /* Sofort reagieren, nicht zeitversetzt. MutationObserver läuft als
+       Microtask, also noch vor dem Zeichnen. Alle Schreibzugriffe oben
+       prüfen vorher, ob sich überhaupt etwas ändert, sonst würde sich der
+       Observer selbst immer wieder auslösen. */
     holen(false).then(function () {
       anwenden();
-      new MutationObserver(spaeter).observe(document.body, { childList: true, subtree: true });
+      new MutationObserver(anwenden).observe(document.body, { childList: true, subtree: true });
     });
   })();
 </script>
