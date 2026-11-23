@@ -755,10 +755,11 @@
         btn.parentNode.insertBefore(box, btn);
       }
       box.textContent = text;
-      clearTimeout(box.__weg);
-      box.__weg = setTimeout(function () {
-        if (box.parentNode) box.parentNode.removeChild(box);
-      }, 9000);
+    }
+
+    function meldungWeg() {
+      var box = document.querySelector('.cm-lager-fehler');
+      if (box && box.parentNode) box.parentNode.removeChild(box);
     }
 
     function satz(n, max) {
@@ -821,6 +822,7 @@
       e.stopPropagation();
       if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 
+      meldungWeg();
       btn.classList.add('cm-pruefe');
       pruefen().then(function (schlecht) {
         btn.classList.remove('cm-pruefe');
