@@ -1,0 +1,46 @@
+{%- layout none -%}
+{%- comment -%}
+  CIAMORE: Lagerbestände als JSON.
+
+  Hintergrund: BOGOS kennt pro Variante nur "verfügbar ja/nein", keine
+  Stückzahl. Die öffentliche Produkt-JSON von Shopify gibt die Stückzahl
+  auch nicht her. Nur Liquid kennt sie. Deswegen diese Datei.
+
+  Aufruf:  /collections/all?view=lager
+           /collections/all?view=lager&page=2   (falls mehr als 50 Produkte)
+
+  Antwort: {"total":65,"anzahl":50,"seite":1,"v":{"<VariantenId>":<Stück>}}
+
+  Stückzahl -1 bedeutet "unbegrenzt": entweder wird der Bestand nicht
+  verfolgt oder es darf weiterverkauft werden, wenn ausverkauft.
+  Negative Bestände werden auf 0 gezogen.
+
+  Benutzt wird das in snippets/freegifts-snippet.liquid, um den
+  Mengen-Zähler im Bundle-Widget zu deckeln.
+{%- endcomment -%}
+{%- paginate collection.products by 50 -%}
+  {%- capture eintraege -%}
+    {%- for produkt in collection.products -%}
+      {%- for variante in produkt.variants -%}
+        {%- liquid
+          assign frei = 0
+          if variante.inventory_management == blank
+            assign frei = -1
+          elsif variante.inventory_policy == 'continue'
+            assign frei = -1
+          else
+            assign frei = variante.inventory_quantity | at_least: 0
+          endif
+        -%}
+        {%- unless forloop.first and forloop.parentloop.first -%},{%- endunless -%}
+        "{{ variante.id }}":{{ frei }}
+      {%- endfor -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {
+  "total":{{ collection.all_products_count }},
+  "anzahl":{{ collection.products.size }},
+  "seite":{{ paginate.current_page }},
+  "v":{ {{- eintraege -}} }
+  }
+{%- endpaginate -%}

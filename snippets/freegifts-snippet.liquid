@@ -565,3 +565,316 @@
     obs.observe(document.body, { childList: true, subtree: true });
   })();
 </script>
+<style>
+  /* ---------------------------------------------------------------
+     LAGERBESTAND IM BUNDLE-WIDGET
+     Hinweistext unter dem Produkt und ausgegrauter Plus-Button,
+     sobald der echte Bestand erreicht ist.
+     --------------------------------------------------------------- */
+  .cm-lager-hinweis {
+    font-size: 11px;
+    line-height: 1.3;
+    color: #c0392b;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  .bogos-plus-step-item-btn.cm-aus {
+    opacity: .3;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .cm-lager-fehler {
+    background: #fdecea;
+    border: 1px solid #f5c2bd;
+    color: #a52b1c;
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 8px 0;
+  }
+
+  .bogos-bp-button-add.cm-pruefe {
+    opacity: .6;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  /* LAGERDECKEL FÜR DIE BUNDLE-MENGEN
+
+     Problem: BOGOS kennt pro Variante nur "verfügbar ja/nein", keine
+     Stückzahl. Der Mengen-Zähler liess sich deshalb beliebig hochdrehen.
+     Beim Absenden hat Shopify dann abgelehnt, aber trotzdem angelegt was
+     ging. Ergebnis: ein halber Warenkorb ohne Bundle-Rabatt, also zum
+     vollen Preis, und eine Meldung ohne Produktnamen.
+
+     Lösung in drei Teilen:
+       1. Bestände kommen aus /collections/all?view=lager (nur Liquid
+          kennt die Stückzahl, siehe templates/collection.lager.liquid)
+       2. Plus-Button stoppt beim Bestand, darunter steht "Nur noch X"
+       3. Vor dem Absenden nochmal frisch prüfen. Passt es nicht, wird
+          gar nichts angelegt und die Menge automatisch korrigiert.
+
+     Läuft nur auf den Bundle-Seiten, nirgendwo sonst im Shop. */
+  (function () {
+    if (!/\/bundle\/\d+/.test(window.location.pathname)) return;
+
+    var cache = null;      /* VariantenId -> Stück, -1 = unbegrenzt */
+    var stand = 0;         /* wann zuletzt geholt */
+    var laeuft = null;     /* laufende Abfrage */
+    var busy = false;      /* wir korrigieren gerade, Observer pausieren */
+
+    /* ---------- Bestände holen ---------- */
+
+    function holen(frisch) {
+      if (!frisch && cache && Date.now() - stand < 60000) {
+        return Promise.resolve(cache);
+      }
+      if (laeuft) return laeuft;
+
+      var map = {};
+      var seite = 1;
+
+      function naechste() {
+        var url = '/collections/all?view=lager&page=' + seite;
+        if (frisch) url += '&t=' + Date.now();
+
+        return fetch(url, { cache: frisch ? 'no-store' : 'default' })
+          .then(function (r) { return r.text(); })
+          .then(function (t) {
+            var j = JSON.parse(t.trim());
+            Object.keys(j.v).forEach(function (k) { map[k] = j.v[k]; });
+            if (seite * 50 < j.total && seite < 12) {
+              seite++;
+              return naechste();
+            }
+          });
+      }
+
+      laeuft = naechste()
+        .then(function () {
+          cache = map;
+          stand = Date.now();
+          laeuft = null;
+          return cache;
+        })
+        .catch(function () {
+          /* Wenn die Abfrage scheitert, verhält sich alles wie vorher.
+             Lieber kein Deckel als ein falscher Deckel. */
+          laeuft = null;
+          return cache || null;
+        });
+
+      return laeuft;
+    }
+
+    function frei(id) {
+      if (!cache) return -1;
+      var v = cache[String(id)];
+      return v === undefined ? -1 : v;
+    }
+
+    function posten() {
+      return [].slice.call(document.querySelectorAll('.bogos-step-item[data-variant-id]'));
+    }
+
+    function menge(it) {
+      var inp = it.querySelector('.bogos-bp-quantity-input');
+      return parseInt(inp && inp.value, 10) || 1;
+    }
+
+    function name(it) {
+      var t = it.querySelector('.bogos-step-item-title');
+      return t ? t.textContent.trim() : 'Artikel';
+    }
+
+    /* ---------- Anzeige und Deckel ---------- */
+
+    function anwenden() {
+      if (!cache || busy) return;
+
+      posten().forEach(function (it) {
+        var max = frei(it.getAttribute('data-variant-id'));
+        var inp = it.querySelector('.bogos-bp-quantity-input');
+        var plus = it.querySelector('.bogos-plus-step-item-btn');
+        var minus = it.querySelector('.bogos-minus-step-item-btn');
+        if (!inp) return;
+
+        var m = menge(it);
+
+        /* Hinweis nur zeigen, wenn es wirklich knapp wird */
+        var h = it.querySelector('.cm-lager-hinweis');
+        if (max >= 0 && max <= 5) {
+          if (!h) {
+            h = document.createElement('div');
+            h.className = 'cm-lager-hinweis';
+            (it.querySelector('.bogos-step-item-info') || it).appendChild(h);
+          }
+          h.textContent = max === 0
+            ? 'Leider ausverkauft'
+            : 'Nur noch ' + max + ' verfügbar';
+        } else if (h) {
+          h.parentNode.removeChild(h);
+        }
+
+        /* Zu viel drin? Über die echten Minus-Klicks zurückdrehen,
+           damit BOGOS seine eigenen Summen mitbekommt. */
+        if (max >= 0 && m > max && minus) {
+          busy = true;
+          for (var i = 0; i < m - max; i++) minus.click();
+          setTimeout(function () { busy = false; anwenden(); }, 400);
+          return;
+        }
+
+        if (plus) {
+          if (max >= 0 && m >= max) plus.classList.add('cm-aus');
+          else plus.classList.remove('cm-aus');
+        }
+        if (max >= 0) inp.setAttribute('max', String(max));
+      });
+
+      /* Falls BOGOS doch seine eigene Meldung zeigt: verständlicher machen */
+      var be = document.querySelector('.bogos-bundle-error');
+      if (be && /Verf..?gbarkeit/i.test(be.textContent)) {
+        be.textContent = 'Von einem Produkt sind nicht mehr genug Stück da. Bitte die Menge anpassen.';
+      }
+    }
+
+    /* ---------- Eigene Meldung ---------- */
+
+    function meldung(text) {
+      var btn = document.querySelector('.bogos-bp-button-add');
+      if (!btn) return;
+      var box = document.querySelector('.cm-lager-fehler');
+      if (!box) {
+        box = document.createElement('div');
+        box.className = 'cm-lager-fehler';
+        btn.parentNode.insertBefore(box, btn);
+      }
+      box.textContent = text;
+      clearTimeout(box.__weg);
+      box.__weg = setTimeout(function () {
+        if (box.parentNode) box.parentNode.removeChild(box);
+      }, 9000);
+    }
+
+    function satz(n, max) {
+      if (max === 0) return n + ' ist leider ausverkauft';
+      if (max === 1) return 'Vom ' + n + ' ist nur noch 1 Stück da';
+      return 'Vom ' + n + ' sind nur noch ' + max + ' Stück da';
+    }
+
+    /* ---------- Prüfung vor dem Absenden ---------- */
+
+    function pruefen() {
+      return holen(true).then(function () {
+        var schlecht = [];
+        posten().forEach(function (it) {
+          var max = frei(it.getAttribute('data-variant-id'));
+          var m = menge(it);
+          if (max >= 0 && m > max) {
+            schlecht.push({ it: it, max: max, menge: m, name: name(it) });
+          }
+        });
+        return schlecht;
+      });
+    }
+
+    function korrigieren(liste) {
+      busy = true;
+      var teile = [];
+
+      liste.forEach(function (x) {
+        var minus = x.it.querySelector('.bogos-minus-step-item-btn');
+        var entf = x.it.querySelector('.bogos-remove-step-item');
+        teile.push(satz(x.name, x.max));
+
+        if (x.max === 0 && entf) {
+          entf.click();
+          return;
+        }
+        for (var i = 0; i < x.menge - x.max; i++) {
+          if (minus) minus.click();
+        }
+      });
+
+      meldung(teile.join('. ') + '. Wir haben die Menge angepasst, bitte nochmal auf "Zum Warenkorb" tippen.');
+      setTimeout(function () { busy = false; anwenden(); }, 600);
+    }
+
+    /* Klick auf "Zum Warenkorb" abfangen, bevor BOGOS ihn bekommt.
+       window-capture läuft vor allem anderen. */
+    window.addEventListener('click', function (e) {
+      var btn = e.target && e.target.closest ? e.target.closest('.bogos-bp-button-add') : null;
+      if (!btn) return;
+
+      /* unser eigener Nachklick, durchlassen */
+      if (btn.getAttribute('data-cm-ok') === '1') {
+        btn.removeAttribute('data-cm-ok');
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+      btn.classList.add('cm-pruefe');
+      pruefen().then(function (schlecht) {
+        btn.classList.remove('cm-pruefe');
+        if (!schlecht.length) {
+          btn.setAttribute('data-cm-ok', '1');
+          btn.click();
+          return;
+        }
+        korrigieren(schlecht);
+      });
+    }, true);
+
+    /* Letzte Sicherung: selbst wenn der Klick doch durchrutscht, darf
+       niemals ein halber Warenkorb entstehen. Greift nur mit frischen
+       Beständen (unter 10 Sekunden alt) und nur auf Bundle-Seiten. */
+    var echtesFetch = window.fetch;
+    window.fetch = function (input, init) {
+      try {
+        var url = typeof input === 'string' ? input : (input && input.url) || '';
+        if (/\/cart\/add(\.js)?/.test(url) &&
+            init && typeof init.body === 'string' &&
+            cache && Date.now() - stand < 10000) {
+          var body = JSON.parse(init.body);
+          var items = body && body.items;
+          if (items && items.length) {
+            var schlecht = items.filter(function (i) {
+              var max = frei(i.id);
+              return max >= 0 && i.quantity > max;
+            });
+            if (schlecht.length) {
+              meldung('Von einem Produkt sind nicht mehr genug Stück verfügbar. Es wurde nichts in den Warenkorb gelegt, bitte die Menge anpassen.');
+              setTimeout(anwenden, 150);
+              return Promise.resolve(new Response(
+                JSON.stringify({ status: 422, message: 'Bestand', description: 'Bestand' }),
+                { status: 422, headers: { 'Content-Type': 'application/json' } }
+              ));
+            }
+          }
+        }
+      } catch (err) { /* im Zweifel normal weiterleiten */ }
+      return echtesFetch.apply(this, arguments);
+    };
+
+    /* ---------- Start ---------- */
+
+    var tick = null;
+    function spaeter() {
+      clearTimeout(tick);
+      tick = setTimeout(anwenden, 120);
+    }
+
+    holen(false).then(function () {
+      anwenden();
+      new MutationObserver(spaeter).observe(document.body, { childList: true, subtree: true });
+    });
+  })();
+</script>
