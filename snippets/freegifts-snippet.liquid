@@ -575,7 +575,6 @@
   /* Knopf behält Kasten, Farbe und Höhe, nur der Text wechselt kurz.
      Etwas kleiner und enger, damit der längere Text einzeilig bleibt. */
   .bogos-bp-product-card .bogos-bp-btn-add-product.cm-max {
-    font-size: 90%;
     letter-spacing: 0;
     white-space: nowrap;
   }
@@ -731,20 +730,29 @@
       }
       el.textContent = text;
       el.classList.add('cm-max');
+      /* falls der Text doch mal breiter ist als der Kasten: verkleinern,
+         statt umbrechen und die Höhe zu sprengen */
+      el.style.fontSize = '';
+      if (el.scrollWidth > el.clientWidth) el.style.fontSize = '90%';
+      if (el.scrollWidth > el.clientWidth) el.style.fontSize = '82%';
       el.__cmZeit = setTimeout(function () {
         el.textContent = el.__cmAlt;
         el.classList.remove('cm-max');
         el.style.minHeight = '';
+        el.style.fontSize = '';
         el.__cmAlt = undefined;
       }, ms || 2800);
     }
 
+    /* Wichtig: der Text muss sagen, dass Schluss ist. "Nur noch 1
+       möglich" liest sich so, als ginge noch eins, obwohl genau dieses
+       eine schon im Bundle liegt. */
     function grossText(max) {
-      return max < 1 ? 'NICHT MEHR VERFÜGBAR' : 'NUR NOCH ' + max + ' MÖGLICH';
+      return max < 1 ? 'NICHT MEHR VERFÜGBAR' : 'MEHR HABEN WIR NICHT';
     }
 
     function kleinText(max) {
-      return max < 1 ? 'Nicht mehr verfügbar' : 'Nur noch ' + max + ' möglich';
+      return max < 1 ? 'Nicht mehr verfügbar' : 'Mehr haben wir nicht';
     }
 
     /* ---------- Anzeige und Deckel ---------- */
