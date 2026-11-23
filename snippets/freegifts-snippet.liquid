@@ -721,31 +721,37 @@
        ohne dass sich irgendwas verschiebt: der vorhandene Text wird
        kurz ausgetauscht und danach wieder zurückgesetzt. Die Höhe wird
        während des Tauschs festgehalten, damit nichts springt. */
-    function kurzTausch(el, text, ms) {
+    /* breiteFest: nur für den Knopf auf der Produktkarte. Dessen Breite
+       richtet sich am Handy nach dem Text, ein längerer Text hätte sonst
+       die ganze Reihe verschoben. Die Variantenzeile im Widget ist
+       dagegen schmal am Inhalt ("Gold"), die darf mitwachsen, dort
+       bewegt sich dadurch nichts. */
+    function kurzTausch(el, text, breiteFest, ms) {
       if (!el) return;
       clearTimeout(el.__cmZeit);
 
       if (el.__cmAlt === undefined) {
         el.__cmAlt = el.textContent;
-        /* Kasten auf genau die Maße einfrieren, die er gerade hat.
-           Am Handy richtet sich die Knopfbreite nach dem Text, ein
-           längerer Text hätte sonst die ganze Reihe verschoben. */
-        el.style.boxSizing = 'border-box';
-        el.style.width = el.offsetWidth + 'px';
-        el.style.minHeight = el.offsetHeight + 'px';
-        el.style.maxHeight = el.offsetHeight + 'px';
+        if (breiteFest) {
+          el.style.boxSizing = 'border-box';
+          el.style.width = el.offsetWidth + 'px';
+          el.style.minHeight = el.offsetHeight + 'px';
+          el.style.maxHeight = el.offsetHeight + 'px';
+        }
       }
 
       el.textContent = text;
       el.classList.add('cm-max');
 
-      /* Schrift so weit verkleinern, bis der Text in den eingefrorenen
-         Kasten passt. Lieber etwas kleinere Schrift als ein Layout,
-         das springt. */
+      /* Schrift nur so weit verkleinern, wie es der eingefrorene Kasten
+         verlangt. Lieber ein paar Prozent kleiner als ein Layout, das
+         springt. */
       el.style.fontSize = '';
-      var stufen = ['96%', '92%', '88%', '84%', '80%', '76%', '72%'];
-      for (var i = 0; i < stufen.length && el.scrollWidth > el.clientWidth; i++) {
-        el.style.fontSize = stufen[i];
+      if (breiteFest) {
+        var stufen = ['96%', '92%', '88%', '84%', '80%'];
+        for (var i = 0; i < stufen.length && el.scrollWidth > el.clientWidth; i++) {
+          el.style.fontSize = stufen[i];
+        }
       }
 
       el.__cmZeit = setTimeout(function () {
@@ -911,7 +917,7 @@
         if (e.stopImmediatePropagation) e.stopImmediatePropagation();
         /* Knopftext selbst tauschen: gleicher Kasten, gleiche Farbe,
            nur ein anderer Text. Danach wieder zurück. */
-        kurzTausch(kbtn, grossText(max));
+        kurzTausch(kbtn, grossText(max), true);
         return;
       }
 
