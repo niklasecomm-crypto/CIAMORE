@@ -1,0 +1,86 @@
+<script>
+/* New Year Glow (BOGOS-Bundle 36180) in die Navigation einfügen:
+   Desktop-Leiste, Header-Menü und Handymenü, direkt nach "Bestseller".
+   Gleiches Prinzip wie cm-nav-blackweek: vorhandenen Eintrag klonen.
+
+   ZEITFENSTER: Nur zwischen NYG_START und NYG_END sichtbar.
+   NYG_ENABLED = false schaltet alles komplett ab. */
+(function () {
+  var NYG_ENABLED = true;
+  var NYG_START = '';
+  var NYG_END   = '';
+  if (!NYG_ENABLED) return;
+  var now = Date.now();
+  if (NYG_START && now < new Date(NYG_START).getTime()) return;
+  if (NYG_END   && now > new Date(NYG_END).getTime())   return;
+
+  var URL = '/apps/secomapp_freegifts_get_order/bundle/36180';
+  var TEXT = 'New Year Glow';
+
+  function setLabel(a, txt) {
+    var span = a.querySelector('span');
+    if (span) { span.textContent = txt; } else { a.textContent = txt; }
+  }
+  function strip(el) {
+    el.removeAttribute('data-cm-bw'); el.removeAttribute('data-cm-nyg');
+    el.querySelectorAll('[data-cm-bw],[data-cm-nyg]').forEach(function (x) { x.removeAttribute('data-cm-bw'); x.removeAttribute('data-cm-nyg'); });
+  }
+
+  function injectDesktop() {
+    document.querySelectorAll('.header__menu a.navlink--toplevel[href*="/collections/besteller"]').forEach(function (best) {
+      var anchor = best.closest('.menu__item') || best;
+      if (anchor.getAttribute('data-cm-nyg') === '1') return;
+      var clone = anchor.cloneNode(true);
+      strip(clone);
+      clone.classList.remove('cm-bw-navitem');
+      clone.classList.add('cm-nyg-navitem');
+      var ca = clone.querySelector('a.navlink--toplevel') || clone;
+      ca.classList.remove('cm-bw-navlink');
+      ca.setAttribute('href', URL);
+      ca.classList.add('cm-nyg-navlink');
+      setLabel(ca, TEXT);
+      anchor.insertAdjacentElement('afterend', clone);
+      anchor.setAttribute('data-cm-nyg', '1');
+    });
+  }
+
+  function injectMobile() {
+    document.querySelectorAll('a.sliderow__title[href*="/collections/besteller"]').forEach(function (a) {
+      var row = a.closest('.sliderow'); if (!row) return;
+      var anchor = row.closest('.sliderule__wrapper') || row;
+      if (anchor.getAttribute('data-cm-nyg') === '1') return;
+      var clone = anchor.cloneNode(true);
+      strip(clone);
+      clone.classList.remove('cm-bw-sliderow');
+      clone.classList.add('cm-nyg-sliderow');
+      var ca = clone.querySelector('a.sliderow__title');
+      if (ca) { ca.setAttribute('href', URL); setLabel(ca, TEXT); }
+      anchor.insertAdjacentElement('afterend', clone);
+      anchor.setAttribute('data-cm-nyg', '1');
+    });
+  }
+
+  function injectChips() {
+    document.querySelectorAll('.cm-chips__track a.cm-chip[href*="/collections/besteller"]').forEach(function (best) {
+      if (best.getAttribute('data-cm-nyg') === '1') return;
+      var clone = best.cloneNode(true);
+      strip(clone);
+      clone.setAttribute('href', URL);
+      clone.classList.add('cm-nyg-chip', 'cm-chip--vip');
+      clone.classList.remove('cm-bw-chip', 'cm-chip--outline', 'cm-chip--soft', 'cm-chip--sale', 'cm-chip--bundle', 'cm-chip--dark', 'is-current');
+      clone.removeAttribute('aria-current');
+      var media = clone.querySelector('.cm-chip__media'); if (media) media.innerHTML = '';
+      var label = clone.querySelector('.cm-chip__label');
+      if (label) { label.textContent = TEXT; } else { setLabel(clone, TEXT); }
+      if (location.pathname.indexOf('/bundle/36180') > -1) clone.classList.add('is-current');
+      best.insertAdjacentElement('afterend', clone);
+      best.setAttribute('data-cm-nyg', '1');
+    });
+  }
+
+  function run() { try { injectDesktop(); injectMobile(); injectChips(); } catch (e) {} }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  var tries = 0;
+  var iv = setInterval(function () { run(); if (++tries > 20) clearInterval(iv); }, 300);
+})();
+</script>

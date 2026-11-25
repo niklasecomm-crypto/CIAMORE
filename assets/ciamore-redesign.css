@@ -964,6 +964,29 @@ body.bundle-newyearglow .bogos-bundle-page-header {
 .bundle-newyearglow .bogos-bundle-page-header .ciamore-feature-badge span { color: #fff !important; }
 .bundle-newyearglow .bogos-bundle-page-header .ciamore-feature-badge img { filter: invert(1) !important; }
 
+/* ===================== NEW YEAR GLOW: MENÜ ===================== */
+/* Schwarze Schrift mit Funkeln: Buchstaben und Unterstrich sind mit dem
+   Glitzer vom Banner gefüllt (fein, 260px). Gilt für Desktop-Leiste,
+   Header-Menü und Handymenü. */
+html body .cm-chips .cm-nyg-chip .cm-chip__label,
+html body .cm-chips .cm-nyg-chip .cm-chip__label::before,
+html body .cm-nyg-navlink span,
+.cm-nyg-sliderow .sliderow__title > span,
+.cm-nyg-sliderow .sliderow__title > span::before {
+  background: #111 url('ciamore-newyearglow-bg.jpg') 6% 30% / 260px auto repeat !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  -webkit-text-fill-color: transparent !important; color: transparent !important;
+  font-weight: 700 !important;
+}
+html body .cm-chips .cm-nyg-chip .cm-chip__label::before { content: "✦ " !important; }
+.cm-nyg-sliderow .sliderow__title > span::before { content: "✦  "; }
+html body .cm-chips[data-v="text"] .cm-nyg-chip::after,
+html body .cm-chips[data-v="text"] .cm-nyg-chip:hover::after,
+html body .cm-chips[data-v="text"] .cm-nyg-chip.is-current::after {
+  background: #111 url('ciamore-newyearglow-bg.jpg') 6% 30% / 260px auto repeat !important;
+  height: 2.5px !important; box-shadow: none !important;
+}
+
 /* ===================== BLACK WEEK ===================== */
 /* Variante B: normaler Unterstrich-Tab wie die anderen (gleiche Höhe, Unterstrich),
    aber Text und Stern in sattem, tiefem Gold plus glänzender Gold-Unterstrich.
