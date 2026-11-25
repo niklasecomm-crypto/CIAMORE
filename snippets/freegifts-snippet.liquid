@@ -240,6 +240,15 @@
   text-align: left;
 }
 
+.bundle-newyearglow .bogos-bp-widget-header::after {
+  content: 'Wähle 3 Glitzer-Pieces und zahle nur 39€!';
+  display: block;
+  font-size: 13px;
+  color: #000000ff;
+  margin-top: 4px;
+  text-align: left;
+}
+
 .bundle-blackweek .bogos-bp-widget-header::after {
   content: 'Wähle mindestens 6 Pieces und spare 70% auf jedes!';
   display: block;
@@ -266,6 +275,8 @@
     document.body.classList.add('bundle-3for69');
   } else if (path.includes('35605')) {
     document.body.classList.add('bundle-blackweek');
+  } else if (path.includes('36180')) {
+    document.body.classList.add('bundle-newyearglow');
   }
 </script>
 

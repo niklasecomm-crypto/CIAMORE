@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
 /* Bundle-Leiste: Hinweis, wie viele Produkte noch fehlen ("Noch 1 Produkt wählen") */
 (function () {
-  var MIN = { '28202': 4, '28201': 5, '28353': 3 };
+  var MIN = { '28202': 4, '28201': 5, '28353': 3, '36180': 3 };
   function need() {
     var m = location.pathname.match(/bundle\/(\d+)/); if (m && MIN[m[1]]) return MIN[m[1]];
     var r = document.querySelector('.bogos-step-items-product-require-title'); var x = r && r.textContent.match(/\d+/); return x ? +x[0] : 0;
