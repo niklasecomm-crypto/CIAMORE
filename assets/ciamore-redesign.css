@@ -1861,20 +1861,26 @@ html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderul
   letter-spacing: .005em !important; color: var(--cm-ink) !important;
   padding: 0 !important; min-height: 0 !important; height: auto !important;
 }
-/* goldener Chevron rechts an jeder Hauptzeile */
+/* Chevron rechts an jeder Hauptzeile, in der Schriftfarbe der Zeile.
+   Nur Black Week behält den goldenen Pfeil (Regel weiter unten); die Zeile
+   existiert nur im Black-Week-Zeitfenster, danach ist auch der Gold-Pfeil weg. */
 html body mobile-menu .drawer__main-menu > .sliderule__wrapper > .sliderow::after {
-  content: "\203A"; color: #c9a45c; font-size: 19px; line-height: 1; opacity: .85;
+  content: "\203A"; color: var(--cm-ink); font-size: 19px; line-height: 1; opacity: 1;
   margin-left: 12px; flex: 0 0 auto; font-weight: 400;
 }
 /* Produkte/Geschenke: klappbares Akkordeon. Pfeil nach rechts (zu),
    dreht sanft nach unten (auf). Sieht zu wie die anderen Kategorien aus. */
 html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule > button.sliderow::after {
-  content: "\203A"; color: #c9a45c; font-size: 19px; line-height: 1; opacity: .85;
+  content: "\203A"; color: var(--cm-ink); font-size: 19px; line-height: 1; opacity: 1;
   margin-left: 12px; flex: 0 0 auto; font-weight: 400;
   transform: rotate(0deg); transition: transform .3s cubic-bezier(.4,0,.2,1);
 }
 html body mobile-menu .drawer__main-menu > .sliderule__wrapper > mobile-sliderule.cm-acc-open > button.sliderow::after {
   transform: rotate(90deg);
+}
+/* Black Week: goldener Pfeil (nur solange die Black-Week-Zeile eingefügt ist) */
+html body mobile-menu .drawer__main-menu > .sliderule__wrapper.cm-bw-sliderow > .sliderow::after {
+  color: #c9a45c; opacity: .85;
 }
 
 /* -- Unterkategorien: eine Spalte, kein Bild, klein & gesperrt -- */
