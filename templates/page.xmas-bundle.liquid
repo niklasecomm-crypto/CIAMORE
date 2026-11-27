@@ -1,0 +1,14 @@
+{%- comment -%}
+  CIAMORE X-Mas Bundle page template.
+  Deployable (.liquid templates are not ignored by the deploy workflow, unlike .json).
+  Assign this template to a Shopify page (handle: xmas-bundle). Delete this file + the snippet
+  + the page + deactivate the BOGOS offer to remove the campaign cleanly after 24.12.
+{%- endcomment -%}
+{% render 'cm-xmas-bundle',
+  collection: collections.besteller,
+  eyebrow: 'Weihnachten bei Ciamore',
+  heading: 'X-Mas Bundle',
+  subheading: 'Wähle 7 Pieces, zahle nur 3.',
+  bundle_size: 7,
+  pay_count: 3
+%}
