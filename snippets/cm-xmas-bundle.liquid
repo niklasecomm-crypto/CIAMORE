@@ -31,7 +31,9 @@
     background:linear-gradient(92deg,#b07f32,#f6d98f 28%,#c9a45c 52%,#fcefbf 72%,#a9792c);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
   .cmx-sub{font-size:14px;color:var(--hero-sub);margin:8px auto 0;max-width:32rem}
   .cmx-badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
-  .cmx-badge{border:1px solid rgba(201,164,92,.4);color:#fff;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:500}
+  .cmx-badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;border-radius:999px;padding:7px 14px;font-size:12px;font-weight:500}
+  .cmx-badge svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:1.6;flex:none}
+  .cmx-psub2{font-size:12.5px;color:#6b655d;margin-top:-3px}
   /* layout */
   .cmx-layout{display:grid;grid-template-columns:1fr 330px;gap:28px;align-items:start;padding:24px 0 72px}
   .cmx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -109,9 +111,9 @@
       <h1>{{ heading }}</h1>
       <div class="cmx-sub">{{ subheading }} Die {{ freecount }} günstigsten Teile gehen aufs Haus, du zahlst nur die {{ pay }} teuersten.</div>
       <div class="cmx-badges">
-        <span class="cmx-badge">Wasserfest, kein Abfärben</span>
-        <span class="cmx-badge">Lifetime Care</span>
-        <span class="cmx-badge">30 Tage Rückgabe</span>
+        <span class="cmx-badge"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 11-12 0c0-4.5 6-11 6-11z"/></svg>Wasserfest - Kein Abfärben</span>
+        <span class="cmx-badge"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.3-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.7-7 10-7 10z"/></svg>Lifetime Care</span>
+        <span class="cmx-badge"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6M3 4v4h4"/></svg>30 Tage Rückgaberecht</span>
       </div>
     </div>
     <div class="cmx-layout">
@@ -162,8 +164,8 @@
       c.varsEl.innerHTML=c.vars.map(function(v,i){return '<button class="cmx-var'+(i===c.sel?' sel':'')+'" '+(v.a?'':'disabled')+' data-v="'+i+'">'+esc(v.t)+'</button>';}).join('');
     } else {c.varsEl.innerHTML='';}
     var full=count()>=MAX, avail=cur(c).a;
-    if(!avail){c.addEl.innerHTML='<button class="cmx-add" disabled>Ausverkauft</button>';}
-    else if(c.qty===0){c.addEl.innerHTML='<button class="cmx-add" '+(full?'disabled':'')+' data-act="add">'+(full?'Set voll':'In den Warenkorb')+'</button>';}
+    if(!avail){c.addEl.innerHTML='<button class="cmx-add" disabled>AUSVERKAUFT</button>';}
+    else if(c.qty===0){c.addEl.innerHTML='<button class="cmx-add" '+(full?'disabled':'')+' data-act="add">'+(full?'SET VOLL':'IN DEN WARENKORB')+'</button>';}
     else{c.addEl.innerHTML='<div class="cmx-step"><button data-act="dec">−</button><span>'+c.qty+'×</span><button data-act="add" '+(full?'disabled':'')+'>+</button></div>';}
   }
 
@@ -192,15 +194,15 @@
     if(full){
       foot='<div class="cmx-note">Die '+FREE+' günstigsten Teile gehen aufs Haus. Du zahlst nur die '+PAY+' teuersten.</div>'
         +'<div class="cmx-pfoot"><div class="cmx-save">Du sparst <b>'+eur(saved)+'</b></div>'
-        +'<div class="cmx-total"><span class="lbl">Dein Preis</span><span><span class="val old">'+eur(fullT)+'</span><span class="val">'+eur(payT)+'</span></span></div>'
-        +'<button class="cmx-cta" data-act="checkout">In den Warenkorb</button></div>';
+        +'<div class="cmx-total"><span class="lbl">GESAMTPREIS</span><span><span class="val old">'+eur(fullT)+'</span><span class="val">'+eur(payT)+'</span></span></div>'
+        +'<button class="cmx-cta" data-act="checkout">ZUM WARENKORB</button></div>';
     } else {
-      foot='<div class="cmx-pfoot"><div class="cmx-total"><span class="lbl">Zwischensumme</span><span class="val">'+eur(fullT)+'</span></div>'
-        +'<button class="cmx-cta" disabled>In den Warenkorb</button></div>';
+      foot='<div class="cmx-pfoot"><div class="cmx-total"><span class="lbl">GESAMTPREIS</span><span class="val">'+eur(fullT)+'</span></div>'
+        +'<button class="cmx-cta" disabled>ZUM WARENKORB</button></div>';
     }
     panel.innerHTML='<div class="cmx-phead"><span class="cmx-pbag"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0"/></svg></span>'
-      +'<span class="cmx-ptitle">Dein '+esc(HEAD)+'</span><span class="cmx-ptot">'+eur(totHead)+'</span></div>'
-      +'<div class="cmx-prog"><div class="cmx-prog__v" style="width:'+Math.min(100,n/MAX*100)+'%"></div></div>'
+      +'<span class="cmx-ptitle">DEIN BUNDLE</span></div>'
+      +'<div class="cmx-psub2">Wähle '+MAX+' Pieces, zahle nur '+PAY+'.</div>'
       +status
       +'<div class="cmx-onlywide">'+items+'</div>'
       +foot;
