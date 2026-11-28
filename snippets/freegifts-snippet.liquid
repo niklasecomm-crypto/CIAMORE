@@ -1091,7 +1091,7 @@
    der letzten Stufe, damit die Linie nicht ueber den Rand hinausragt. */
 .ciamore-staffel-schiene { position: relative; }
 .ciamore-staffel-schiene .cs-line {
-  position: absolute; top: 39px; height: 3px;
+  position: absolute; top: 47px; height: 3px;
   background: #e6e4df; border-radius: 3px; z-index: 0;
 }
 .ciamore-staffel-schiene .cs-fill {
@@ -1111,10 +1111,10 @@
    Wechsel der Stufe nichts springt. */
 .ciamore-staffel-step {
   position: relative; text-align: center;
-  padding: 54px 2px 2px; background: none; border: 0;
+  padding: 62px 2px 2px; background: none; border: 0;
 }
 .ciamore-staffel-step .cs-dot {
-  position: absolute; top: 33px; left: 50%; margin-left: -7px;
+  position: absolute; top: 41px; left: 50%; margin-left: -7px;
   width: 14px; height: 14px; border-radius: 50%;
   background: #fff; border: 2.5px solid #ddd9d2; box-sizing: border-box;
   transition: background-color .2s ease, border-color .2s ease,
@@ -1129,9 +1129,9 @@
 }
 /* Aktuelle Stufe: groesserer Punkt mit goldenem Ring. */
 .ciamore-staffel-step.is-active .cs-dot {
-  top: 30px; margin-left: -10px; width: 20px; height: 20px;
+  top: 38px; margin-left: -10px; width: 20px; height: 20px;
   background: #121212; border-color: #121212;
-  box-shadow: 0 0 0 3px #fff, 0 0 0 5px #c9a45c;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px #121212;
 }
 
 .ciamore-staffel-step .cs-n { font-size: 11.5px; font-weight: 600; color: #8b857c; }
@@ -1162,19 +1162,19 @@
 .ciamore-staffel-step .cs-tag {
   visibility: hidden; position: absolute; top: 2px; left: 50%;
   transform: translateX(-50%); white-space: nowrap;
-  background: #c9a45c; color: #131313;
-  font-size: 10px; font-weight: 700; letter-spacing: .3px;
-  text-transform: uppercase; padding: 2px 8px; border-radius: 999px;
+  background: #121212; color: #fff;
+  font-size: 10px; font-weight: 700; letter-spacing: .4px;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
 }
 .ciamore-staffel-step.is-active .cs-tag { visibility: visible; }
 
 @media (max-width: 749px) {
   .ciamore-staffel { margin: 16px 0 4px; }
   .ciamore-staffel-grid { gap: 0 2px; }
-  .ciamore-staffel-step { padding-top: 50px; }
-  .ciamore-staffel-schiene .cs-line { top: 35px; }
-  .ciamore-staffel-step .cs-dot { top: 29px; }
-  .ciamore-staffel-step.is-active .cs-dot { top: 26px; }
+  .ciamore-staffel-step { padding-top: 58px; }
+  .ciamore-staffel-schiene .cs-line { top: 43px; }
+  .ciamore-staffel-step .cs-dot { top: 37px; }
+  .ciamore-staffel-step.is-active .cs-dot { top: 34px; }
   .ciamore-staffel-step .cs-n,
   .ciamore-staffel-step .cs-per,
   .ciamore-staffel-step .cs-plus { font-size: 10px; }
@@ -1184,7 +1184,7 @@
   /* Schmale Spalten: die Fahne wird kleiner, und an der ersten bzw.
      letzten Stufe buendig gesetzt statt zentriert, sonst ragt sie
      seitlich aus dem Bild. */
-  .ciamore-staffel-step .cs-tag { font-size: 9.5px; padding: 2px 7px; letter-spacing: .2px; }
+  .ciamore-staffel-step .cs-tag { font-size: 9.5px; padding: 3px 8px; letter-spacing: .3px; }
   .ciamore-staffel-step:first-child .cs-tag { left: 0; transform: none; }
   .ciamore-staffel-step:last-child .cs-tag { left: auto; right: 0; transform: none; }
   .ciamore-staffel-head span { font-size: 12px; }
@@ -1263,7 +1263,7 @@
           preis = '-' + Math.round(s1.wert) + '%';
         }
         h += '<div class="ciamore-staffel-step">'
-           +   '<span class="cs-tag">Du bist hier</span>'
+           +   '<span class="cs-tag">Dein Set</span>'
            +   '<span class="cs-dot"></span>'
            +   '<div class="cs-n">' + s1.menge + ' Teile</div>'
            +   '<div class="cs-price">' + preis + '</div>'
