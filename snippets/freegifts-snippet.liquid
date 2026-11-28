@@ -1181,12 +1181,11 @@
   .ciamore-staffel-step .cs-price { font-size: 16.5px; line-height: 24px; }
   .ciamore-staffel-step.is-active .cs-price { font-size: 18.5px; line-height: 24px; }
   .ciamore-staffel-head { gap: 0 8px; margin-bottom: 6px; }
-  /* Schmale Spalten: die Fahne wird kleiner, und an der ersten bzw.
-     letzten Stufe buendig gesetzt statt zentriert, sonst ragt sie
-     seitlich aus dem Bild. */
+  /* Fahne etwas kleiner, aber IMMER mittig ueber ihrem Punkt. Sie darf
+     seitlich in die Nachbarspalte ragen, dort steht nichts. Buendig
+     ausrichten waere falsch: dann sitzt sie sichtbar schief ueber dem
+     Punkt, und genau das faellt an der ersten und letzten Stufe auf. */
   .ciamore-staffel-step .cs-tag { font-size: 9.5px; padding: 3px 8px; letter-spacing: .3px; }
-  .ciamore-staffel-step:first-child .cs-tag { left: 0; transform: none; }
-  .ciamore-staffel-step:last-child .cs-tag { left: auto; right: 0; transform: none; }
   .ciamore-staffel-head span { font-size: 12px; }
 }
 </style>
