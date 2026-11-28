@@ -277,6 +277,8 @@
     document.body.classList.add('bundle-blackweek');
   } else if (path.includes('36180')) {
     document.body.classList.add('bundle-newyearglow');
+  } else if (path.includes('36355')) {
+    document.body.classList.add('bundle-xmas');
   }
 </script>
 
@@ -325,7 +327,12 @@
           </div>
         </div>
       </div>
-    
+
+      <!-- Ciamore Staffel-Leiste. Bleibt leer und versteckt, bis das
+           Skript am Dateiende die Stufen aus BOGOS gelesen hat. Erscheint
+           nur bei Bundles mit mehr als einer Mengenstufe. -->
+      <div class="ciamore-staffel" hidden></div>
+
       <div class="bogos-bundle-page-body">
         <div class="bogos-bp-products-info">
           {{ bogos_bundle_page_steps_data }}
@@ -1046,5 +1053,227 @@
       anwenden();
       new MutationObserver(anwenden).observe(document.body, { childList: true, subtree: true });
     });
+  })();
+</script>
+
+
+<style>
+/* ======================================================================
+   CIAMORE STAFFEL-LEISTE auf der Bundle-Seite
+
+   Zeigt dem Kunden alle Mengenstufen auf einen Blick ("3 Teile 55 €",
+   "4 Teile 65 €", ...) und hebt die Stufe hervor, auf der er gerade steht.
+
+   WICHTIG: Die Stufen stehen NICHT hier im Code. Sie werden direkt aus
+   dem BOGOS-Bundle gelesen. Änderst du in BOGOS eine Menge, einen Preis
+   oder fügst eine Stufe hinzu, ändert sich die Leiste automatisch mit.
+
+   Sie erscheint nur bei Bundles mit MEHR ALS EINER Stufe. Die Bundles
+   mit nur einer Stufe (5 für 79, 3 für 69, Mix Your Set, Black Week,
+   New Year Glow) bleiben dadurch unverändert.
+
+   Farben pro Aktion über die Body-Klasse umstellbar, z. B. unten bei
+   body.bundle-xmas. Für ein späteres Osterbundle einfach eine neue
+   Klasse ergänzen, die Leiste selbst muss nicht angefasst werden.
+   ====================================================================== */
+.ciamore-staffel { margin: 20px 0 4px; }
+.ciamore-staffel[hidden] { display: none !important; }
+
+.ciamore-staffel-head {
+  display: flex; align-items: baseline; gap: 9px;
+  margin: 0 2px 15px; flex-wrap: wrap;
+}
+.ciamore-staffel-head b { font-size: 15px; font-weight: 700; color: #1e1e1e; }
+.ciamore-staffel-head span { font-size: 13px; color: #6b655d; }
+
+/* Zeilenabstand grösser als Spaltenabstand: die "Du bist hier"-Fahne
+   ragt oben aus der Kachel heraus und braucht darüber Luft. */
+.ciamore-staffel-grid {
+  display: grid; gap: 16px 10px;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+}
+
+.ciamore-staffel-step {
+  position: relative; text-align: center; background: #fff;
+  border: 1.5px solid #e6e4df; border-radius: 14px;
+  padding: 15px 8px 13px;
+  transition: background-color .18s ease, border-color .18s ease;
+}
+.ciamore-staffel-step .cs-n { font-size: 12.5px; font-weight: 600; color: #6b655d; }
+.ciamore-staffel-step .cs-price {
+  font-size: 22px; font-weight: 800; letter-spacing: -.5px;
+  color: #1e1e1e; margin-top: 2px; line-height: 1.15;
+}
+.ciamore-staffel-step .cs-per { font-size: 11.5px; color: #6b655d; margin-top: 4px; }
+/* Aufpreis zur Stufe darunter. Die Zeile wird immer gerendert, damit alle
+   Kacheln gleich hoch bleiben und beim Umschalten nichts springt. */
+.ciamore-staffel-step .cs-plus {
+  font-size: 11.5px; font-weight: 700; color: #a9792c;
+  margin-top: 3px; min-height: 1.35em;
+}
+/* Auf erreichten Stufen ist der Aufpreis uninteressant: Platz behalten,
+   Text weg. Kein display:none, sonst verrutscht die Kachel. */
+.ciamore-staffel-step.is-done .cs-plus { visibility: hidden; }
+
+/* Stufe, auf der der Kunde gerade steht */
+.ciamore-staffel-step.is-active { background: #121212; border-color: #121212; }
+.ciamore-staffel-step.is-active .cs-price { color: #fff; }
+.ciamore-staffel-step.is-active .cs-n,
+.ciamore-staffel-step.is-active .cs-per { color: rgba(255,255,255,.72); }
+.ciamore-staffel-step.is-active .cs-plus { color: #e8c583; }
+
+.ciamore-staffel-step .cs-tag {
+  display: none; position: absolute; top: -9px; left: 50%;
+  transform: translateX(-50%); white-space: nowrap;
+  background: #c9a45c; color: #131313;
+  font-size: 10px; font-weight: 700; letter-spacing: .3px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 999px;
+}
+.ciamore-staffel-step.is-active .cs-tag { display: inline-block; }
+
+@media (max-width: 749px) {
+  .ciamore-staffel { margin: 14px 0 2px; }
+  .ciamore-staffel-grid { grid-template-columns: repeat(2, 1fr); gap: 17px 8px; }
+  .ciamore-staffel-step { padding: 14px 6px 11px; }
+  .ciamore-staffel-step .cs-price { font-size: 19px; }
+}
+</style>
+
+<script>
+  /* Staffel-Leiste: liest die Mengenstufen aus dem BOGOS-Bundle und
+     zeichnet sie über das Produktraster. Siehe Kommentar im Style oben. */
+  (function () {
+    /* Das Snippet liegt im Layout und läuft auf jeder Seite. Auf allem,
+       was keine Bundle-Seite ist, sofort wieder raus. */
+    if (!/\/bundle\/\d+/.test(window.location.pathname)) return;
+
+    function eur2(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
+    function eurKurz(n) {
+      var s = n.toFixed(2).replace('.', ',');
+      if (/,00$/.test(s)) s = s.slice(0, -3);
+      return s + ' €';
+    }
+
+    /* Stufen des aktuellen Bundles aus den BOGOS-Daten holen.
+       Liefert null, solange die Daten fehlen oder es nur eine Stufe gibt. */
+    function stufen() {
+      var m = window.location.pathname.match(/bundle\/(\d+)/);
+      var liste = (window.fgData && window.fgData.bundles) || null;
+      if (!m || !liste) return null;
+      for (var i = 0; i < liste.length; i++) {
+        if (String(liste[i].id) !== m[1]) continue;
+        var roh = liste[i].discount || [], out = [];
+        for (var j = 0; j < roh.length; j++) {
+          var t = roh[j];
+          if (!t || !t.discount) continue;
+          var menge = parseInt(t.quantity, 10);
+          var wert = parseFloat(t.discount.value);
+          if (!(menge > 0) || !isFinite(wert)) continue;
+          out.push({ menge: menge, typ: t.discount.type, wert: wert });
+        }
+        out.sort(function (a, b) { return a.menge - b.menge; });
+        return out.length > 1 ? out : null;   /* nur echte Staffeln */
+      }
+      return null;
+    }
+
+    /* Wie viele Teile liegen gerade im Bundle */
+    function anzahl() {
+      var el = document.querySelector('.bogos-bp-widget-count');
+      if (!el) return 0;
+      var n = parseInt(String(el.textContent || '').replace(/\D/g, ''), 10);
+      return isFinite(n) ? n : 0;
+    }
+
+    function html(st) {
+      var h = '<div class="ciamore-staffel-head"><b>Deine Staffel</b>'
+            + '<span>je mehr Teile, desto günstiger pro Stück</span></div>'
+            + '<div class="ciamore-staffel-grid">';
+      for (var i = 0; i < st.length; i++) {
+        var s = st[i], preis, proTeil = '', plus = '';
+        if (s.typ === 'fixed_price') {
+          preis = eurKurz(s.wert);
+          proTeil = eur2(s.wert / s.menge) + ' / Teil';
+          /* Aufpreis gegenüber der Stufe darunter. Wird per CSS nur auf
+             Stufen gezeigt, die der Kunde noch vor sich hat, denn auf der
+             eigenen Stufe wäre "+10 €" nur verwirrend. */
+          if (i > 0 && st[i - 1].typ === 'fixed_price') {
+            var diff = s.wert - st[i - 1].wert;
+            if (diff > 0) plus = '+' + eurKurz(diff);
+          }
+        } else {
+          preis = '-' + Math.round(s.wert) + '%';
+        }
+        h += '<div class="ciamore-staffel-step">'
+           +   '<span class="cs-tag">Du bist hier</span>'
+           +   '<div class="cs-n">' + s.menge + ' Teile</div>'
+           +   '<div class="cs-price">' + preis + '</div>'
+           +   (proTeil ? '<div class="cs-per">' + proTeil + '</div>' : '')
+           +   '<div class="cs-plus">' + plus + '</div>'
+           + '</div>';
+      }
+      return h + '</div>';
+    }
+
+    /* Darf beliebig oft laufen. Schreibt nur, wenn sich wirklich etwas
+       ändert, sonst würde der MutationObserver sich selbst auslösen. */
+    function zeichnen() {
+      var box = document.querySelector('.ciamore-staffel');
+      if (!box) return;
+      var st = stufen();
+      if (!st) { if (!box.hidden) box.hidden = true; return; }
+
+      if (box.getAttribute('data-gebaut') !== '1') {
+        box.innerHTML = html(st);
+        box.setAttribute('data-gebaut', '1');
+      }
+      if (box.hidden) box.hidden = false;
+
+      var n = anzahl(), aktiv = -1;
+      for (var i = 0; i < st.length; i++) if (n >= st[i].menge) aktiv = i;
+
+      var tiles = box.querySelectorAll('.ciamore-staffel-step');
+      for (var k = 0; k < tiles.length; k++) {
+        var istAktiv = (k === aktiv);
+        /* erreicht = diese Stufe liegt hinter dem Kunden. Dort ist der
+           Aufpreis-Hinweis uninteressant und wird ausgeblendet. */
+        var erreicht = (aktiv >= 0 && k <= aktiv);
+        if (tiles[k].classList.contains('is-active') !== istAktiv) {
+          tiles[k].classList.toggle('is-active', istAktiv);
+        }
+        if (tiles[k].classList.contains('is-done') !== erreicht) {
+          tiles[k].classList.toggle('is-done', erreicht);
+        }
+      }
+    }
+
+    /* Der Observer feuert bei jeder DOM-Änderung, und BOGOS baut viel um.
+       Deshalb sammeln wir die Aufrufe und zeichnen höchstens einmal pro
+       Bildwiederholung. Sonst läuft die Funktion bei jedem Klick dutzende
+       Male und die Seite wird zäh. */
+    var geplant = false;
+    function anstossen() {
+      if (geplant) return;
+      geplant = true;
+      requestAnimationFrame(function () { geplant = false; zeichnen(); });
+    }
+
+    /* BOGOS baut die Seite nach, und fgData kommt teils später.
+       Deshalb Observer plus ein paar begrenzte Nachversuche. */
+    function start() {
+      zeichnen();
+      new MutationObserver(anstossen).observe(document.body, { childList: true, subtree: true, characterData: true });
+      var n = 0;
+      var t = setInterval(function () {
+        zeichnen();
+        if (++n > 40 || document.querySelector('.ciamore-staffel[data-gebaut="1"]')) clearInterval(t);
+      }, 250);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
   })();
 </script>
